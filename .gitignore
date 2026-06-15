@@ -119,6 +119,11 @@ Thumbs.db
 # Keep purchased assets here locally, but never commit them to this public repo.
 Assets/ThirdParty_PriAsset/
 Assets/ThirdParty_PriAsset.meta
+Assets/ThirdParty_Premium/
+Assets/ThirdParty_Premium.meta
+
+# Local plugin/editor preferences
+ProjectSettings/HueFolders_Prefs.json
 
 # Local recovery scenes
 Assets/_Recovery/
