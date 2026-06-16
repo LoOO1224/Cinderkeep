@@ -10,6 +10,7 @@ using OODong.Workspace;
 using OODong.Shared;
 using OODong.TeamDocs;
 using OODong.UI;
+using OODong.Cinderkeep;
 using OODong.Cinderkeep.Editor;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
@@ -29,9 +30,12 @@ namespace OODong.CharacterSelect.Editor
         private const string MainGameSceneFolder = "Assets/Scenes/MainGame";
         private const string MainWorkspaceSceneFolder = "Assets/Scenes/MainWorkspace";
         private const string CharacterSceneFolder = "Assets/Scenes/CharacterScenes";
-        private const string LobbyBackgroundSpritePath = "Assets/MainAssets/Images/Lobby/SteampunkIndustries_Background.jpg";
+        private const string LobbyBackgroundSpritePath = "Assets/Image/MainHubImage/MainLobby_Background.png";
         private const string KoreanFallbackFontPath = "Assets/Fonts/ChosunCentennial.ttf";
         private const string ReadMeFolderPath = "Assets/ReadMe";
+        private const string BgmClipPath = "Assets/Sounds/MainHubBGM/Cinderkeep_BGM_V1.mp3";
+        private const string BgmClipPath2 = "Assets/Sounds/MainHubBGM/Cinderkeep_BGM_V1_2.mp3";
+        private const float BgmVolume = 0.4f;
 
         private static readonly string[] CinderkeepRelatedAssetPaths =
         {
@@ -98,6 +102,7 @@ namespace OODong.CharacterSelect.Editor
 
             SceneCameraController cameraController = CreateSceneCamera(Color.black, 5f, new Vector3(0f, 0f, -10f), Quaternion.identity);
             CreateEventSystem();
+            CreateMainHubBgmController();
             CreateCharacterSelectCanvas(cameraController);
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -132,7 +137,8 @@ namespace OODong.CharacterSelect.Editor
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             SceneCameraController cameraController = CreateMainLobbyCamera();
             CreateEventSystem();
-            CreateMainLobbyCanvas(cameraController);
+            CinderkeepBgmController bgmController = CreateMainHubBgmController();
+            CreateMainLobbyCanvas(cameraController, bgmController);
             CreateMainLobbyCharacterRoster();
             EditorSceneManager.SaveScene(scene, GetScenePath(MainLobbySceneName));
         }
@@ -246,6 +252,16 @@ namespace OODong.CharacterSelect.Editor
                 throw new System.InvalidOperationException($"{lobbyScene.name} has no visible finish work button.");
             }
 
+            if (FindTransformIncludingInactive("BGM Toggle Button") == null)
+            {
+                throw new System.InvalidOperationException($"{lobbyScene.name} has no BGM toggle button.");
+            }
+
+            if (Object.FindFirstObjectByType<CinderkeepBgmController>() == null)
+            {
+                throw new System.InvalidOperationException($"{lobbyScene.name} has no CinderkeepBgmController.");
+            }
+
             ValidateWorkspaceScene(SharedWorkspaceSceneName, "WorkspaceRoot_Shared");
             ValidateWorkspaceScene(MainBuildWorkspaceSceneName, "WorkspaceRoot_MainBuild");
             ValidateWorkspaceScene(PersonalWorkspaceSceneName, "WorkspaceRoot_Personal");
@@ -350,7 +366,7 @@ namespace OODong.CharacterSelect.Editor
             EditorUtility.SetDirty(controller);
         }
 
-        private static void CreateMainLobbyCanvas(SceneCameraController cameraController)
+        private static void CreateMainLobbyCanvas(SceneCameraController cameraController, CinderkeepBgmController bgmController)
         {
             EnsureLobbyArtSprites();
 
@@ -430,6 +446,8 @@ namespace OODong.CharacterSelect.Editor
             CreateLobbyLoadButton(menu, "개인 작업 공간", PersonalWorkspaceSceneName, new Color(0.3f, 0.34f, 0.76f, 1f), Color.white);
             CreateLobbyLoadButton(menu, "!! 빌드 전 검수 공간", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
 
+            CreateBgmToggleButton(menu, bgmController);
+
             RectTransform finishButton = CreateButton(
                 "Finish Work Button",
                 menu,
@@ -448,6 +466,65 @@ namespace OODong.CharacterSelect.Editor
             accentImage.color = new Color(0.92f, 0.7f, 0.18f, 0.75f);
 
             CreateCharacterWorkplaceButtons(root);
+        }
+
+        private static CinderkeepBgmController CreateMainHubBgmController()
+        {
+            GameObject bgmObject = new GameObject(
+                "MainHub_BGM_Controller",
+                typeof(AudioSource),
+                typeof(CinderkeepBgmController));
+
+            AudioSource audioSource = bgmObject.GetComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.loop = false;
+            audioSource.spatialBlend = 0f;
+            audioSource.volume = BgmVolume;
+
+            CinderkeepBgmController bgmController = bgmObject.GetComponent<CinderkeepBgmController>();
+            bgmController.SetReferences(audioSource, LoadMainHubBgmPlaylist(), BgmVolume);
+            EditorUtility.SetDirty(audioSource);
+            EditorUtility.SetDirty(bgmController);
+            return bgmController;
+        }
+
+        private static AudioClip[] LoadMainHubBgmPlaylist()
+        {
+            List<AudioClip> clips = new List<AudioClip>();
+            AddBgmClip(clips, BgmClipPath);
+            AddBgmClip(clips, BgmClipPath2);
+            return clips.ToArray();
+        }
+
+        private static void AddBgmClip(List<AudioClip> clips, string path)
+        {
+            AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip != null)
+            {
+                clips.Add(clip);
+            }
+        }
+
+        private static void CreateBgmToggleButton(RectTransform parent, CinderkeepBgmController bgmController)
+        {
+            RectTransform buttonRoot = CreateButton(
+                "BGM Toggle Button",
+                parent,
+                "BGM ON",
+                24,
+                new Color(0.1f, 0.13f, 0.18f, 1f),
+                Color.white);
+
+            LayoutElement layoutElement = buttonRoot.gameObject.AddComponent<LayoutElement>();
+            layoutElement.minHeight = 46f;
+            layoutElement.preferredHeight = 52f;
+            AddButtonFrame(buttonRoot, new Color(0.7f, 0.86f, 1f, 0.36f));
+
+            Button button = buttonRoot.GetComponent<Button>();
+            Text label = buttonRoot.GetComponentInChildren<Text>(true);
+            CinderkeepBgmToggleButton toggleButton = buttonRoot.gameObject.AddComponent<CinderkeepBgmToggleButton>();
+            toggleButton.SetReferences(button, label, bgmController);
+            EditorUtility.SetDirty(toggleButton);
         }
 
         private static void EnsureLobbyArtSprites()
@@ -928,6 +1005,7 @@ namespace OODong.CharacterSelect.Editor
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             CreateEventSystem();
+            CreateMainHubBgmController();
             SceneCameraController cameraController = CreateSceneCamera(new Color(0.012f, 0.014f, 0.02f), 5f, new Vector3(0f, 0f, -10f), Quaternion.identity);
 
             GameObject workspaceObject = new GameObject(
@@ -1181,6 +1259,7 @@ namespace OODong.CharacterSelect.Editor
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             CreateEventSystem();
+            CreateMainHubBgmController();
             SceneCameraController cameraController = CreateWorkspaceCamera();
 
             GameObject workspaceRoot = new GameObject(workspaceRootName);
