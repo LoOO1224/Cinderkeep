@@ -1,17 +1,17 @@
-using OODong.Cinderkeep;
+using UnityEngine;
 
 namespace OODong.UI
 {
     public static class UIManagerExtension
     {
-        public static void OpenCinderkeepInventory(this UIManager uiManager, CinderkeepHudView hudView)
+        public static void OpenCinderkeepInventory(this UIManager uiManager, MonoBehaviour hudView)
         {
-            hudView?.SetInventoryOpen(true);
+            hudView?.SendMessage("SetInventoryOpen", true, SendMessageOptions.DontRequireReceiver);
         }
 
-        public static void CloseCinderkeepInventory(this UIManager uiManager, CinderkeepHudView hudView)
+        public static void CloseCinderkeepInventory(this UIManager uiManager, MonoBehaviour hudView)
         {
-            hudView?.SetInventoryOpen(false);
+            hudView?.SendMessage("SetInventoryOpen", false, SendMessageOptions.DontRequireReceiver);
         }
     }
 }

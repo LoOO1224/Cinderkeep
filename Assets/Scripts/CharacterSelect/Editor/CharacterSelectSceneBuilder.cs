@@ -11,7 +11,6 @@ using OODong.Shared;
 using OODong.TeamDocs;
 using OODong.UI;
 using OODong.Cinderkeep;
-using OODong.Cinderkeep.Editor;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
 #endif
@@ -160,7 +159,7 @@ namespace OODong.CharacterSelect.Editor
             CreateWorkspaceScene(SharedWorkspaceSceneName, "Cinderkeep Team Workspace", "WorkspaceRoot_Shared");
             CreateWorkspaceScene(MainBuildWorkspaceSceneName, "Game Work Review Room", "WorkspaceRoot_MainBuild");
             CreateWorkspaceScene(PersonalWorkspaceSceneName, "Personal Workspace Room", "WorkspaceRoot_Personal");
-            CinderkeepPlayableSceneBuilder.RebuildPlayableGameScenes();
+            Debug.Log("CharacterSelectSceneBuilder: playable game scene rebuild skipped because Cinderkeep gameplay scripts are disabled.");
         }
 
         public static void ValidateSampleScene()
@@ -265,7 +264,7 @@ namespace OODong.CharacterSelect.Editor
             ValidateWorkspaceScene(SharedWorkspaceSceneName, "WorkspaceRoot_Shared");
             ValidateWorkspaceScene(MainBuildWorkspaceSceneName, "WorkspaceRoot_MainBuild");
             ValidateWorkspaceScene(PersonalWorkspaceSceneName, "WorkspaceRoot_Personal");
-            CinderkeepPlayableSceneBuilder.ValidatePlayableGameScenes();
+            Debug.Log("CharacterSelectSceneBuilder: playable game scene validation skipped because Cinderkeep gameplay scripts are disabled.");
             Debug.Log("CharacterSelectSceneBuilder: main lobby and workspace scenes validated.");
         }
 
