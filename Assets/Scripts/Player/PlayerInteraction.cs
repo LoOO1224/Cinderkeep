@@ -1,41 +1,82 @@
 using UnityEngine;
 
-public class PlayerInteraction : MonoBehaviour
+// 플레이어가 바라보는 오브젝트와 상호작용하는 입구 역할만 담당합니다.
+// 실제 채집, 획득, 파괴 처리는 대상 오브젝트의 전용 컴포넌트가 맡도록 분리합니다.
+public sealed class PlayerInteraction : MonoBehaviour
 {
-    [Header("상호작용 세팅")]
-    [SerializeField] private float _interactionDistance = 3f; // 상호작용 거리
-    [SerializeField] private LayerMask _interactionLayerMask; // 상호작용 레이어 마스크
-    [SerializeField] private Transform Transform_Camera; // 플레이어 카메라
+    [Header("상호작용 설정")]
+    [SerializeField] private float _interactionDistance = 3f;
+    [SerializeField] private LayerMask _interactionLayerMask;
+    [SerializeField] private KeyCode _interactionKey = KeyCode.E;
+    [SerializeField] private Transform Transform_Camera;
 
+    private void Start()
+    {
+        ConnectCameraIfNeeded();
+    }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        ReadInteractionInput();
+    }
+
+    public void TryInteract()
+    {
+        IInteractable interactable = GetInteractableFromRay();
+
+        if (interactable == null)
+        {
+            return;
+        }
+
+        if (interactable.CanInteract(gameObject) == false)
+        {
+            return;
+        }
+
+        interactable.Interact(gameObject);
+    }
+
+    private void ReadInteractionInput()
+    {
+        if (Input.GetKeyDown(_interactionKey))
         {
             TryInteract();
         }
     }
 
-    private void TryInteract() // 자원 상호작용용 임시 코드
+    private void ConnectCameraIfNeeded()
     {
-        Ray ray = new Ray(Transform_Camera.position, Transform_Camera.forward);
-
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, _interactionDistance, _interactionLayerMask))
+        if (Transform_Camera != null)
         {
-            GameObject hitObject = hitInfo.collider.gameObject;
-
-            // 2. 비교할 타겟 레이어(Resources)의 번호를 int로 추출
-            int resourceLayer = LayerMask.NameToLayer("Resources");
-
-            if (hitObject.layer != resourceLayer)
-            {
-                // Default 레이어(벽, 바닥 등)에 맞았을 경우 파괴하지 않고 작업을 중단
-                Debug.LogWarning($"[PlayerInteraction] 자원이 아닌 오브젝트를 타격, 무시합니다. 대상: {hitObject.name}");
-                return;
-            }
-
-            Destroy(hitObject);
-            Debug.Log($"자원 오브젝트 파괴 : {hitObject.name}");
+            return;
         }
+
+        Camera camera = GetComponentInChildren<Camera>();
+
+        if (camera == null)
+        {
+            return;
+        }
+
+        Transform_Camera = camera.transform;
+    }
+
+    private IInteractable GetInteractableFromRay()
+    {
+        if (Transform_Camera == null)
+        {
+            return null;
+        }
+
+        Ray ray = new Ray(Transform_Camera.position, Transform_Camera.forward);
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(ray, out hitInfo, _interactionDistance, _interactionLayerMask) == false)
+        {
+            return null;
+        }
+
+        return hitInfo.collider.GetComponentInParent<IInteractable>();
     }
 }
