@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 public sealed class PlayerMovement : MonoBehaviour
@@ -10,13 +10,28 @@ public sealed class PlayerMovement : MonoBehaviour
     [SerializeField] private float _gravity = -20f;
     [SerializeField] private float _groundStickVelocity = -2f;
 
+    private PlayerStatus _playerStatus;
     private CharacterController _characterController;
     private Vector3 _moveDirection;
     private float _verticalVelocity;
 
+    // HUD나 상태 표시에서 현재 달리기 여부를 읽을 수 있도록 열어둡니다.
+    public bool IsRunningNow
+    {
+        get
+        {
+            bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
+            bool isMoving = _moveDirection.magnitude > 0.01f;
+            bool canRun = CheckCanRun();
+
+            return isMoving && isShiftPressed && canRun;
+        }
+    }
+
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
+        _playerStatus = GetComponent<PlayerStatus>();
     }
 
     private void Update()
@@ -32,7 +47,7 @@ public sealed class PlayerMovement : MonoBehaviour
 
     public void Jump(float jumpForce)
     {
-        if (_characterController == null || !_characterController.isGrounded)
+        if (_characterController == null || _characterController.isGrounded == false)
         {
             return;
         }
@@ -45,7 +60,7 @@ public sealed class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        Vector3 moveDirection = (transform.right * horizontal) + (transform.forward * vertical);
+        Vector3 moveDirection = transform.right * horizontal + transform.forward * vertical;
         _moveDirection = moveDirection.normalized;
     }
 
@@ -56,10 +71,12 @@ public sealed class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // CharacterController는 Rigidbody가 없으므로 Move 함수로 직접 이동시킵니다.
-        bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
-        bool isMoving = _moveDirection.magnitude > 0.01f;
-        bool isRunning = isMoving && isShiftPressed;
+        bool isRunning = IsRunningNow;
+
+        if (isRunning == true && _playerStatus != null)
+        {
+            _playerStatus.ConsumeStaminaForRun();
+        }
 
         float currentSpeed = isRunning ? _runSpeed : _moveSpeed;
         Vector3 horizontalVelocity = _moveDirection * currentSpeed;
@@ -71,12 +88,22 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        if (_characterController.isGrounded == true && _verticalVelocity < 0f)
         {
             _verticalVelocity = _groundStickVelocity;
             return;
         }
 
         _verticalVelocity += _gravity * Time.deltaTime;
+    }
+
+    private bool CheckCanRun()
+    {
+        if (_playerStatus == null)
+        {
+            return true;
+        }
+
+        return _playerStatus.CanRun();
     }
 }

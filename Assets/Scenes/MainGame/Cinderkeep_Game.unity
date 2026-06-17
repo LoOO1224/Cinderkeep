@@ -415,6 +415,7 @@ GameObject:
   - component: {fileID: 356893298}
   - component: {fileID: 356893297}
   - component: {fileID: 356893300}
+  - component: {fileID: 356893301}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -525,6 +526,25 @@ MonoBehaviour:
   GameObject_BuildingPrefab: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
   _spawnDistance: 3
   _buildKey: 98
+--- !u!114 &356893301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356893294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5deb0791d3974f44b268b4147af130b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
+  _health: 100
+  _maxHealth: 100
+  _stamina: 150
+  _maxStamina: 150
+  _staminaRecoveryRate: 15
+  _staminaConsumeRate: 15
+  _exhaustedRecoveryPoint: 30
 --- !u!1 &432202583
 GameObject:
   m_ObjectHideFlags: 0
