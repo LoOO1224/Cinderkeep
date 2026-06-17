@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,6 +33,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private float _attackDamage;
         [SerializeField] private float _attackInterval;
         [SerializeField] private float _visualScale;
+        [SerializeField] private float _detectorDistance;
 
         public string DisplayName
         {
@@ -87,6 +88,13 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _visualScale;
+            }
+        }
+        public float DetectorDistance
+        {
+            get
+            {
+                return _detectorDistance;
             }
         }
     }
