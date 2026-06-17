@@ -416,6 +416,7 @@ GameObject:
   - component: {fileID: 356893297}
   - component: {fileID: 356893300}
   - component: {fileID: 356893301}
+  - component: {fileID: 356893302}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -545,6 +546,23 @@ MonoBehaviour:
   _staminaRecoveryRate: 15
   _staminaConsumeRate: 15
   _exhaustedRecoveryPoint: 30
+--- !u!114 &356893302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356893294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9f8afc84777274aae75869d0ef64bb, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  _interactionDistance: 3
+  _interactionLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _camera: {fileID: 432202584}
 --- !u!1 &432202583
 GameObject:
   m_ObjectHideFlags: 0
