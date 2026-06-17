@@ -13,6 +13,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
         [SerializeField] private UIManager UIManager_UIManager;
         [SerializeField] private SoundManager SoundManager_SoundManager;
+        [SerializeField] private MapManager MapManager_MapManager;
 
         private PlayerModel _playerModel = new PlayerModel();
         private GameRunModel _gameRunModel = new GameRunModel();
@@ -79,6 +80,7 @@ namespace Cinderkeep.Gameplay
             InitializeManager(GameObjectManager_GameObjectManager, "GameObjectManager");
             InitializeManager(SoundManager_SoundManager, "SoundManager");
             InitializeManager(UIManager_UIManager, "UIManager");
+            InitializeManager(MapManager_MapManager, "MapManager");
 
             _playerModel.InitializeDefault();
             _gameRunModel.InitializeDefault();
