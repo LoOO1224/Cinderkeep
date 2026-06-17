@@ -3,6 +3,7 @@
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 UI 매니저입니다.
+    // 현재는 3일 MVP 루프에 필요한 HUD, 인벤토리, 게임오버 UI부터 관리합니다.
     // UI는 코드에서 새로 만들지 않고, 씬이나 프리팹에 준비된 오브젝트를 켜고 끄는 방식으로 관리합니다.
     public sealed class UIManager : MonoBehaviour, IGameInitializable
     {

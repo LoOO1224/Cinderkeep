@@ -3,6 +3,9 @@
 namespace Cinderkeep.Gameplay
 {
     // 게임 전체 생성 주기를 잡는 최상위 매니저입니다.
+    // 현재 목표는 3일/15분 MVP 루프를 안정적으로 시작하고 끝내는 것입니다.
+    // 1일차는 채집/기초 제작, 2일차는 FlameHeart 방어, 3일차는 보스 클리어가 기준입니다.
+    // 이후 7일 루프 확장은 이 초기화 흐름을 유지한 채 Model과 매니저 기능을 늘립니다.
     // 규칙: 게임 영역에서는 GameManager만 싱글톤으로 둡니다.
     public sealed class GameManager : MonoBehaviour
     {
@@ -51,6 +54,14 @@ namespace Cinderkeep.Gameplay
             Initialize();
         }
 
+        private void OnDestroy()
+        {
+            if (Inst == this)
+            {
+                Inst = null;
+            }
+        }
+
         public void Initialize()
         {
             if (_isInitialized)
@@ -59,10 +70,10 @@ namespace Cinderkeep.Gameplay
             }
 
             // 생성 주기 순서:
-            // 1. Static Data 로드
-            // 2. 동적 오브젝트 생성 관리자 준비
-            // 3. 사운드 관리자 준비
-            // 4. UI 관리자 준비
+            // 1. 3일 MVP 루프에 필요한 Static Data 로드
+            // 2. 몬스터, 자원, 건축물 생성을 맡을 관리자 준비
+            // 3. BGM과 효과음 관리자 준비
+            // 4. HUD, 인벤토리, 게임오버 UI 관리자 준비
             // 5. 저장이 필요한 Instance Model 기본값 준비
             InitializeManager(GameDataManager_GameDataManager, "GameDataManager");
             InitializeManager(GameObjectManager_GameObjectManager, "GameObjectManager");

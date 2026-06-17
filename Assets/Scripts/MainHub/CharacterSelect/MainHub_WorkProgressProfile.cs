@@ -115,7 +115,7 @@ namespace MainHub.CharacterSelect
 
             if (Text_Status != null)
             {
-                Text_Status.text = $"?묒뾽 寃쏀뿕移섎? ?볥뒗 以?- {_ownerEnglishName} {GetWorkingDots()}";
+                Text_Status.text = $"?? ?? ? - {_ownerEnglishName} {GetWorkingDots()}";
             }
 
             if (Text_Experience != null)

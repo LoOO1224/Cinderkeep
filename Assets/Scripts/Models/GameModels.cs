@@ -44,7 +44,9 @@ namespace Cinderkeep.Gameplay
     }
 
     // 한 판의 진행 상태를 담는 Instance Data입니다.
-    // 이후 7일차 루프, 보스전, 추위 같은 진행 상태가 여기에 추가됩니다.
+    // 현재는 3일/15분 MVP 루프의 기본 진행 상태만 보관합니다.
+    // Day는 1~3을 먼저 사용하고, 확장 단계에서 1~7로 늘립니다.
+    // 이후 7일 루프, 보스전, 추위 같은 확장 상태가 여기에 추가됩니다.
     [Serializable]
     public sealed class GameRunModel
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cinderkeep.Gameplay
 {
     // 변하지 않는 기획 데이터의 부모 클래스입니다.
-    // 예: 몬스터 기본 체력, 이동 속도, 공격력, 제작 레시피 등.
+    // 예: 몬스터 기본 체력, 이동 속도, 공격력, 제작 레시피, 불꽃 강화 등.
     [Serializable]
     public class GameDataBase
     {
@@ -21,6 +21,7 @@ namespace Cinderkeep.Gameplay
     }
 
     // JaeUk-MonsterAI 브랜치에서 만든 Enemy 데이터 필드를 현재 규칙에 맞춰 반영했습니다.
+    // 3일 MVP 루프에서는 밤 웨이브와 보스 접근의 기초 스탯으로 사용합니다.
     // JSON 필드명은 _id, _displayName, _health 같은 이름을 그대로 사용합니다.
     [Serializable]
     public sealed class EnemyData : GameDataBase

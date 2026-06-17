@@ -411,7 +411,7 @@ namespace MainHub.CharacterSelect.Editor
             title.rectTransform.offsetMin = Vector2.zero;
             title.rectTransform.offsetMax = Vector2.zero;
 
-            Text subtitle = CreateText("Lobby Subtitle", header, "? ?덈툕: 罹먮┃???좏깮, 寃뚯엫 ?ㅽ뻾, 怨듬룞/媛쒖씤 ?묒뾽 怨듦컙 ?대룞", 20, new Color(0.9f, 0.78f, 0.45f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text subtitle = CreateText("Lobby Subtitle", header, "? ??: ??? ??, ????, ?? ??? ?????", 20, new Color(0.9f, 0.78f, 0.45f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
             subtitle.rectTransform.anchorMin = new Vector2(0f, 0f);
             subtitle.rectTransform.anchorMax = new Vector2(1f, 0.28f);
             subtitle.rectTransform.offsetMin = Vector2.zero;
@@ -441,16 +441,16 @@ namespace MainHub.CharacterSelect.Editor
             CreateLobbyLoadButton(menu, "!! Play Our Game (V1)", PlayableGameSceneName, new Color(0.18f, 0.5f, 0.32f, 1f), Color.white);
             CreateLobbyLoadButton(menu, "Select My Character", "SampleScene", new Color(0.92f, 0.7f, 0.18f, 1f), new Color(0.055f, 0.06f, 0.07f, 1f));
             CreateOpenReadMeFolderButton(menu);
-            CreateLobbyLoadButton(menu, "怨듬룞 ?묒뾽 怨듦컙", SharedWorkspaceSceneName, new Color(0.14f, 0.2f, 0.28f, 1f), Color.white);
-            CreateLobbyLoadButton(menu, "媛쒖씤 ?묒뾽 怨듦컙", PersonalWorkspaceSceneName, new Color(0.3f, 0.34f, 0.76f, 1f), Color.white);
-            CreateLobbyLoadButton(menu, "!! 鍮뚮뱶 ??寃??怨듦컙", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "?? ???? ??", SharedWorkspaceSceneName, new Color(0.14f, 0.2f, 0.28f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "?? ???? ??", PersonalWorkspaceSceneName, new Color(0.3f, 0.34f, 0.76f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "!! Play Our Game ????", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
 
             CreateBgmToggleButton(menu, bgmController);
 
             RectTransform finishButton = CreateButton(
                 "Finish Work Button",
                 menu,
-                "?묒뾽 醫낅즺",
+                "?? ??",
                 24,
                 new Color(0.24f, 0.25f, 0.29f, 1f),
                 new Color(0.86f, 0.88f, 0.94f, 1f));
@@ -561,7 +561,7 @@ namespace MainHub.CharacterSelect.Editor
             outline.effectColor = new Color(0.84f, 0.58f, 0.16f, 0.5f);
             outline.effectDistance = new Vector2(3f, -3f);
 
-            Text title = CreateText("Character_Workplace_Title", panel, "媛쒖씤 ?묒뾽???듭뒳濡?, 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text title = CreateText("Character_Workplace_Title", panel, "?? ???? ????", 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
             title.rectTransform.anchorMin = new Vector2(0.055f, 0.91f);
             title.rectTransform.anchorMax = new Vector2(0.95f, 0.98f);
             title.rectTransform.offsetMin = Vector2.zero;
@@ -1087,7 +1087,7 @@ namespace MainHub.CharacterSelect.Editor
             Stretch(workBack.rectTransform);
             AddButtonFrame(workRoot, new Color(0.26f, 0.72f, 0.82f, 0.28f));
 
-            Text workText = CreateText("Work Root Label", workRoot, "媛쒖씤 ?묒뾽 濡쒕퉬 袁몃?湲??곸뿭\nHierarchy??Custom_Decoration_Root ?꾨옒???먯쑀濡?쾶 諛곗튂", 24, new Color(0.88f, 0.94f, 0.96f, 1f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            Text workText = CreateText("Work Root Label", workRoot, "?? ???? ?? ??\nHierarchy? Custom_Decoration_Root ??? ??? ??? ?????", 24, new Color(0.88f, 0.94f, 0.96f, 1f), TextAnchor.MiddleCenter, FontStyle.Bold);
             Stretch(workText.rectTransform, 22f, 18f);
 
             RectTransform buttonPanel = CreateRect("Personal_Workspace_Link_Buttons", root);
@@ -1099,7 +1099,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Go_To_Build_Check_Scene_Button",
                 buttonPanel,
-                "而ㅻ컠 ??寃???ъ쑝濡??대룞",
+                "?? ?? ??? ??",
                 MainBuildWorkspaceSceneName,
                 new Vector2(0f, 0.55f),
                 new Vector2(0.49f, 1f),
@@ -1109,7 +1109,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Go_To_Playable_Game_Scene_Button",
                 buttonPanel,
-                "?꾩옱 寃뚯엫 ???뚮젅??,
+                "?? ?? ??? ??",
                 PlayableGameSceneName,
                 new Vector2(0.51f, 0.55f),
                 new Vector2(1f, 1f),
@@ -1119,7 +1119,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Back_To_Main_Hub_Button",
                 buttonPanel,
-                "硫붿씤 ?덈툕濡?,
+                "?? ??? ????",
                 MainLobbySceneName,
                 new Vector2(0f, 0f),
                 new Vector2(0.49f, 0.42f),
@@ -1129,7 +1129,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Back_To_Character_Select_Button",
                 buttonPanel,
-                "罹먮┃???좏깮?쇰줈",
+                "??? ????",
                 "SampleScene",
                 new Vector2(0.51f, 0f),
                 new Vector2(1f, 0.42f),
@@ -1202,7 +1202,7 @@ namespace MainHub.CharacterSelect.Editor
             levelText.rectTransform.offsetMin = Vector2.zero;
             levelText.rectTransform.offsetMax = Vector2.zero;
 
-            Text statusText = CreateText("Developer_Status_Text", panel, "?묒뾽 寃쏀뿕移??볥뒗 以?, 18, new Color(0.78f, 0.86f, 0.88f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text statusText = CreateText("Developer_Status_Text", panel, "?? ?? ?? ?", 18, new Color(0.78f, 0.86f, 0.88f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
             statusText.rectTransform.anchorMin = new Vector2(0.04f, 0.31f);
             statusText.rectTransform.anchorMax = new Vector2(0.96f, 0.55f);
             statusText.rectTransform.offsetMin = Vector2.zero;

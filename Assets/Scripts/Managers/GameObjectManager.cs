@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Cinderkeep.Gameplay
 {
     // 게임 중 동적으로 만들어지는 오브젝트를 등록하고 제거하는 매니저입니다.
+    // 현재는 몬스터, 자원, 고정 건축 지점 같은 MVP 오브젝트를 관리할 기반입니다.
     // 생성된 오브젝트는 instanceId를 받아서, 이후 수정/제거 요청을 같은 id로 처리할 수 있습니다.
     public sealed class GameObjectManager : MonoBehaviour, IGameInitializable
     {
@@ -79,6 +80,7 @@ namespace Cinderkeep.Gameplay
             GameObjectIdentity identity = _createdObjectById[instanceId];
             if (identity == null)
             {
+                _createdObjectById.Remove(instanceId);
                 return null;
             }
 

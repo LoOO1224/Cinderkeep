@@ -3,6 +3,7 @@
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 사운드 매니저입니다.
+    // 현재는 MVP 루프의 BGM과 전투/채집 효과음 재생 기반만 준비합니다.
     // BGM과 효과음 AudioSource는 Inspector에서 연결하고, 다른 스크립트는 이 매니저 함수만 호출합니다.
     public sealed class SoundManager : MonoBehaviour, IGameInitializable
     {
