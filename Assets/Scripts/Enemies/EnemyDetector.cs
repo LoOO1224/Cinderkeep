@@ -76,5 +76,32 @@ public class EnemyDetector : MonoBehaviour
         return angle <= (_viewAngle * 0.5f);
     }
 
+    public void EnableAlertMode()   //데미지를 받으면 원 내의 플레이어 캐릭터에게 어그로를 끔
+    {
+        if(_isHashDetectedPlayer)
+        {
+            return ;
+        }
+
+        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectorDistance, _overlapColliders);
+
+        for(int i = 0; i < hitCount;i++)
+        {
+            Collider col = _overlapColliders[i];
+
+            if(col.transform == transform)
+            {
+                continue;
+            }
+            if(!col.CompareTag(TargetTag))
+            {
+                continue;
+            }
+
+            Transform_DetectedPlayer = col.transform;
+            Debug.Log($"[{gameObject.name}] 시야각 외 피격 주변 범위 내 플레이어를 강제 포착해 타겟을 고정합니다.");
+        }
+        Debug.Log($"[{gameObject.name}] 피격당했으나 감지 범위 내에 플레이어 태그가 존재하지 않아 맞고 끝납니다.");
+    }
 
 }
