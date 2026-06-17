@@ -90,6 +90,7 @@ namespace Cinderkeep.Gameplay
                 return _visualScale;
             }
         }
+
         public float DetectorDistance
         {
             get

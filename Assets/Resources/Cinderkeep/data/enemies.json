@@ -9,7 +9,7 @@
       "_attackDamage": 8,
       "_attackInterval": 1.4,
       "_visualScale": 1.0,
-      "_detectorDistance": "5"
+      "_detectorDistance": 5
     },
     {
       "_id": "frost_wolf",
@@ -20,7 +20,7 @@
       "_attackDamage": 6,
       "_attackInterval": 0.9,
       "_visualScale": 0.9,
-      "_detectorDistance": "15"
+      "_detectorDistance": 15
     }
   ]
 }
