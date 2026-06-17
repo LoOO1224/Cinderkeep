@@ -3,3 +3,4 @@ MainHub Character Selection Log
 
 캐릭터 선택 창에서 본인 캐릭터를 클릭하거나 선택 취소를 누르면 아래에 기록됩니다.
 
+2026-06-17 17:25:07 | 선택 | Owner=ChoiJaeho | Class=Blacksmith | Scene=Blacksmith_ChoiJaeho

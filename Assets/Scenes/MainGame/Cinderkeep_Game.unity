@@ -414,6 +414,7 @@ GameObject:
   - component: {fileID: 356893299}
   - component: {fileID: 356893298}
   - component: {fileID: 356893297}
+  - component: {fileID: 356893300}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -476,8 +477,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fab770991bd08ba4987971e2561eb8af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
-  mouseSensitivity: 260
-  playerBody: {fileID: 356893296}
+  _mouseSensitivity: 260
+  Transform_PlayerBody: {fileID: 356893296}
+  Transform_Camera: {fileID: 0}
 --- !u!114 &356893298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,8 +492,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bff361dfa0174b4aaa557541f00813f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 5
-  runSpeed: 10
+  _moveSpeed: 5
+  _runSpeed: 10
+  _gravity: -20
+  _groundStickVelocity: -2
 --- !u!114 &356893299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,8 +508,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 002d7520baa149542a8c2e94861c45e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
-  m_jumpForce: 5
-  m_groundCheck: {fileID: 1310550262}
+  _jumpForce: 5
+  PlayerMovement_PlayerMovement: {fileID: 0}
+--- !u!114 &356893300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356893294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5977229879c95ab4ab19ee480f442720, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBuild
+  Prefab_Fence: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
+  SpawnDistance: 3
 --- !u!1 &432202583
 GameObject:
   m_ObjectHideFlags: 0
