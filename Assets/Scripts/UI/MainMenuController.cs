@@ -4,16 +4,21 @@ using UnityEngine.UI;
 
 namespace Cinderkeep.UI
 {
-    // Cinderkeep의 게임 시작과 게임 종료만 담당하는 메인 메뉴 컨트롤러입니다.
+    // 메인 메뉴의 큰 화면 흐름만 담당합니다.
+    // 실제 BGM 조절은 MainMenuBgmController가 담당합니다.
     public sealed class MainMenuController : MonoBehaviour
     {
         [SerializeField] private string _gameSceneName = "Cinderkeep_Game";
         [SerializeField] private Button Button_StartGame;
+        [SerializeField] private Button Button_Settings;
         [SerializeField] private Button Button_QuitGame;
+        [SerializeField] private GameObject GameObject_SettingsPanel;
+        [SerializeField] private Button Button_CloseSettings;
 
         private void Start()
         {
             InitializeButtons();
+            CloseSettings();
         }
 
         private void OnDestroy()
@@ -21,10 +26,13 @@ namespace Cinderkeep.UI
             ReleaseButtons();
         }
 
-        public void SetReferences(Button buttonStartGame, Button buttonQuitGame)
+        public void SetReferences(Button buttonStartGame, Button buttonSettings, Button buttonQuitGame, GameObject gameObjectSettingsPanel, Button buttonCloseSettings)
         {
             Button_StartGame = buttonStartGame;
+            Button_Settings = buttonSettings;
             Button_QuitGame = buttonQuitGame;
+            GameObject_SettingsPanel = gameObjectSettingsPanel;
+            Button_CloseSettings = buttonCloseSettings;
         }
 
         public void StartGame()
@@ -36,6 +44,26 @@ namespace Cinderkeep.UI
             }
 
             SceneManager.LoadScene(_gameSceneName);
+        }
+
+        public void OpenSettings()
+        {
+            if (GameObject_SettingsPanel == null)
+            {
+                return;
+            }
+
+            GameObject_SettingsPanel.SetActive(true);
+        }
+
+        public void CloseSettings()
+        {
+            if (GameObject_SettingsPanel == null)
+            {
+                return;
+            }
+
+            GameObject_SettingsPanel.SetActive(false);
         }
 
         public void QuitGame()
@@ -54,9 +82,19 @@ namespace Cinderkeep.UI
                 Button_StartGame.onClick.AddListener(StartGame);
             }
 
+            if (Button_Settings != null)
+            {
+                Button_Settings.onClick.AddListener(OpenSettings);
+            }
+
             if (Button_QuitGame != null)
             {
                 Button_QuitGame.onClick.AddListener(QuitGame);
+            }
+
+            if (Button_CloseSettings != null)
+            {
+                Button_CloseSettings.onClick.AddListener(CloseSettings);
             }
         }
 
@@ -67,9 +105,19 @@ namespace Cinderkeep.UI
                 Button_StartGame.onClick.RemoveListener(StartGame);
             }
 
+            if (Button_Settings != null)
+            {
+                Button_Settings.onClick.RemoveListener(OpenSettings);
+            }
+
             if (Button_QuitGame != null)
             {
                 Button_QuitGame.onClick.RemoveListener(QuitGame);
+            }
+
+            if (Button_CloseSettings != null)
+            {
+                Button_CloseSettings.onClick.RemoveListener(CloseSettings);
             }
         }
     }

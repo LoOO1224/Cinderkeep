@@ -367,12 +367,12 @@ GameObject:
   m_Component:
   - component: {fileID: 320822000}
   m_Layer: 0
-  m_Name: MainGame_TestMapGroup
+  m_Name: Legacy_MainGame_TestMapGroup_Disabled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &320822000
 Transform:
   m_ObjectHideFlags: 0
@@ -1622,6 +1622,7 @@ MonoBehaviour:
   GameObjectManager_GameObjectManager: {fileID: 2064572603}
   UIManager_UIManager: {fileID: 317245440}
   SoundManager_SoundManager: {fileID: 1733528638}
+  MapManager_MapManager: {fileID: 2130000003}
 --- !u!1 &1100383249
 GameObject:
   m_ObjectHideFlags: 0
@@ -2711,7 +2712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.SoundManager
   AudioSource_Bgm: {fileID: 1696894092}
   AudioSource_Effect: {fileID: 1012578978}
-  _defaultVolume: 0.4
+  _defaultVolume: 0.3
 --- !u!1 &1773396659
 GameObject:
   m_ObjectHideFlags: 0
@@ -2981,6 +2982,64 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073255813}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2130000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2130000002}
+  - component: {fileID: 2130000003}
+  m_Layer: 0
+  m_Name: MapManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2130000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2130000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2130000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2130000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea08368b833476a4ebb840e8d90b723f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.MapManager
+  _generateOnInitialize: 1
+  _chunkSize: 120
+  _mapRadius: 2
+  GameObject_CenterChunkPrefab: {fileID: 1937059058961897434, guid: ef9c66bf274b779448e6f0a57b60b28d, type: 3}
+  GameObjects_NormalChunkPrefabs:
+  - {fileID: 4251393647116105588, guid: ef4e5f7b66143e44aa9f351bf91581ed, type: 3}
+  - {fileID: 4251393647116105588, guid: 6badf189e3d95b343a23621f4e271458, type: 3}
+  - {fileID: 4251393647116105588, guid: f0e3574a2be57fa49979827738b66259, type: 3}
+  - {fileID: 4251393647116105588, guid: 95766eeb580d94145865071ab78813d8, type: 3}
+  - {fileID: 4251393647116105588, guid: 21e13a3fdb7f2f547846600b4fc0e94f, type: 3}
+  GameObjects_EdgeChunkPrefabs:
+  - {fileID: 4251393647116105588, guid: da4550692e9f9bd468850a3d63adddcb, type: 3}
+  - {fileID: 4251393647116105588, guid: 8b3683fcbee141344a37e57f1315b882, type: 3}
+  - {fileID: 4251393647116105588, guid: 19042e9a3b7027c44b6d575a3c797ceb, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2989,3 +3048,4 @@ SceneRoots:
   - {fileID: 356893296}
   - {fileID: 1400517116}
   - {fileID: 1482158122}
+  - {fileID: 2130000002}

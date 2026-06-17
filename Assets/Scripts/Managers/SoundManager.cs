@@ -9,7 +9,7 @@ namespace Cinderkeep.Gameplay
     {
         [SerializeField] private AudioSource AudioSource_Bgm;
         [SerializeField] private AudioSource AudioSource_Effect;
-        [SerializeField] private float _defaultVolume = 0.4f;
+        [SerializeField] private float _defaultVolume = 0.3f;
 
         private bool _isInitialized;
 
