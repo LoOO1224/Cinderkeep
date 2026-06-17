@@ -101,7 +101,8 @@ namespace MainHub.CharacterSelect.Editor
 
             MainHub_SceneCameraController cameraController = CreateSceneCamera(Color.black, 5f, new Vector3(0f, 0f, -10f), Quaternion.identity);
             CreateEventSystem();
-            CreateMainHubBgmController();
+            MainHub_BgmController bgmController = CreateMainHubBgmController();
+            CreateBgmToggleCanvas(bgmController);
             CreateCharacterSelectCanvas(cameraController);
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -462,7 +463,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateRememberedPersonalWorkspaceButton(menu);
             CreateLobbyLoadButton(menu, "게임 작업 공간", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
 
-            CreateBgmToggleButton(root, bgmController);
+            CreateBgmToggleCanvas(bgmController, parent);
 
             RectTransform finishButton = CreateButton(
                 "Finish Work Button",
@@ -573,6 +574,31 @@ namespace MainHub.CharacterSelect.Editor
             {
                 clips.Add(clip);
             }
+        }
+
+        private static void CreateBgmToggleCanvas(MainHub_BgmController bgmController, Transform parent = null)
+        {
+            GameObject canvasObject = new GameObject(
+                "MainHub_BgmToggleCanvas",
+                typeof(RectTransform),
+                typeof(Canvas),
+                typeof(CanvasScaler),
+                typeof(GraphicRaycaster));
+            SetParent(canvasObject, parent);
+
+            RectTransform root = canvasObject.GetComponent<RectTransform>();
+            Stretch(root);
+
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 90;
+
+            CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            CreateBgmToggleButton(root, bgmController);
         }
 
         private static void CreateBgmToggleButton(RectTransform parent, MainHub_BgmController bgmController)
@@ -1145,7 +1171,8 @@ namespace MainHub.CharacterSelect.Editor
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             CreateEventSystem();
-            CreateMainHubBgmController();
+            MainHub_BgmController bgmController = CreateMainHubBgmController();
+            CreateBgmToggleCanvas(bgmController);
             MainHub_SceneCameraController cameraController = CreateSceneCamera(new Color(0.012f, 0.014f, 0.02f), 5f, new Vector3(0f, 0f, -10f), Quaternion.identity);
 
             GameObject workspaceObject = new GameObject(
@@ -1404,7 +1431,8 @@ namespace MainHub.CharacterSelect.Editor
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             CreateEventSystem();
-            CreateMainHubBgmController();
+            MainHub_BgmController bgmController = CreateMainHubBgmController();
+            CreateBgmToggleCanvas(bgmController);
             MainHub_SceneCameraController cameraController = CreateWorkspaceCamera();
 
             GameObject workspaceRoot = new GameObject(workspaceRootName);

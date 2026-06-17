@@ -1,23 +1,34 @@
-﻿using UnityEngine;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace MainHub.Audio
 {
-    // Main_Lobby에서 BGM ON/OFF 버튼을 관리합니다.
-    // 버튼 문구와 실제 BGM 컨트롤러 상태를 함께 맞춥니다.
+    // MainHub BGM ON/OFF 버튼을 관리합니다.
+    // 별도 Canvas에 올려서 씬이 바뀌어도 작업 중 계속 사용할 수 있게 둡니다.
     public sealed class MainHub_BgmToggleButton : MonoBehaviour
     {
+        private const string PersistentCanvasName = "MainHub_BgmToggleCanvas";
+
         [SerializeField] private Button Button_Toggle;
         [SerializeField] private Text Text_Label;
         [SerializeField] private MainHub_BgmController MainHubBgmController_BgmController;
+        [SerializeField] private bool _keepAcrossScenes = true;
+
+        private static MainHub_BgmToggleButton _instance;
 
         private void Awake()
         {
-            ResolveReferences();
-            if (Button_Toggle != null)
+            if (_instance != null && _instance != this)
             {
-                Button_Toggle.onClick.AddListener(ToggleBgm);
+                DestroyDuplicateRoot();
+                return;
             }
+
+            _instance = this;
+            PreserveToggleCanvas();
+            RegisterButtonEvent();
+            SceneManager.sceneLoaded += HandleSceneLoaded;
         }
 
         private void Start()
@@ -27,9 +38,12 @@ namespace MainHub.Audio
 
         private void OnDestroy()
         {
-            if (Button_Toggle != null)
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+            UnregisterButtonEvent();
+
+            if (_instance == this)
             {
-                Button_Toggle.onClick.RemoveListener(ToggleBgm);
+                _instance = null;
             }
         }
 
@@ -39,6 +53,11 @@ namespace MainHub.Audio
             Text_Label = label;
             MainHubBgmController_BgmController = bgmController;
             RefreshLabel();
+        }
+
+        public void SetKeepAcrossScenes(bool keepAcrossScenes)
+        {
+            _keepAcrossScenes = keepAcrossScenes;
         }
 
         public void ToggleBgm()
@@ -60,6 +79,23 @@ namespace MainHub.Audio
             Text_Label.text = isEnabled ? "\u266a BGM ON" : "\u266a BGM OFF";
         }
 
+        private void RegisterButtonEvent()
+        {
+            ResolveReferences();
+            if (Button_Toggle != null)
+            {
+                Button_Toggle.onClick.AddListener(ToggleBgm);
+            }
+        }
+
+        private void UnregisterButtonEvent()
+        {
+            if (Button_Toggle != null)
+            {
+                Button_Toggle.onClick.RemoveListener(ToggleBgm);
+            }
+        }
+
         private void ResolveReferences()
         {
             if (Button_Toggle == null)
@@ -76,6 +112,40 @@ namespace MainHub.Audio
             {
                 MainHubBgmController_BgmController = MainHub_BgmController.Instance;
             }
+        }
+
+        private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            RefreshLabel();
+        }
+
+        private void PreserveToggleCanvas()
+        {
+            if (!_keepAcrossScenes)
+            {
+                return;
+            }
+
+            Transform root = GetPersistentRoot();
+            root.SetParent(null);
+            DontDestroyOnLoad(root.gameObject);
+        }
+
+        private void DestroyDuplicateRoot()
+        {
+            Transform root = GetPersistentRoot();
+            Destroy(root.gameObject);
+        }
+
+        private Transform GetPersistentRoot()
+        {
+            Canvas canvas = GetComponentInParent<Canvas>();
+            if (canvas != null && canvas.gameObject.name == PersistentCanvasName)
+            {
+                return canvas.transform;
+            }
+
+            return transform;
         }
     }
 }
