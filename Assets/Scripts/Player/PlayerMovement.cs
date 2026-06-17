@@ -10,13 +10,34 @@ public sealed class PlayerMovement : MonoBehaviour
     [SerializeField] private float _gravity = -20f;
     [SerializeField] private float _groundStickVelocity = -2f;
 
+
+    private PlayerStatus _playerStatus;
     private CharacterController _characterController;
     private Vector3 _moveDirection;
     private float _verticalVelocity;
 
+
+    //실시간으로 달리고 있는지 여부를 외부에서 알 수 있도록 개방
+    public bool IsRunningNow
+    {
+        get
+        {
+            bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
+            bool isMoving = _moveDirection.magnitude > 0.01f;
+            bool hasStamina = _playerStatus != null && _playerStatus.CurrentStamina > 0f;
+
+            return isMoving && isShiftPressed && hasStamina;
+        }
+    }
+
+
+
+
+
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
+        _playerStatus = GetComponent<PlayerStatus>();
     }
 
     private void Update()
@@ -56,10 +77,13 @@ public sealed class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // CharacterController는 Rigidbody가 없으므로 Move 함수로 직접 이동시킵니다.
-        bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
-        bool isMoving = _moveDirection.magnitude > 0.01f;
-        bool isRunning = isMoving && isShiftPressed;
+        bool isRunning = IsRunningNow;
+
+        // 달리는 중 PlayerStatus에게 스태미나 소모를 실시간 요청
+        if (isRunning == true && _playerStatus != null)
+        {
+            _playerStatus.ConsumeStaminaInMovement();
+        }
 
         float currentSpeed = isRunning ? _runSpeed : _moveSpeed;
         Vector3 horizontalVelocity = _moveDirection * currentSpeed;
