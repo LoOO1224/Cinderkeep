@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Cinderkeep.Gameplay;
 
 public sealed class EnemyAttack : MonoBehaviour
@@ -35,5 +35,10 @@ public sealed class EnemyAttack : MonoBehaviour
     public void RecordAttackTime()
     {
         _lastAttackTime = Time.time;
+    }
+
+    public void Attack(float targetHealth)
+    {
+        targetHealth -= _attackDamage;
     }
 }
