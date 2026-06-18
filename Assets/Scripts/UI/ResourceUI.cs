@@ -1,41 +1,94 @@
-﻿?using UnityEngine;
+﻿using Cinderkeep.Gameplay;
 using TMPro;
-using Cinderkeep.Gameplay;
+using UnityEngine;
 
 public sealed class ResourceUI : MonoBehaviour
 {
-    [Header("자원 텍스트 UI 연결")]
-    [SerializeField] private TMP_Text _woodText;
-    [SerializeField] private TMP_Text _stoneText;
-    [SerializeField] private TMP_Text _ironText;
-    [SerializeField] private TMP_Text _mithrilText;
-    [SerializeField] private TMP_Text _adamantiumText;
+    [Header("Resource Text UI")]
+    [SerializeField] private TMP_Text Text_Wood;
+    [SerializeField] private TMP_Text Text_Stone;
+    [SerializeField] private TMP_Text Text_Iron;
+    [SerializeField] private TMP_Text Text_Mithril;
+    [SerializeField] private TMP_Text Text_Adamantium;
+
+    private PlayerModel _playerModel;
 
     private void Start()
     {
-        if (GameManager.Inst != null && GameManager.Inst.PlayerModel != null)
-        {
-            GameManager.Inst.PlayerModel.OnResourceChanged += UpdateResourceUI;
-
-            UpdateResourceUI();
-        }
+        ConnectPlayerModel();
+        SubscribeResourceChanged();
+        RefreshResourceUI();
     }
 
     private void OnDestroy()
     {
-        if (GameManager.Inst != null && GameManager.Inst.PlayerModel != null)
-        {
-            GameManager.Inst.PlayerModel.OnResourceChanged -= UpdateResourceUI;
-        }
+        UnsubscribeResourceChanged();
     }
 
-    private void UpdateResourceUI()
+    public void SetPlayerModel(PlayerModel playerModel)
     {
-        PlayerModel model = GameManager.Inst.PlayerModel;
-        if (_woodText != null) _woodText.text = model.Wood.ToString();
-        if (_stoneText != null) _stoneText.text = model.Stone.ToString();
-        if (_ironText != null) _ironText.text = model.Iron.ToString();
-        if (_mithrilText != null) _mithrilText.text = model.Mithril.ToString();
-        if (_adamantiumText != null) _adamantiumText.text = model.Adamantium.ToString();
+        UnsubscribeResourceChanged();
+        _playerModel = playerModel;
+        SubscribeResourceChanged();
+        RefreshResourceUI();
+    }
+
+    private void ConnectPlayerModel()
+    {
+        if (_playerModel != null)
+        {
+            return;
+        }
+
+        if (GameManager.Inst == null)
+        {
+            return;
+        }
+
+        _playerModel = GameManager.Inst.PlayerModel;
+    }
+
+    private void SubscribeResourceChanged()
+    {
+        if (_playerModel == null)
+        {
+            return;
+        }
+
+        _playerModel.OnResourceChanged += RefreshResourceUI;
+    }
+
+    private void UnsubscribeResourceChanged()
+    {
+        if (_playerModel == null)
+        {
+            return;
+        }
+
+        _playerModel.OnResourceChanged -= RefreshResourceUI;
+    }
+
+    private void RefreshResourceUI()
+    {
+        if (_playerModel == null)
+        {
+            return;
+        }
+
+        RefreshText(Text_Wood, _playerModel.Wood);
+        RefreshText(Text_Stone, _playerModel.Stone);
+        RefreshText(Text_Iron, _playerModel.Iron);
+        RefreshText(Text_Mithril, _playerModel.Mithril);
+        RefreshText(Text_Adamantium, _playerModel.Adamantium);
+    }
+
+    private void RefreshText(TMP_Text textResource, int amount)
+    {
+        if (textResource == null)
+        {
+            return;
+        }
+
+        textResource.text = amount.ToString();
     }
 }
