@@ -4,6 +4,8 @@ using UnityEngine;
 
 // 몬스터의 체력을 관리하는 컴포넌트입니다.
 // 데미지 계산과 사망 처리를 담당하고, 이동/감지/공격 판단은 다른 컴포넌트가 담당합니다.
+// 기준: 적 체력 로직은 EnemyStatus에서 관리합니다.
+// EnemyHp는 기존 작업 호환 확인용 보조 컴포넌트로 두고, 새 체력 로직은 이 클래스에 추가합니다.
 public sealed class EnemyStatus : MonoBehaviour
 {
     public static event Action<EnemyStatus> EnemyDamaged;

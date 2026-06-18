@@ -126,7 +126,7 @@ namespace Cinderkeep.MainGame.Editor
 
             GameObject visual = CreatePrimitive(
                 PrimitiveType.Capsule,
-                "PlayerVisual_DebugCapsule",
+                "PlayerVisual_FallbackCapsule",
                 player.transform,
                 new Vector3(0f, 0.85f, 0f),
                 new Vector3(0.7f, 0.85f, 0.7f),

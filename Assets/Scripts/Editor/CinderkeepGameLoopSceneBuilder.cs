@@ -773,10 +773,19 @@ public static class CinderkeepGameLoopSceneBuilder
     {
         GameObject connectorObject = GetOrCreateRootObject("MainGame_LoopConnector");
         CinderkeepGameLoopConnector connector = EnsureComponent<CinderkeepGameLoopConnector>(connectorObject);
+        PlayerLoopConnector playerLoopConnector = EnsureComponent<PlayerLoopConnector>(
+            GetOrCreateChild(connectorObject.transform, "PlayerLoopConnector").gameObject);
+        ResourceLoopConnector resourceLoopConnector = EnsureComponent<ResourceLoopConnector>(
+            GetOrCreateChild(connectorObject.transform, "ResourceLoopConnector").gameObject);
+        EnemyLoopConnector enemyLoopConnector = EnsureComponent<EnemyLoopConnector>(
+            GetOrCreateChild(connectorObject.transform, "EnemyLoopConnector").gameObject);
+        GameFlowLoopConnector gameFlowLoopConnector = EnsureComponent<GameFlowLoopConnector>(
+            GetOrCreateChild(connectorObject.transform, "GameFlowLoopConnector").gameObject);
 
         GameObject managerRoot = GetOrCreateRootObject("MainGame_Managers");
         GameManager gameManager = GetComponentInChildrenByName<GameManager>(managerRoot.transform, "GameManager");
         GameDataManager gameDataManager = GetComponentInChildrenByName<GameDataManager>(managerRoot.transform, "GameDataManager");
+        GameObjectManager gameObjectManager = GetComponentInChildrenByName<GameObjectManager>(managerRoot.transform, "GameObjectManager");
 
         if (gameManager == null)
         {
@@ -788,14 +797,30 @@ public static class CinderkeepGameLoopSceneBuilder
             gameDataManager = EnsureComponent<GameDataManager>(GetOrCreateChild(managerRoot.transform, "GameDataManager").gameObject);
         }
 
-        SetObjectReference(connector, "_gameManager", gameManager);
-        SetObjectReference(connector, "_gameDataManager", gameDataManager);
-        SetObjectReference(connector, "_playerStatus", player.GetComponent<PlayerStatus>());
-        SetObjectReference(connector, "_playerHud", GetSceneComponentByName<PlayerHUD>("Panel_PlayerHUD"));
-        SetObjectReference(connector, "_resourceUi", GetSceneComponentByName<ResourceUI>("Panel_ResourceUI"));
-        SetObjectReference(connector, "_cinderHeartTarget", cinderHeart.transform);
-        SetObjectReference(connector, "_gameCamera", player.GetComponentInChildren<Camera>());
-        SetEnemyRuntimeSet(connector, enemy);
+        if (gameObjectManager == null)
+        {
+            gameObjectManager = EnsureComponent<GameObjectManager>(GetOrCreateChild(managerRoot.transform, "GameObjectManager").gameObject);
+        }
+
+        SetObjectReference(playerLoopConnector, "_playerStatus", player.GetComponent<PlayerStatus>());
+        SetObjectReference(playerLoopConnector, "_playerHud", GetSceneComponentByName<PlayerHUD>("Panel_PlayerHUD"));
+
+        SetObjectReference(resourceLoopConnector, "_gameManager", gameManager);
+        SetObjectReference(resourceLoopConnector, "_resourceUi", GetSceneComponentByName<ResourceUI>("Panel_ResourceUI"));
+
+        SetObjectReference(enemyLoopConnector, "_gameDataManager", gameDataManager);
+        SetObjectReference(enemyLoopConnector, "_cinderHeartTarget", cinderHeart.transform);
+        SetObjectReference(enemyLoopConnector, "_gameCamera", player.GetComponentInChildren<Camera>());
+        SetEnemyRuntimeSet(enemyLoopConnector, enemy);
+
+        SetObjectReference(gameFlowLoopConnector, "_gameManager", gameManager);
+        SetObjectReference(gameFlowLoopConnector, "_gameObjectManager", gameObjectManager);
+        SetObjectReference(gameFlowLoopConnector, "_enemyLoopConnector", enemyLoopConnector);
+
+        SetObjectReference(connector, "_playerLoopConnector", playerLoopConnector);
+        SetObjectReference(connector, "_resourceLoopConnector", resourceLoopConnector);
+        SetObjectReference(connector, "_enemyLoopConnector", enemyLoopConnector);
+        SetObjectReference(connector, "_gameFlowLoopConnector", gameFlowLoopConnector);
     }
 
     private static void SetupManagersForGameLoop()
@@ -825,7 +850,7 @@ public static class CinderkeepGameLoopSceneBuilder
         SetObjectReference(uiManager, "_hudRoot", hudRoot);
     }
 
-    private static void SetEnemyRuntimeSet(CinderkeepGameLoopConnector connector, GameObject enemy)
+    private static void SetEnemyRuntimeSet(EnemyLoopConnector connector, GameObject enemy)
     {
         SerializedObject serializedObject = new SerializedObject(connector);
         SerializedProperty enemySets = serializedObject.FindProperty("_enemyRuntimeSets");

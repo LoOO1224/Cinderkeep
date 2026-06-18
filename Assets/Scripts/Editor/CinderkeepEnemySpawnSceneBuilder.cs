@@ -321,14 +321,29 @@ public static class CinderkeepEnemySpawnSceneBuilder
             return;
         }
 
-        SerializedObject serializedObject = new SerializedObject(gameLoopConnector);
-        serializedObject.FindProperty("_gameManager").objectReferenceValue = gameManager;
-        serializedObject.FindProperty("_gameDataManager").objectReferenceValue = gameDataManager;
-        serializedObject.FindProperty("_gameObjectManager").objectReferenceValue = gameObjectManager;
-        serializedObject.FindProperty("_enemyLoopConnector").objectReferenceValue = enemyLoopConnector;
-        serializedObject.FindProperty("_cinderHeartTarget").objectReferenceValue = cinderHeartTarget;
-        serializedObject.FindProperty("_gameCamera").objectReferenceValue = gameCamera;
-        serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        Transform connectorRoot = gameLoopConnector.transform;
+        PlayerLoopConnector playerLoopConnector = GetOrCreateComponentObject<PlayerLoopConnector>(connectorRoot, "PlayerLoopConnector");
+        ResourceLoopConnector resourceLoopConnector = GetOrCreateComponentObject<ResourceLoopConnector>(connectorRoot, "ResourceLoopConnector");
+        GameFlowLoopConnector gameFlowLoopConnector = GetOrCreateComponentObject<GameFlowLoopConnector>(connectorRoot, "GameFlowLoopConnector");
+
+        if (enemyLoopConnector.transform.parent != connectorRoot)
+        {
+            enemyLoopConnector.transform.SetParent(connectorRoot, true);
+        }
+
+        SetObjectReference(enemyLoopConnector, "_gameDataManager", gameDataManager);
+        SetObjectReference(enemyLoopConnector, "_cinderHeartTarget", cinderHeartTarget);
+        SetObjectReference(enemyLoopConnector, "_gameCamera", gameCamera);
+
+        SetObjectReference(resourceLoopConnector, "_gameManager", gameManager);
+        SetObjectReference(gameFlowLoopConnector, "_gameManager", gameManager);
+        SetObjectReference(gameFlowLoopConnector, "_gameObjectManager", gameObjectManager);
+        SetObjectReference(gameFlowLoopConnector, "_enemyLoopConnector", enemyLoopConnector);
+
+        SetObjectReference(gameLoopConnector, "_playerLoopConnector", playerLoopConnector);
+        SetObjectReference(gameLoopConnector, "_resourceLoopConnector", resourceLoopConnector);
+        SetObjectReference(gameLoopConnector, "_enemyLoopConnector", enemyLoopConnector);
+        SetObjectReference(gameLoopConnector, "_gameFlowLoopConnector", gameFlowLoopConnector);
     }
 
     private static void SetSpawnRule(EnemySpawnPoint spawnPoint, string fieldName, float interval, int count, int maxAlive, bool spawnOnStart)
@@ -350,6 +365,25 @@ public static class CinderkeepEnemySpawnSceneBuilder
         {
             property.GetArrayElementAtIndex(i).objectReferenceValue = prefabs[i];
         }
+    }
+
+    private static void SetObjectReference(Object targetObject, string propertyName, Object value)
+    {
+        if (targetObject == null)
+        {
+            return;
+        }
+
+        SerializedObject serializedObject = new SerializedObject(targetObject);
+        SerializedProperty property = serializedObject.FindProperty(propertyName);
+        if (property == null)
+        {
+            return;
+        }
+
+        property.objectReferenceValue = value;
+        serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(targetObject);
     }
 
     private static T GetOrCreateComponentObject<T>(Transform parent, string objectName)
