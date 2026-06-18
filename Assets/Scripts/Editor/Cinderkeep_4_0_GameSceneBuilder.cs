@@ -804,6 +804,7 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         GameManager gameManager = EnsureComponent<GameManager>(GetOrCreateChild(managerRoot.transform, "GameManager").gameObject);
         GameDataManager gameDataManager = EnsureComponent<GameDataManager>(GetOrCreateChild(managerRoot.transform, "GameDataManager").gameObject);
         GameObjectManager gameObjectManager = EnsureComponent<GameObjectManager>(GetOrCreateChild(managerRoot.transform, "GameObjectManager").gameObject);
+        BuildingManager buildingManager = EnsureComponent<BuildingManager>(GetOrCreateChild(managerRoot.transform, "BuildingManager").gameObject);
         UIManager uiManager = EnsureComponent<UIManager>(GetOrCreateChild(managerRoot.transform, "UIManager").gameObject);
         SoundManager soundManager = EnsureComponent<SoundManager>(GetOrCreateChild(managerRoot.transform, "SoundManager").gameObject);
         MapManager mapManager = EnsureComponent<MapManager>(GetOrCreateChild(managerRoot.transform, "MapManager").gameObject);
@@ -813,9 +814,12 @@ public static class Cinderkeep_4_0_GameSceneBuilder
 
         SetObjectReference(gameManager, "GameDataManager_GameDataManager", gameDataManager);
         SetObjectReference(gameManager, "GameObjectManager_GameObjectManager", gameObjectManager);
+        SetObjectReference(gameManager, "BuildingManager_BuildingManager", buildingManager);
         SetObjectReference(gameManager, "UIManager_UIManager", uiManager);
         SetObjectReference(gameManager, "SoundManager_SoundManager", soundManager);
         SetObjectReference(gameManager, "MapManager_MapManager", mapManager);
+
+        SetObjectReference(buildingManager, "GameObjectManager_GameObjectManager", gameObjectManager);
 
         GameObject hudRoot = GetSceneObjectByName("Panel_HUDRoot");
         SetObjectReference(uiManager, "GameObject_HudRoot", hudRoot);

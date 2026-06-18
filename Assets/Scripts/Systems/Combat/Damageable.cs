@@ -9,6 +9,7 @@ public sealed class Damageable : MonoBehaviour
 
     private PlayerStatus _playerStatus;
     private EnemyStatus _enemyStatus;
+    private BuildingHp _buildingHp;
     private float _currentHealth;
     private bool _isDead;
 
@@ -55,7 +56,7 @@ public sealed class Damageable : MonoBehaviour
             return;
         }
 
-        if (ApplyDamageToStatusComponent(damage) == true)
+        if (ApplyDamageToRoleComponent(damage) == true)
         {
             return;
         }
@@ -67,6 +68,7 @@ public sealed class Damageable : MonoBehaviour
     {
         _playerStatus = GetComponent<PlayerStatus>();
         _enemyStatus = GetComponent<EnemyStatus>();
+        _buildingHp = GetComponent<BuildingHp>();
     }
 
     private void InitializeFallbackHealth()
@@ -75,7 +77,7 @@ public sealed class Damageable : MonoBehaviour
         _isDead = false;
     }
 
-    private bool ApplyDamageToStatusComponent(float damage)
+    private bool ApplyDamageToRoleComponent(float damage)
     {
         if (_playerStatus != null)
         {
@@ -86,6 +88,12 @@ public sealed class Damageable : MonoBehaviour
         if (_enemyStatus != null)
         {
             _enemyStatus.TakeDamage(damage);
+            return true;
+        }
+
+        if (_buildingHp != null)
+        {
+            _buildingHp.TakeDamage(damage);
             return true;
         }
 

@@ -15,6 +15,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameDataManager GameDataManager_GameDataManager;
         [FormerlySerializedAs("_gameObjectManager")]
         [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
+        [SerializeField] private BuildingManager BuildingManager_BuildingManager;
         [FormerlySerializedAs("_uiManager")]
         [SerializeField] private UIManager UIManager_UIManager;
         [FormerlySerializedAs("_soundManager")]
@@ -86,6 +87,8 @@ namespace Cinderkeep.Gameplay
             // 6. 저장이 필요한 Instance Model 기본값 준비
             InitializeManager(GameDataManager_GameDataManager, "GameDataManager");
             InitializeManager(GameObjectManager_GameObjectManager, "GameObjectManager");
+            ConnectBuildingManager();
+            InitializeBuildingManagerIfExists();
             InitializeManager(MapManager_MapManager, "MapManager");
             InitializeManager(SoundManager_SoundManager, "SoundManager");
             InitializeManager(UIManager_UIManager, "UIManager");
@@ -131,6 +134,11 @@ namespace Cinderkeep.Gameplay
             return GameObjectManager_GameObjectManager;
         }
 
+        public BuildingManager GetBuildingManager()
+        {
+            return BuildingManager_BuildingManager;
+        }
+
         public UIManager GetUIManager()
         {
             return UIManager_UIManager;
@@ -161,6 +169,26 @@ namespace Cinderkeep.Gameplay
 
             Debug.LogWarning("GameManager duplicate was found. Only the first GameManager will stay active.");
             Destroy(gameObject);
+        }
+
+        private void ConnectBuildingManager()
+        {
+            if (BuildingManager_BuildingManager == null)
+            {
+                return;
+            }
+
+            BuildingManager_BuildingManager.SetGameObjectManager(GameObjectManager_GameObjectManager);
+        }
+
+        private void InitializeBuildingManagerIfExists()
+        {
+            if (BuildingManager_BuildingManager == null)
+            {
+                return;
+            }
+
+            BuildingManager_BuildingManager.Initialize();
         }
 
         private void InitializeManager<TManager>(TManager manager, string managerName)
