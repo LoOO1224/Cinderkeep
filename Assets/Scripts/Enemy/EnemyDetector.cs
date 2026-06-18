@@ -15,6 +15,9 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private float _detectorDistance;
 
+    private bool _isInitialized;                                    //초기 테스트를 위한 변수         scene 단계에서 생성할시, 초기화가 안이루어져 버그가 발생.
+    [SerializeField] private string _testEnemyId = "ice_zombie";    //초기 테스트를 위한 데이터       때문에 Start단계에서 초기화가 안이뤄져있다면, 초기화를 하는 로직을 추가
+
     public Transform DetectedPlayer { get; private set; }   //타겟 플레이어 위치 정보
 
     public bool HasDetectedPlayer                           //타겟 플레이어 감지 유무
@@ -24,6 +27,43 @@ public sealed class EnemyDetector : MonoBehaviour
             return DetectedPlayer != null;
         }
     }
+
+    private void Start()
+    {
+        if (!_isInitialized)
+        {
+            if (string.IsNullOrEmpty(_testEnemyId))
+            {
+                Debug.LogError($"[{gameObject.name}] 테스트용 _testEnemyId가 비어있습니다! 인스펙터에 JSON ID를 적어주세요.");
+                return;
+            }
+
+            if (GameManager.Inst == null)
+            {
+                Debug.LogError($"[{gameObject.name}] 씬에 GameManager가 존재하지 않아 테스트 초기화에 실패했습니다.");
+                return;
+            }
+
+            GameDataManager dataManager = GameManager.Inst.GetGameDataManager();
+            if (dataManager == null)
+            {
+                Debug.LogError($"[{gameObject.name}] GameManager에 GameDataManager가 연결되어 있지 않습니다.");
+                return;
+            }
+
+            // 데이터 추출 후 자가 초기화 진행
+            EnemyData enemyData = dataManager.GetEnemy(_testEnemyId);
+            if (enemyData == null)
+            {
+                Debug.LogError($"[{gameObject.name}] JSON 테이블에서 ID [{_testEnemyId}]를 찾을 수 없습니다.");
+                return;
+            }
+
+            Initialize(enemyData);
+        }
+    }
+
+
 
     private void OnEnable()
     {
