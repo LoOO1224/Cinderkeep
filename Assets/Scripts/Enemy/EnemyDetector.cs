@@ -2,6 +2,8 @@ using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 
+// 몬스터가 플레이어를 감지하는 컴포넌트입니다.
+// 감지 결과만 들고 있고, 이동과 공격은 EnemyMovement와 EnemyBrain이 처리합니다.
 public sealed class EnemyDetector : MonoBehaviour
 {
     [SerializeField] private float _viewAngle = 90f;
@@ -13,7 +15,7 @@ public sealed class EnemyDetector : MonoBehaviour
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];
 
     private Coroutine _detectionRoutine;
-    private float _detectorDistance;
+    private float _detectorDistance = 8f;
 
     public Transform DetectedPlayer { get; private set; }
 
@@ -119,7 +121,7 @@ public sealed class EnemyDetector : MonoBehaviour
             if (IsPlayerTarget(targetCollider))
             {
                 DetectedPlayer = targetCollider.transform;
-                Debug.Log(gameObject.name + ": 피격으로 플레이어를 감지했습니다.");
+                Debug.Log(gameObject.name + ": 피격 반응으로 플레이어를 감지했습니다.");
                 return;
             }
         }

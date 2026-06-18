@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
+// 플레이어의 WASD 이동과 Shift 달리기를 담당하는 컴포넌트입니다.
+// 체력/스태미나 계산은 PlayerStatus가 담당하고, 이 클래스는 이동 입력만 처리합니다.
 public sealed class PlayerMovement : MonoBehaviour
 {
     [FormerlySerializedAs("moveSpeed")]
@@ -15,7 +17,6 @@ public sealed class PlayerMovement : MonoBehaviour
     private Vector3 _moveDirection;
     private float _verticalVelocity;
 
-    // HUD나 상태 표시에서 현재 달리기 여부를 읽을 수 있도록 열어둡니다.
     public bool IsRunningNow
     {
         get
@@ -78,12 +79,22 @@ public sealed class PlayerMovement : MonoBehaviour
             _playerStatus.ConsumeStaminaForRun();
         }
 
-        float currentSpeed = isRunning ? _runSpeed : _moveSpeed;
+        float currentSpeed = GetCurrentSpeed(isRunning);
         Vector3 horizontalVelocity = _moveDirection * currentSpeed;
         Vector3 velocity = horizontalVelocity + Vector3.up * _verticalVelocity;
 
         _characterController.Move(velocity * Time.deltaTime);
         ApplyGravity();
+    }
+
+    private float GetCurrentSpeed(bool isRunning)
+    {
+        if (isRunning)
+        {
+            return _runSpeed;
+        }
+
+        return _moveSpeed;
     }
 
     private void ApplyGravity()

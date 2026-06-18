@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 namespace Cinderkeep.UI
 {
-    // 메인 메뉴의 큰 화면 흐름만 담당합니다.
-    // 실제 BGM 조절은 MainMenuBgmController가 담당합니다.
+    // 메인 메뉴 화면 흐름을 담당하는 컴포넌트입니다.
+    // BGM 조절은 MainMenuBgmController가 맡고, 이 클래스는 버튼 화면 전환만 담당합니다.
     public sealed class MainMenuController : MonoBehaviour
     {
         [SerializeField] private string _gameSceneName = "Cinderkeep_Game";

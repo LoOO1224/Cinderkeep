@@ -1,0 +1,41 @@
+4.00 Game Loop Connection Guide
+
+목표
+- 지금까지 머지된 팀원 작업물을 Cinderkeep_Game 씬에서 실제로 확인할 수 있게 연결합니다.
+- 목표는 완성형 게임이 아니라 3일 / 15분 게임 루프의 최소 작동 확인입니다.
+
+4.00에서 연결한 흐름
+- GameManager가 전체 초기화 순서를 잡습니다.
+- GameDataManager가 enemies.json의 EnemyData를 읽습니다.
+- CinderkeepGameLoopConnector가 씬의 Player, HUD, Enemy, CinderHeart를 서로 연결합니다.
+- PlayerMovement는 WASD 이동을 담당합니다.
+- PlayerJump는 Space 점프를 담당합니다.
+- PlayerView는 마우스 시점 회전을 담당합니다.
+- PlayerStatus는 체력과 스태미나 수치를 담당합니다.
+- PlayerHUD는 PlayerStatus 값을 화면에 표시합니다.
+- ResourceUI는 PlayerModel의 자원 수량을 화면에 표시합니다.
+- ResourceNode는 E키 상호작용 시 PlayerModel에 자원을 지급합니다.
+- PlayerToolController는 1번 도끼, 2번 곡괭이, 3번 맨손 상태를 관리합니다.
+- FirstPersonToolView는 1인칭 도구 표시와 간단한 휘두르기만 담당합니다.
+- PlayerAttack은 좌클릭 근접 공격 판정만 담당합니다.
+- EnemyStatus는 적 체력과 사망 처리를 담당합니다.
+- EnemyDetector는 플레이어 감지를 담당합니다.
+- EnemyMovement는 플레이어 또는 CinderHeart 방향 이동을 담당합니다.
+- EnemyBrain은 공격 대상 판단을 담당합니다.
+- EnemyAttack은 실제 피해 적용과 쿨타임을 담당합니다.
+
+팀 작업 기준
+- Player 관련 코드는 Assets/Scripts/Player에 둡니다.
+- Enemy 관련 코드는 Assets/Scripts/Enemy에 둡니다.
+- UI 관련 코드는 Assets/Scripts/UI에 둡니다.
+- 전투 공통 코드는 Assets/Scripts/Systems/Combat에 둡니다.
+- 채집, 제작, 건축 같은 단위 시스템은 Assets/Scripts/Systems에 둡니다.
+- 매니저는 Assets/Scripts/Managers에 둡니다.
+- 테스트 후보 에셋은 Assets/_Sandbox/4_0_CandidateAssets에 두고, 확정되면 정식 폴더로 승격합니다.
+
+주의
+- GameManager만 싱글톤으로 유지합니다.
+- 다른 매니저는 GameManager가 Initialize 순서로 준비합니다.
+- FindObject 계열 자동 탐색은 쓰지 않습니다.
+- UI는 런타임에서 new GameObject로 만들지 않고 씬 또는 프리팹에 준비된 오브젝트를 연결합니다.
+- 한 스크립트에 여러 역할을 몰아넣지 않습니다.

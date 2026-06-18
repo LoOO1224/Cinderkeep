@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // 공격 판정용 Trigger Collider에 붙이는 컴포넌트입니다.
-// 이 컴포넌트는 충돌 감지만 담당하고, 실제 데미지 값은 DamageDealer가 관리합니다.
+// 충돌 감지만 담당하고, 실제 데미지 값은 DamageDealer가 관리합니다.
 public sealed class AttackHitbox : MonoBehaviour
 {
     [SerializeField] private DamageDealer DamageDealer_DamageDealer;

@@ -1,13 +1,16 @@
 using UnityEngine;
 
+// 플레이어의 체력과 스태미나를 관리하는 컴포넌트입니다.
+// 이동 입력과 HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산만 담당합니다.
 public sealed class PlayerStatus : MonoBehaviour
 {
+    [Header("Health")]
     [SerializeField] private float _health = 100f;
     [SerializeField] private float _maxHealth = 100f;
+
+    [Header("Stamina")]
     [SerializeField] private float _stamina = 150f;
     [SerializeField] private float _maxStamina = 150f;
-
-    [Header("스태미나 설정")]
     [SerializeField] private float _staminaRecoveryRate = 15f;
     [SerializeField] private float _staminaConsumeRate = 15f;
     [SerializeField] private float _exhaustedRecoveryPoint = 30f;
@@ -17,22 +20,34 @@ public sealed class PlayerStatus : MonoBehaviour
 
     public float CurrentHealth
     {
-        get { return _health; }
+        get
+        {
+            return _health;
+        }
     }
 
     public float MaxHealth
     {
-        get { return _maxHealth; }
+        get
+        {
+            return _maxHealth;
+        }
     }
 
     public float CurrentStamina
     {
-        get { return _stamina; }
+        get
+        {
+            return _stamina;
+        }
     }
 
     public float MaxStamina
     {
-        get { return _maxStamina; }
+        get
+        {
+            return _maxStamina;
+        }
     }
 
     private void Start()
@@ -158,12 +173,22 @@ public sealed class PlayerStatus : MonoBehaviour
 
     private void RecoverStaminaByTime()
     {
-        bool isRunningNow = _playerMovement != null && _playerMovement.IsRunningNow == true;
+        bool isRunningNow = CheckIsRunningNow();
 
         if (IsDead() == false && _stamina < _maxStamina && isRunningNow == false)
         {
             RecoverStamina(_staminaRecoveryRate * Time.deltaTime);
         }
+    }
+
+    private bool CheckIsRunningNow()
+    {
+        if (_playerMovement == null)
+        {
+            return false;
+        }
+
+        return _playerMovement.IsRunningNow;
     }
 
     private void ClampStatusValues()
@@ -181,6 +206,6 @@ public sealed class PlayerStatus : MonoBehaviour
 
     private void ProcessDeath()
     {
-        Debug.LogWarning("[PlayerStatus] 플레이어 사망 처리가 필요합니다. 이후 GameOver UI와 연결합니다.");
+        Debug.LogWarning("[PlayerStatus] 플레이어 사망 처리 진입점입니다. 이후 GameOver UI와 연결합니다.");
     }
 }

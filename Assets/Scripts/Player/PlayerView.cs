@@ -1,15 +1,22 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
+// 1인칭 마우스 시점 회전을 담당하는 컴포넌트입니다.
+// 이동은 PlayerMovement, 점프는 PlayerJump가 담당하므로 이 클래스는 회전만 처리합니다.
 public sealed class PlayerView : MonoBehaviour
 {
+    [Header("View Settings")]
     [FormerlySerializedAs("mouseSensitivity")]
-    [SerializeField] private float _mouseSensitivity = 260f;
+    [SerializeField] private float _mouseSensitivity = 285f;
+
+    [Header("Connected Objects")]
     [FormerlySerializedAs("playerBody")]
     [FormerlySerializedAs("Transform_PlayerBody")]
-    [SerializeField] private Transform _playerBody;
+    [FormerlySerializedAs("_playerBody")]
+    [SerializeField] private Transform Transform_PlayerBody;
     [FormerlySerializedAs("Transform_Camera")]
-    [SerializeField] private Transform _cameraTransform;
+    [FormerlySerializedAs("_cameraTransform")]
+    [SerializeField] private Transform Transform_Camera;
 
     private float _xRotation;
 
@@ -26,24 +33,26 @@ public sealed class PlayerView : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (_playerBody == null)
+        if (Transform_PlayerBody == null)
         {
-            _playerBody = transform;
+            Transform_PlayerBody = transform;
         }
 
-        if (_cameraTransform == null)
+        if (Transform_Camera != null)
         {
-            Camera camera = GetComponentInChildren<Camera>(true);
-            if (camera != null)
-            {
-                _cameraTransform = camera.transform;
-            }
+            return;
+        }
+
+        Camera camera = GetComponentInChildren<Camera>(true);
+        if (camera != null)
+        {
+            Transform_Camera = camera.transform;
         }
     }
 
     private void RotateView()
     {
-        if (_cameraTransform == null || _playerBody == null)
+        if (Transform_Camera == null || Transform_PlayerBody == null)
         {
             return;
         }
@@ -54,7 +63,7 @@ public sealed class PlayerView : MonoBehaviour
         _xRotation -= mouseY;
         _xRotation = Mathf.Clamp(_xRotation, -45f, 45f);
 
-        _cameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-        _playerBody.Rotate(Vector3.up * mouseX);
+        Transform_Camera.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+        Transform_PlayerBody.Rotate(Vector3.up * mouseX);
     }
 }

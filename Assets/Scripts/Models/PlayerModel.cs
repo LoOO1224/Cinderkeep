@@ -7,11 +7,12 @@ namespace Cinderkeep.Gameplay
     [Serializable]
     public sealed class PlayerModel
     {
-        private const string ResourceWood = "Wood";
-        private const string ResourceStone = "Stone";
-        private const string ResourceIron = "Iron";
-        private const string ResourceMithril = "Mithril";
-        private const string ResourceAdamantium = "Adamantium";
+        public const string ResourceWood = "Wood";
+        public const string ResourceStone = "Stone";
+        public const string ResourceIron = "Iron";
+        public const string ResourceGold = "Gold";
+        public const string ResourceMithril = "Mithril";
+        public const string ResourceAdamantium = "Adamantium";
 
         private int _health;
         private int _maxHealth;
@@ -21,6 +22,7 @@ namespace Cinderkeep.Gameplay
         private int _wood;
         private int _stone;
         private int _iron;
+        private int _gold;
         private int _mithril;
         private int _adamantium;
 
@@ -88,6 +90,14 @@ namespace Cinderkeep.Gameplay
             }
         }
 
+        public int Gold
+        {
+            get
+            {
+                return _gold;
+            }
+        }
+
         public int Mithril
         {
             get
@@ -117,6 +127,7 @@ namespace Cinderkeep.Gameplay
             _wood = 0;
             _stone = 0;
             _iron = 0;
+            _gold = 0;
             _mithril = 0;
             _adamantium = 0;
         }
@@ -152,7 +163,9 @@ namespace Cinderkeep.Gameplay
 
         private bool TryAddResource(string resourceType, int amount)
         {
-            switch (resourceType)
+            string safeResourceType = NormalizeResourceType(resourceType);
+
+            switch (safeResourceType)
             {
                 case ResourceWood:
                     _wood += amount;
@@ -162,6 +175,9 @@ namespace Cinderkeep.Gameplay
                     return true;
                 case ResourceIron:
                     _iron += amount;
+                    return true;
+                case ResourceGold:
+                    _gold += amount;
                     return true;
                 case ResourceMithril:
                     _mithril += amount;
@@ -176,7 +192,9 @@ namespace Cinderkeep.Gameplay
 
         private bool TryUseResource(string resourceType, int amount)
         {
-            switch (resourceType)
+            string safeResourceType = NormalizeResourceType(resourceType);
+
+            switch (safeResourceType)
             {
                 case ResourceWood:
                     return TrySpendWood(amount);
@@ -184,6 +202,8 @@ namespace Cinderkeep.Gameplay
                     return TrySpendStone(amount);
                 case ResourceIron:
                     return TrySpendIron(amount);
+                case ResourceGold:
+                    return TrySpendGold(amount);
                 case ResourceMithril:
                     return TrySpendMithril(amount);
                 case ResourceAdamantium:
@@ -226,6 +246,17 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        private bool TrySpendGold(int amount)
+        {
+            if (_gold < amount)
+            {
+                return false;
+            }
+
+            _gold -= amount;
+            return true;
+        }
+
         private bool TrySpendMithril(int amount)
         {
             if (_mithril < amount)
@@ -256,6 +287,33 @@ namespace Cinderkeep.Gameplay
             }
 
             OnResourceChanged.Invoke();
+        }
+
+        private string NormalizeResourceType(string resourceType)
+        {
+            if (string.IsNullOrEmpty(resourceType))
+            {
+                return string.Empty;
+            }
+
+            string loweredType = resourceType.ToLowerInvariant();
+            switch (loweredType)
+            {
+                case "wood":
+                    return ResourceWood;
+                case "stone":
+                    return ResourceStone;
+                case "iron":
+                    return ResourceIron;
+                case "gold":
+                    return ResourceGold;
+                case "mithril":
+                    return ResourceMithril;
+                case "adamantium":
+                    return ResourceAdamantium;
+            }
+
+            return resourceType;
         }
     }
 }

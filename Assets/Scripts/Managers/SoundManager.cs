@@ -1,18 +1,18 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 using UnityEngine.Serialization;
 
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 사운드 매니저입니다.
-    // 현재는 MVP 루프의 BGM과 전투/채집 효과음 재생 기반만 준비합니다.
+    // 현재는 게임 루프의 BGM과 전투/채집 효과음 재생 기반만 준비합니다.
     // BGM과 효과음 AudioSource는 Inspector에서 연결하고, 다른 스크립트는 이 매니저 함수만 호출합니다.
     public sealed class SoundManager : MonoBehaviour, IGameInitializable
     {
-        [FormerlySerializedAs("AudioSource_Bgm")]
-        [SerializeField] private AudioSource _bgmAudioSource;
-        [FormerlySerializedAs("AudioSource_Effect")]
-        [SerializeField] private AudioSource _effectAudioSource;
+        [FormerlySerializedAs("_bgmAudioSource")]
+        [SerializeField] private AudioSource AudioSource_Bgm;
+        [FormerlySerializedAs("_effectAudioSource")]
+        [SerializeField] private AudioSource AudioSource_Effect;
         [SerializeField] private float _defaultVolume = 0.3f;
 
         private bool _isInitialized;
@@ -38,48 +38,48 @@ namespace Cinderkeep.Gameplay
 
         public void PlayBgm(AudioClip bgmClip)
         {
-            if (_bgmAudioSource == null || bgmClip == null)
+            if (AudioSource_Bgm == null || bgmClip == null)
             {
                 return;
             }
 
-            _bgmAudioSource.clip = bgmClip;
-            _bgmAudioSource.loop = true;
-            _bgmAudioSource.Play();
+            AudioSource_Bgm.clip = bgmClip;
+            AudioSource_Bgm.loop = true;
+            AudioSource_Bgm.Play();
         }
 
         public void StopBgm()
         {
-            if (_bgmAudioSource == null)
+            if (AudioSource_Bgm == null)
             {
                 return;
             }
 
-            _bgmAudioSource.Stop();
+            AudioSource_Bgm.Stop();
         }
 
         public void PlayEffect(AudioClip effectClip)
         {
-            if (_effectAudioSource == null || effectClip == null)
+            if (AudioSource_Effect == null || effectClip == null)
             {
                 return;
             }
 
-            _effectAudioSource.PlayOneShot(effectClip);
+            AudioSource_Effect.PlayOneShot(effectClip);
         }
 
         public void SetVolume(float volume)
         {
             float safeVolume = Mathf.Clamp01(volume);
 
-            if (_bgmAudioSource != null)
+            if (AudioSource_Bgm != null)
             {
-                _bgmAudioSource.volume = safeVolume;
+                AudioSource_Bgm.volume = safeVolume;
             }
 
-            if (_effectAudioSource != null)
+            if (AudioSource_Effect != null)
             {
-                _effectAudioSource.volume = safeVolume;
+                AudioSource_Effect.volume = safeVolume;
             }
         }
     }

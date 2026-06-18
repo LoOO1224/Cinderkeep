@@ -158,6 +158,9 @@ Assets/ThirdParty/PrivateAssets/**
 # Local plugin/editor preferences
 ProjectSettings/HueFolders_Prefs.json
 
+# Local Codex/generated asset analysis tools
+tools/cinderkeep_asset_excel/
+
 # Local recovery scenes
 Assets/_Recovery/
 Assets/_Recovery.meta

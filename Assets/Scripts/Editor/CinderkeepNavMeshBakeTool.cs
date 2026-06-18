@@ -79,7 +79,7 @@ namespace Cinderkeep.EditorTools
         {
             List<string> prefabPaths = new List<string>();
 
-            prefabPaths.Add("Assets/Prefabs/Map/PF_Map_TestMapGroup.prefab");
+            prefabPaths.Add("Assets/Prefabs/Map/PF_Map_GameMapGroup.prefab");
 
             for (int index = 1; index <= 8; index++)
             {

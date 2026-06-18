@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.Serialization;
@@ -6,12 +6,12 @@ using UnityEngine.Serialization;
 namespace Cinderkeep.Gameplay
 {
     // 게임 중 동적으로 만들어지는 오브젝트를 등록하고 제거하는 매니저입니다.
-    // 현재는 몬스터, 자원, 고정 건축 지점 같은 MVP 오브젝트를 관리할 기반입니다.
+    // 현재는 몬스터, 자원, 고정 건축 지점 같은 게임 루프 오브젝트를 관리할 기반입니다.
     // 생성된 오브젝트는 instanceId를 받아서, 이후 수정/제거 요청을 같은 id로 처리할 수 있습니다.
     public sealed class GameObjectManager : MonoBehaviour, IGameInitializable
     {
-        [FormerlySerializedAs("Transform_ObjectRoot")]
-        [SerializeField] private Transform _objectRoot;
+        [FormerlySerializedAs("_objectRoot")]
+        [SerializeField] private Transform Transform_ObjectRoot;
 
         private readonly Dictionary<int, GameObjectIdentity> _createdObjectById = new Dictionary<int, GameObjectIdentity>();
         private int _objectInstanceKeyGenerator;
@@ -47,7 +47,7 @@ namespace Cinderkeep.Gameplay
                 return null;
             }
 
-            GameObject createdObject = Instantiate(prefab, position, rotation, _objectRoot);
+            GameObject createdObject = Instantiate(prefab, position, rotation, Transform_ObjectRoot);
             RegisterGameObject(createdObject);
             return createdObject;
         }

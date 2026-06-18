@@ -1,0 +1,31 @@
+4.00 Candidate Assets Guide
+
+이 폴더는 4.00 게임 루프 연결을 위해 모아둔 후보 에셋 공간입니다.
+정식 에셋 폴더가 아닙니다. 실제 게임에 어울리면 담당 파트에서 정식 Prefabs, Arts 폴더로 승격하고, 어울리지 않으면 제거해도 됩니다.
+
+폴더 용도
+- Prefabs: 씬에 붙여보거나 교체해볼 수 있는 후보 프리팹입니다.
+- Materials: 후보 프리팹에 쓰는 색상 머티리얼입니다.
+- Models: 이후 후보 모델을 복사하거나 비교할 때 쓰는 자리입니다.
+- ReadMe: 이 폴더 사용 안내입니다.
+
+현재 들어간 후보
+- PF_4_0_CinderHeart_Core: CinderHeart 시각 후보입니다. 하트, 불꽃, 얼음 크리스탈 조합입니다.
+- PF_4_0_Resource_Tree: 도끼로 채집할 나무 후보입니다.
+- PF_4_0_Resource_StonePickup: E키로 주울 작은 돌 후보입니다.
+- PF_4_0_Resource_Rock: 곡괭이로 채집할 바위 후보입니다.
+- PF_4_0_Resource_IronOre: 철광석 후보입니다.
+- PF_4_0_Resource_GoldOre: 금광석 후보입니다.
+- PF_4_0_Equipment_Pickaxe: 전용 모델이 없어 직접 조립한 임시 곡괭이 후보입니다.
+- PF_4_0_Crafting_Workbench: 제작대 후보입니다.
+- PF_4_0_Building_WoodTurret: 나무 포탑 후보입니다.
+- PF_4_0_Enemy_IceZombie: 얼음 좀비 임시 후보입니다.
+- PF_4_0_Candidate_PlayerVisual_MageBlack: 플레이어 외형 후보입니다.
+- PF_4_0_Candidate_RuinTower: 폐허 탑 후보입니다.
+- PF_4_0_Candidate_FireBowl: 불꽃 장식 후보입니다.
+
+사용 규칙
+- 이 폴더의 에셋은 확정 에셋이 아닙니다.
+- 담당 파트에서 더 좋은 로우폴리 에셋을 찾으면 교체해도 됩니다.
+- 교체할 때는 기존 참조가 깨지지 않도록 프리팹을 먼저 연결한 뒤 기존 후보를 제거해주세요.
+- 스크립트가 정식 기능으로 승격되면 Assets/Scripts 안의 역할별 폴더로 이동합니다.

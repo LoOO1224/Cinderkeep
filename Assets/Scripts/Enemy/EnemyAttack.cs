@@ -1,6 +1,8 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 몬스터의 실제 공격 실행을 담당하는 컴포넌트입니다.
+// 공격 대상 판단은 EnemyBrain이 맡고, 이 클래스는 쿨타임과 피해 적용만 처리합니다.
 public sealed class EnemyAttack : MonoBehaviour
 {
     [SerializeField] private float _attackDamage;
@@ -27,8 +29,6 @@ public sealed class EnemyAttack : MonoBehaviour
         _attackInterval = enemyData.AttackInterval;
     }
 
-    // 공격 쿨타임이 끝났는지 확인합니다.
-    // 실제 공격 실행은 TryAttack에서 처리합니다.
     public bool CanAttack()
     {
         return Time.time >= _lastAttackTime + _attackInterval;
@@ -39,8 +39,6 @@ public sealed class EnemyAttack : MonoBehaviour
         _lastAttackTime = Time.time;
     }
 
-    // 몬스터가 공격 가능한 상태라면 대상에게 피해를 줍니다.
-    // targetHealth 같은 숫자만 받으면 값 복사라 실제 체력이 줄지 않기 때문에 Damageable을 받습니다.
     public bool TryAttack(Damageable targetDamageable)
     {
         if (targetDamageable == null)

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // 피해를 받을 수 있는 오브젝트에 붙이는 공통 컴포넌트입니다.
-// PlayerStatus나 EnemyStatus가 있으면 그 컴포넌트로 피해 처리를 넘깁니다.
+// PlayerStatus나 EnemyStatus가 있으면 해당 상태 컴포넌트로 피해 처리를 넘깁니다.
 public sealed class Damageable : MonoBehaviour
 {
     [Header("Fallback Health")]
@@ -111,7 +111,6 @@ public sealed class Damageable : MonoBehaviour
         _currentHealth = 0f;
         _isDead = true;
 
-        // TODO: 사망 연출, 아이템 드롭, 제거 방식은 각 오브젝트 전용 컴포넌트에서 연결합니다.
         Debug.Log(gameObject.name + " is dead.");
     }
 }

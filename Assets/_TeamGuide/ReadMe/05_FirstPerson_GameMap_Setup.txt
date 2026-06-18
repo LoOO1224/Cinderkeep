@@ -1,4 +1,4 @@
-﻿Cinderkeep First Person Test Map Setup
+Cinderkeep First Person Game Map Setup
 
 목적
 - !! Play Our Game 버튼이 여는 Cinderkeep_Game 씬에서 1인칭 플레이어 스크립트를 바로 테스트하기 위한 준비입니다.
@@ -22,7 +22,7 @@
 - Scene View에서는 Player 캡슐을 볼 수 있고, Game View에서는 Camera_FirstPerson으로 1인칭 확인을 합니다.
 
 테스트 맵 그룹
-- MainGame_TestMapGroup
+- MainGame_GameMapGroup
 - Cube_Ground_IcePlane
 - Cube_FlameHeart
 - Light_FlameHeart_Red

@@ -5,8 +5,8 @@ using UnityEngine.Serialization;
 
 namespace Cinderkeep.Gameplay
 {
-    // GameManager의 초기화 순서에 맞춰 모듈형 맵 청크를 준비하는 매니저입니다.
-    // 중앙 청크는 CinderHeart 방어, 전투, 건축 테스트가 가능하도록 고정된 평지 구역으로 둡니다.
+    // GameManager 초기화 순서에 맞춰 모듈형 맵 청크를 준비하는 매니저입니다.
+    // 중앙 청크는 CinderHeart 방어, 전투, 건축 테스트가 가능한 평평한 구역으로 유지합니다.
     public sealed class MapManager : MonoBehaviour, IGameInitializable
     {
         [Header("Chunk Settings")]
@@ -15,12 +15,12 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private int _mapRadius = 2;
 
         [Header("Chunk Prefabs")]
-        [FormerlySerializedAs("GameObject_CenterChunkPrefab")]
-        [SerializeField] private GameObject _centerChunkPrefab;
-        [FormerlySerializedAs("GameObjects_NormalChunkPrefabs")]
-        [SerializeField] private List<GameObject> _normalChunkPrefabs = new List<GameObject>();
-        [FormerlySerializedAs("GameObjects_EdgeChunkPrefabs")]
-        [SerializeField] private List<GameObject> _edgeChunkPrefabs = new List<GameObject>();
+        [FormerlySerializedAs("_centerChunkPrefab")]
+        [SerializeField] private GameObject GameObject_CenterChunkPrefab;
+        [FormerlySerializedAs("_normalChunkPrefabs")]
+        [SerializeField] private List<GameObject> GameObjects_NormalChunkPrefabs = new List<GameObject>();
+        [FormerlySerializedAs("_edgeChunkPrefabs")]
+        [SerializeField] private List<GameObject> GameObjects_EdgeChunkPrefabs = new List<GameObject>();
 
         private Dictionary<Vector2Int, GameObject> _spawnedChunks = new Dictionary<Vector2Int, GameObject>();
         private bool _isInitialized;
@@ -99,19 +99,19 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            if (_centerChunkPrefab == null)
+            if (GameObject_CenterChunkPrefab == null)
             {
                 Debug.LogWarning("MapManager: Center chunk prefab is empty.");
                 return false;
             }
 
-            if (_normalChunkPrefabs == null || _normalChunkPrefabs.Count == 0)
+            if (GameObjects_NormalChunkPrefabs == null || GameObjects_NormalChunkPrefabs.Count == 0)
             {
                 Debug.LogWarning("MapManager: Normal chunk prefab list is empty.");
                 return false;
             }
 
-            if (_edgeChunkPrefabs == null || _edgeChunkPrefabs.Count == 0)
+            if (GameObjects_EdgeChunkPrefabs == null || GameObjects_EdgeChunkPrefabs.Count == 0)
             {
                 Debug.LogWarning("MapManager: Edge chunk prefab list is empty.");
                 return false;
@@ -124,15 +124,15 @@ namespace Cinderkeep.Gameplay
         {
             if (CheckIsCenterPosition(gridPosition) == true)
             {
-                return _centerChunkPrefab;
+                return GameObject_CenterChunkPrefab;
             }
 
             if (CheckIsEdgePosition(gridPosition) == true)
             {
-                return GetRandomPrefabCanBeNull(_edgeChunkPrefabs);
+                return GetRandomPrefabCanBeNull(GameObjects_EdgeChunkPrefabs);
             }
 
-            return GetRandomPrefabCanBeNull(_normalChunkPrefabs);
+            return GetRandomPrefabCanBeNull(GameObjects_NormalChunkPrefabs);
         }
 
         private bool CheckIsCenterPosition(Vector2Int gridPosition)
@@ -164,7 +164,6 @@ namespace Cinderkeep.Gameplay
             Vector3 worldPosition = new Vector3(gridPosition.x * _chunkSize, 0f, gridPosition.y * _chunkSize);
             Quaternion rotation = GetChunkRotation(gridPosition);
 
-            // 생성된 청크는 MapManager 아래에 묶어 Hierarchy에서 맵 구조를 쉽게 확인합니다.
             GameObject chunk = Instantiate(prefab, worldPosition, rotation, transform);
             chunk.name = "MapChunk_" + gridPosition.x + "_" + gridPosition.y;
 

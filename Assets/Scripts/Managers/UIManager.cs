@@ -1,20 +1,20 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 using UnityEngine.Serialization;
 
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 UI 매니저입니다.
-    // 현재는 3일 MVP 루프에 필요한 HUD, 인벤토리, 게임오버 UI부터 관리합니다.
+    // 현재는 3일 게임 루프에 필요한 HUD, 인벤토리, 게임오버 UI부터 관리합니다.
     // UI는 코드에서 새로 만들지 않고, 씬이나 프리팹에 준비된 오브젝트를 켜고 끄는 방식으로 관리합니다.
     public sealed class UIManager : MonoBehaviour, IGameInitializable
     {
-        [FormerlySerializedAs("GameObject_HudRoot")]
-        [SerializeField] private GameObject _hudRoot;
-        [FormerlySerializedAs("GameObject_InventoryRoot")]
-        [SerializeField] private GameObject _inventoryRoot;
-        [FormerlySerializedAs("GameObject_GameOverPanel")]
-        [SerializeField] private GameObject _gameOverPanel;
+        [FormerlySerializedAs("_hudRoot")]
+        [SerializeField] private GameObject GameObject_HudRoot;
+        [FormerlySerializedAs("_inventoryRoot")]
+        [SerializeField] private GameObject GameObject_InventoryRoot;
+        [FormerlySerializedAs("_gameOverPanel")]
+        [SerializeField] private GameObject GameObject_GameOverPanel;
 
         private bool _isInitialized;
 
@@ -41,32 +41,32 @@ namespace Cinderkeep.Gameplay
 
         public void OpenHud()
         {
-            SetActive(_hudRoot, true);
+            SetActive(GameObject_HudRoot, true);
         }
 
         public void CloseHud()
         {
-            SetActive(_hudRoot, false);
+            SetActive(GameObject_HudRoot, false);
         }
 
         public void OpenInventory()
         {
-            SetActive(_inventoryRoot, true);
+            SetActive(GameObject_InventoryRoot, true);
         }
 
         public void CloseInventory()
         {
-            SetActive(_inventoryRoot, false);
+            SetActive(GameObject_InventoryRoot, false);
         }
 
         public void OpenGameOverPanel()
         {
-            SetActive(_gameOverPanel, true);
+            SetActive(GameObject_GameOverPanel, true);
         }
 
         public void CloseGameOverPanel()
         {
-            SetActive(_gameOverPanel, false);
+            SetActive(GameObject_GameOverPanel, false);
         }
 
         private void SetActive(GameObject targetObject, bool isActive)

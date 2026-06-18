@@ -4,9 +4,7 @@ using UnityEngine;
 namespace Cinderkeep.Gameplay
 {
     // 변하지 않는 기획 데이터를 JSON에서 읽어 보관하는 매니저입니다.
-    // 현재는 3일 MVP 루프에 필요한 Enemy 데이터를 먼저 연결합니다.
-    // 이후 자원, 제작법, 건축 비용도 같은 방식으로 추가할 예정입니다.
-    // 이 매니저는 싱글톤이 아니며 GameManager가 Initialize 순서에 맞춰 호출합니다.
+    // 현재는 3일 게임 루프에 필요한 Enemy 데이터를 먼저 연결합니다.
     public sealed class GameDataManager : MonoBehaviour, IGameInitializable
     {
         [SerializeField] private string _enemyDataResourcePath = GameUtil.EnemyDataResourcePath;

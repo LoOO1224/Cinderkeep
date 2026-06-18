@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 몬스터가 어떤 대상을 우선 공격할지 판단하는 행동 조정 컴포넌트입니다.
+// 몬스터가 어떤 대상을 공격할지 판단하는 컴포넌트입니다.
 // 이동은 EnemyMovement, 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
 public sealed class EnemyBrain : MonoBehaviour
 {
@@ -23,8 +23,7 @@ public sealed class EnemyBrain : MonoBehaviour
         TryAttackCurrentTarget();
     }
 
-    // 구조물, 플레이어처럼 외부에서 지정한 대상도 공격 대상으로 받을 수 있게 둡니다.
-    // 예: CinderHeart로 가는 길이 벽에 막혔을 때 벽의 Damageable을 넘겨서 공격합니다.
+    // 벽이나 구조물 공격이 필요할 때 외부에서 공격 대상을 지정하는 진입점입니다.
     public void SetAttackTarget(Damageable targetDamageable)
     {
         _currentAttackTarget = targetDamageable;

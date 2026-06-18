@@ -7,22 +7,22 @@ using UnityEngine.UI;
 
 namespace Cinderkeep.MainGame.Editor
 {
-    // Cinderkeep_Game 씬에 MVP 테스트용 플레이어와 기본 UI를 배치하는 에디터 도구입니다.
+    // Cinderkeep_Game 씬에 검증용 플레이어와 기본 UI를 배치하는 에디터 도구입니다.
     // 씬 오브젝트 이름도 실제 게임 기준 네이밍으로 맞춰 팀원이 Hierarchy를 쉽게 읽게 합니다.
-    public static class Cinderkeep_TestMapSceneBuilder
+    public static class Cinderkeep_GameMapSceneBuilder
     {
         private const string _gameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
         private const string _materialFolderPath = "Assets/Materials/MainGame";
-        private const string _iceMaterialPath = _materialFolderPath + "/TestMap_Ice.mat";
-        private const string _wallMaterialPath = _materialFolderPath + "/TestMap_Wall.mat";
-        private const string _markerMaterialPath = _materialFolderPath + "/TestMap_Marker.mat";
+        private const string _iceMaterialPath = _materialFolderPath + "/GameMap_Ice.mat";
+        private const string _wallMaterialPath = _materialFolderPath + "/GameMap_Wall.mat";
+        private const string _markerMaterialPath = _materialFolderPath + "/GameMap_Marker.mat";
         private const string _flameHeartMaterialPath = _materialFolderPath + "/FlameHeart_Red.mat";
-        private const string _horizonMaterialPath = _materialFolderPath + "/TestMap_Horizon.mat";
-        private const string _centerChunkPrefabPath = "Assets/Prefabs/Map/PF_Map_TestMapGroup.prefab";
+        private const string _horizonMaterialPath = _materialFolderPath + "/GameMap_Horizon.mat";
+        private const string _centerChunkPrefabPath = "Assets/Prefabs/Map/PF_Map_GameMapGroup.prefab";
         private const string _cinderHeartTagName = "CinderHeart";
 
-        [MenuItem("Cinderkeep/Main Game/Rebuild First Person Test Map")]
-        public static void RebuildFirstPersonTestMap()
+        [MenuItem("Cinderkeep/Main Game/Rebuild First Person Game Map")]
+        public static void RebuildFirstPersonGameMap()
         {
             Scene scene = EditorSceneManager.OpenScene(_gameScenePath, OpenSceneMode.Single);
             ClearScene(scene);
@@ -35,10 +35,10 @@ namespace Cinderkeep.MainGame.Editor
 
             EnsureTag(_cinderHeartTagName);
 
-            GameObject root = GetOrCreateRoot(scene, "MainGame_TestMapGroup");
+            GameObject root = GetOrCreateRoot(scene, "MainGame_GameMapGroup");
             ClearChildren(root.transform);
 
-            CreateTestMap(root.transform, iceMaterial, wallMaterial, markerMaterial, flameHeartMaterial, horizonMaterial);
+            CreateGameMap(root.transform, iceMaterial, wallMaterial, markerMaterial, flameHeartMaterial, horizonMaterial);
             CreatePlayerTestRig(scene);
             CreateRuntimeManagers(scene);
             CreateTestHud(scene);
@@ -47,7 +47,7 @@ namespace Cinderkeep.MainGame.Editor
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
 
-            Debug.Log("Cinderkeep_TestMapSceneBuilder: first person test map was rebuilt.");
+            Debug.Log("Cinderkeep_GameMapSceneBuilder: first person test map was rebuilt.");
         }
 
         [MenuItem("Cinderkeep/Main Game/Normalize Main Game Hierarchy")]
@@ -55,7 +55,7 @@ namespace Cinderkeep.MainGame.Editor
         {
             Scene scene = EditorSceneManager.OpenScene(_gameScenePath, OpenSceneMode.Single);
 
-            DestroyRootObjectIfExists(scene, "Legacy_MainGame_TestMapGroup_Disabled");
+            DestroyRootObjectIfExists(scene, "Legacy_MainGame_GameMapGroup_Disabled");
             RenameSceneObjects(scene);
             MoveObjectUnderManagerGroup(scene, "MapManager");
 
@@ -65,10 +65,10 @@ namespace Cinderkeep.MainGame.Editor
             RenameCenterChunkPrefabObjects();
             AssetDatabase.SaveAssets();
 
-            Debug.Log("Cinderkeep_TestMapSceneBuilder: main game hierarchy was normalized.");
+            Debug.Log("Cinderkeep_GameMapSceneBuilder: main game hierarchy was normalized.");
         }
 
-        private static void CreateTestMap(
+        private static void CreateGameMap(
             Transform root,
             Material iceMaterial,
             Material wallMaterial,
@@ -179,13 +179,13 @@ namespace Cinderkeep.MainGame.Editor
             bgmSource.playOnAwake = false;
             effectSource.playOnAwake = false;
 
-            SetObjectReference(gameManager, "_gameDataManager", dataManager);
-            SetObjectReference(gameManager, "_gameObjectManager", objectManager);
-            SetObjectReference(gameManager, "_uiManager", uiManager);
-            SetObjectReference(gameManager, "_soundManager", soundManager);
-            SetObjectReference(objectManager, "_objectRoot", objectRoot.transform);
-            SetObjectReference(soundManager, "_bgmAudioSource", bgmSource);
-            SetObjectReference(soundManager, "_effectAudioSource", effectSource);
+            SetObjectReference(gameManager, "GameDataManager_GameDataManager", dataManager);
+            SetObjectReference(gameManager, "GameObjectManager_GameObjectManager", objectManager);
+            SetObjectReference(gameManager, "UIManager_UIManager", uiManager);
+            SetObjectReference(gameManager, "SoundManager_SoundManager", soundManager);
+            SetObjectReference(objectManager, "Transform_ObjectRoot", objectRoot.transform);
+            SetObjectReference(soundManager, "AudioSource_Bgm", bgmSource);
+            SetObjectReference(soundManager, "AudioSource_Effect", effectSource);
         }
 
         private static void CreateTestHud(Scene scene)
@@ -223,9 +223,9 @@ namespace Cinderkeep.MainGame.Editor
                 return;
             }
 
-            SetObjectReference(uiManager, "_hudRoot", hudRoot);
-            SetObjectReference(uiManager, "_inventoryRoot", inventoryRoot);
-            SetObjectReference(uiManager, "_gameOverPanel", gameOverRoot);
+            SetObjectReference(uiManager, "GameObject_HudRoot", hudRoot);
+            SetObjectReference(uiManager, "GameObject_InventoryRoot", inventoryRoot);
+            SetObjectReference(uiManager, "GameObject_GameOverPanel", gameOverRoot);
         }
 
         private static GameObject CreatePrimitive(PrimitiveType type, string objectName, Transform parent, Vector3 localPosition, Vector3 localScale, Material material)
@@ -397,7 +397,7 @@ namespace Cinderkeep.MainGame.Editor
             GameObject prefabRoot = PrefabUtility.LoadPrefabContents(_centerChunkPrefabPath);
             if (prefabRoot == null)
             {
-                Debug.LogWarning("Cinderkeep_TestMapSceneBuilder: center chunk prefab was not found.");
+                Debug.LogWarning("Cinderkeep_GameMapSceneBuilder: center chunk prefab was not found.");
                 return;
             }
 
@@ -518,7 +518,7 @@ namespace Cinderkeep.MainGame.Editor
             SerializedProperty property = serializedObject.FindProperty(propertyName);
             if (property == null)
             {
-                Debug.LogWarning("Cinderkeep_TestMapSceneBuilder: property was not found. " + propertyName);
+                Debug.LogWarning("Cinderkeep_GameMapSceneBuilder: property was not found. " + propertyName);
                 return;
             }
 

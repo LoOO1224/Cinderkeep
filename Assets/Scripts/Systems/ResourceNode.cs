@@ -1,12 +1,15 @@
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 나무, 돌처럼 맵에 배치되는 자원 오브젝트의 기본 컴포넌트입니다.
-// 실제 인벤토리 지급과 오브젝트 제거는 후속 작업에서 GameManager/GameObjectManager 흐름과 연결합니다.
+// 나무, 돌, 광석처럼 플레이어가 얻을 수 있는 자원 오브젝트입니다.
+// E 입력은 줍기용, 좌클릭은 도끼/곡괭이 채집용으로 분리합니다.
 public sealed class ResourceNode : MonoBehaviour, IInteractable
 {
     [Header("Resource Data")]
-    [SerializeField] private string _resourceId = "stone";
-    [SerializeField] private int _previewAmount = 1;
+    [SerializeField] private string _resourceId = PlayerModel.ResourceStone;
+    [SerializeField] private int _amount = 1;
+    [SerializeField] private GatherToolType _requiredToolType = GatherToolType.None;
+    [SerializeField] private bool _disableAfterGather = true;
     [SerializeField] private bool _canInteract = true;
 
     public string ResourceId
@@ -17,11 +20,19 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
     }
 
-    public int PreviewAmount
+    public int Amount
     {
         get
         {
-            return _previewAmount;
+            return _amount;
+        }
+    }
+
+    public GatherToolType RequiredToolType
+    {
+        get
+        {
+            return _requiredToolType;
         }
     }
 
@@ -32,7 +43,12 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return false;
         }
 
-        return gameObjectInteractor != null;
+        if (gameObjectInteractor == null)
+        {
+            return false;
+        }
+
+        return _requiredToolType == GatherToolType.None;
     }
 
     public void Interact(GameObject gameObjectInteractor)
@@ -42,13 +58,63 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return;
         }
 
-        RequestGather(gameObjectInteractor);
+        GiveResourceToPlayer();
+        ProcessGathered();
     }
 
-    private void RequestGather(GameObject gameObjectInteractor)
+    public bool TryGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType)
     {
-        // TODO: 인벤토리 구조가 들어오면 여기서 자원 지급을 연결합니다.
-        // TODO: 자원 노드 제거 방식이 확정되면 GameObjectManager에 제거를 요청합니다.
-        // 현재 단계에서는 상호작용 진입점만 유지합니다.
+        if (CanGatherWithTool(gameObjectInteractor, toolType) == false)
+        {
+            return false;
+        }
+
+        GiveResourceToPlayer();
+        ProcessGathered();
+        return true;
+    }
+
+    private bool CanGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType)
+    {
+        if (_canInteract == false)
+        {
+            return false;
+        }
+
+        if (gameObjectInteractor == null)
+        {
+            return false;
+        }
+
+        if (_requiredToolType == GatherToolType.None)
+        {
+            return false;
+        }
+
+        return _requiredToolType == toolType;
+    }
+
+    private void GiveResourceToPlayer()
+    {
+        if (GameManager.Inst == null)
+        {
+            Debug.LogWarning("ResourceNode: GameManager가 없어 자원을 지급하지 못했습니다.");
+            return;
+        }
+
+        GameManager.Inst.PlayerModel.AddResource(_resourceId, _amount);
+        Debug.Log("ResourceNode: " + _resourceId + " +" + _amount);
+    }
+
+    private void ProcessGathered()
+    {
+        _canInteract = false;
+
+        if (_disableAfterGather == false)
+        {
+            return;
+        }
+
+        gameObject.SetActive(false);
     }
 }

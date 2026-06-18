@@ -34,7 +34,7 @@ public sealed class PlayerBuild : MonoBehaviour
         Vector3 spawnPosition = transform.position + transform.forward * _spawnDistance;
         Quaternion spawnRotation = transform.rotation;
 
-        // MVP 테스트용 직접 생성입니다. 정식 건축 시스템에서는 GameObjectManager 경유로 교체합니다.
+        // 검증용 직접 생성입니다. 정식 건축 시스템에서는 GameObjectManager 경유로 교체합니다.
         Instantiate(_buildingPrefab, spawnPosition, spawnRotation);
 
         Debug.Log("PlayerBuild: 플레이어 앞에 건축물이 생성되었습니다.");

@@ -1,26 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 using UnityEngine.Serialization;
 
 namespace Cinderkeep.Gameplay
 {
     // 게임 전체 생성 주기를 잡는 최상위 매니저입니다.
-    // 현재 목표는 3일/15분 MVP 루프를 안정적으로 시작하고 끝내는 것입니다.
+    // 현재 목표는 3일/15분 게임 루프를 안정적으로 시작하고 끝내는 것입니다.
     // 1일차는 채집/기초 제작, 2일차는 FlameHeart 방어, 3일차는 보스 클리어가 기준입니다.
     // 이후 7일 루프 확장은 이 초기화 흐름을 유지한 채 Model과 매니저 기능을 늘립니다.
     // 규칙: 게임 영역에서는 GameManager만 싱글톤으로 둡니다.
     public sealed class GameManager : MonoBehaviour
     {
-        [FormerlySerializedAs("GameDataManager_GameDataManager")]
-        [SerializeField] private GameDataManager _gameDataManager;
-        [FormerlySerializedAs("GameObjectManager_GameObjectManager")]
-        [SerializeField] private GameObjectManager _gameObjectManager;
-        [FormerlySerializedAs("UIManager_UIManager")]
-        [SerializeField] private UIManager _uiManager;
-        [FormerlySerializedAs("SoundManager_SoundManager")]
-        [SerializeField] private SoundManager _soundManager;
-        [FormerlySerializedAs("MapManager_MapManager")]
-        [SerializeField] private MapManager _mapManager;
+        [FormerlySerializedAs("_gameDataManager")]
+        [SerializeField] private GameDataManager GameDataManager_GameDataManager;
+        [FormerlySerializedAs("_gameObjectManager")]
+        [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
+        [FormerlySerializedAs("_uiManager")]
+        [SerializeField] private UIManager UIManager_UIManager;
+        [FormerlySerializedAs("_soundManager")]
+        [SerializeField] private SoundManager SoundManager_SoundManager;
+        [FormerlySerializedAs("_mapManager")]
+        [SerializeField] private MapManager MapManager_MapManager;
 
         private PlayerModel _playerModel = new PlayerModel();
         private GameRunModel _gameRunModel = new GameRunModel();
@@ -78,17 +78,17 @@ namespace Cinderkeep.Gameplay
             }
 
             // 생성 주기 순서:
-            // 1. 3일 MVP 루프에 필요한 Static Data 로드
+            // 1. 3일 게임 루프에 필요한 Static Data 로드
             // 2. 몬스터, 자원, 건축물 생성을 맡을 관리자 준비
             // 3. 테스트맵과 이후 모듈형 맵 생성을 맡을 관리자 준비
             // 4. BGM과 효과음 관리자 준비
             // 5. HUD, 인벤토리, 게임오버 UI 관리자 준비
             // 6. 저장이 필요한 Instance Model 기본값 준비
-            InitializeManager(_gameDataManager, "GameDataManager");
-            InitializeManager(_gameObjectManager, "GameObjectManager");
-            InitializeManager(_mapManager, "MapManager");
-            InitializeManager(_soundManager, "SoundManager");
-            InitializeManager(_uiManager, "UIManager");
+            InitializeManager(GameDataManager_GameDataManager, "GameDataManager");
+            InitializeManager(GameObjectManager_GameObjectManager, "GameObjectManager");
+            InitializeManager(MapManager_MapManager, "MapManager");
+            InitializeManager(SoundManager_SoundManager, "SoundManager");
+            InitializeManager(UIManager_UIManager, "UIManager");
 
             _playerModel.InitializeDefault();
             _gameRunModel.InitializeDefault();
@@ -100,9 +100,9 @@ namespace Cinderkeep.Gameplay
             Initialize();
             _gameRunModel.StartRun();
 
-            if (_uiManager != null)
+            if (UIManager_UIManager != null)
             {
-                _uiManager.OpenHud();
+                UIManager_UIManager.OpenHud();
             }
         }
 
@@ -115,35 +115,35 @@ namespace Cinderkeep.Gameplay
 
             _gameRunModel.EndRun();
 
-            if (_uiManager != null)
+            if (UIManager_UIManager != null)
             {
-                _uiManager.OpenGameOverPanel();
+                UIManager_UIManager.OpenGameOverPanel();
             }
         }
 
         public GameDataManager GetGameDataManager()
         {
-            return _gameDataManager;
+            return GameDataManager_GameDataManager;
         }
 
         public GameObjectManager GetGameObjectManager()
         {
-            return _gameObjectManager;
+            return GameObjectManager_GameObjectManager;
         }
 
         public UIManager GetUIManager()
         {
-            return _uiManager;
+            return UIManager_UIManager;
         }
 
         public SoundManager GetSoundManager()
         {
-            return _soundManager;
+            return SoundManager_SoundManager;
         }
 
         public MapManager GetMapManager()
         {
-            return _mapManager;
+            return MapManager_MapManager;
         }
 
         private void RegisterSingleton()

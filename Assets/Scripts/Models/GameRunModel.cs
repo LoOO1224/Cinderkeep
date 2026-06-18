@@ -3,7 +3,7 @@ using System;
 namespace Cinderkeep.Gameplay
 {
     // Instance data for one gameplay run.
-    // The MVP starts with day 1-3 and can expand to a longer loop later.
+    // The 3일 게임 루프 starts with day 1-3 and can expand to a longer loop later.
     [Serializable]
     public sealed class GameRunModel
     {

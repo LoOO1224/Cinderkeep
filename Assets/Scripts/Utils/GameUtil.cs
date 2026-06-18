@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Cinderkeep.Gameplay
 {
     // 공용 계산과 데이터 로드 시작점을 모아두는 순수 도구 클래스입니다.
-    // 오브젝트를 직접 찾지 않고, 필요한 값은 파라미터로 받아 결과만 돌려줍니다.
+    // 오브젝트를 직접 찾지 않고, 필요한 값과 매니저를 파라미터로 받아 처리합니다.
     public static class GameUtil
     {
         public const string EnemyDataResourcePath = "Cinderkeep/data/enemies";

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Cinderkeep.UI.Editor
 {
     // Main_Lobby를 실제 게임의 첫 화면으로 다시 만드는 편집기 도구입니다.
-    // 메인 메뉴 UI, 설정창, BGM 기본 연결을 한 번에 맞춥니다.
+    // BGM은 별도 화면 버튼을 두지 않고, 설정창의 체크박스와 슬라이더에서만 관리합니다.
     public static class MainMenuSceneBuilder
     {
         private const string MainMenuScenePath = "Assets/Scenes/Main_Lobby.unity";
@@ -29,6 +29,7 @@ namespace Cinderkeep.UI.Editor
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             CreateMainCamera();
+            CreateEventSystem();
             BgmBuildReferences bgmBuildReferences = CreateBgmController();
             CreateMainMenuCanvas(bgmBuildReferences);
             SaveScene(scene);
@@ -82,6 +83,13 @@ namespace Cinderkeep.UI.Editor
             cameraObject.tag = "MainCamera";
         }
 
+        private static void CreateEventSystem()
+        {
+            GameObject eventSystemObject = new GameObject("EventSystem_MainMenu");
+            eventSystemObject.AddComponent<EventSystem>();
+            eventSystemObject.AddComponent<StandaloneInputModule>();
+        }
+
         private static BgmBuildReferences CreateBgmController()
         {
             GameObject bgmControllerObject = new GameObject("MainMenu_BgmController");
@@ -93,48 +101,11 @@ namespace Cinderkeep.UI.Editor
             audioSource.spatialBlend = 0f;
             audioSource.volume = BgmVolume;
 
-            CreateEventSystem(bgmControllerObject.transform);
-            Button bgmButton = CreateBgmButton(bgmControllerObject.transform);
-            Text bgmText = bgmButton.GetComponentInChildren<Text>();
-            AudioClip[] bgmClips = LoadBgmClips();
-
-            bgmController.SetReferences(audioSource, bgmButton, null, null, bgmText, null, null, bgmClips, BgmVolume);
-            EditorUtility.SetDirty(bgmController);
-
             BgmBuildReferences bgmBuildReferences = new BgmBuildReferences();
             bgmBuildReferences.Controller = bgmController;
             bgmBuildReferences.AudioSourceBgm = audioSource;
-            bgmBuildReferences.ButtonBgmToggle = bgmButton;
-            bgmBuildReferences.TextBgmToggle = bgmText;
-            bgmBuildReferences.AudioClipsBgm = bgmClips;
+            bgmBuildReferences.AudioClipsBgm = LoadBgmClips();
             return bgmBuildReferences;
-        }
-
-        private static void CreateEventSystem(Transform parent)
-        {
-            GameObject eventSystemObject = new GameObject("EventSystem_BgmControl");
-            eventSystemObject.transform.SetParent(parent, false);
-            eventSystemObject.AddComponent<EventSystem>();
-            eventSystemObject.AddComponent<StandaloneInputModule>();
-        }
-
-        private static Button CreateBgmButton(Transform parent)
-        {
-            GameObject canvasObject = new GameObject("Canvas_BgmControl", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-            canvasObject.transform.SetParent(parent, false);
-
-            Canvas canvas = canvasObject.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 100;
-
-            CanvasScaler canvasScaler = canvasObject.GetComponent<CanvasScaler>();
-            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            canvasScaler.referenceResolution = new Vector2(1920f, 1080f);
-            canvasScaler.matchWidthOrHeight = 0.5f;
-
-            RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
-            Button bgmButton = CreateButton("Button_BgmToggle", canvasRect, "♪ BGM ON", 28, new Color(0.13f, 0.22f, 0.28f, 0.96f), LoadFont(), new Vector2(0.875f, 0.92f), new Vector2(0.99f, 0.985f));
-            return bgmButton;
         }
 
         private static AudioClip[] LoadBgmClips()
@@ -172,7 +143,7 @@ namespace Cinderkeep.UI.Editor
             CreateText("Text_Title", menuRoot, "Cinderkeep", 88, Color.white, TextAnchor.MiddleCenter, font, new Vector2(0.16f, 0.70f), new Vector2(0.84f, 0.84f));
             CreateText("Text_Subtitle", menuRoot, "불꽃 심장을 지키는 생존 방어 게임", 28, new Color(0.88f, 0.91f, 0.94f, 1f), TextAnchor.MiddleCenter, font, new Vector2(0.16f, 0.63f), new Vector2(0.84f, 0.70f));
 
-            Button startButton = CreateButton("Button_StartGame", menuRoot, "게임 시작하기", 34, new Color(0.2f, 0.48f, 0.32f, 0.96f), font, new Vector2(0.36f, 0.49f), new Vector2(0.64f, 0.57f));
+            Button startButton = CreateButton("Button_StartGame", menuRoot, "게임 시작하기", 34, new Color(0.20f, 0.48f, 0.32f, 0.96f), font, new Vector2(0.36f, 0.49f), new Vector2(0.64f, 0.57f));
             Button settingsButton = CreateButton("Button_Settings", menuRoot, "설정", 34, new Color(0.18f, 0.30f, 0.46f, 0.96f), font, new Vector2(0.36f, 0.38f), new Vector2(0.64f, 0.46f));
             Button quitButton = CreateButton("Button_QuitGame", menuRoot, "게임 끝내기", 34, new Color(0.46f, 0.16f, 0.16f, 0.96f), font, new Vector2(0.36f, 0.27f), new Vector2(0.64f, 0.35f));
 
@@ -184,7 +155,14 @@ namespace Cinderkeep.UI.Editor
 
             if (bgmBuildReferences != null && bgmBuildReferences.Controller != null)
             {
-                bgmBuildReferences.Controller.SetReferences(bgmBuildReferences.AudioSourceBgm, bgmBuildReferences.ButtonBgmToggle, settingsPanel.ToggleVolumeMute, settingsPanel.SliderVolume, bgmBuildReferences.TextBgmToggle, settingsPanel.TextVolumeMute, settingsPanel.TextVolumeValue, bgmBuildReferences.AudioClipsBgm, BgmVolume);
+                bgmBuildReferences.Controller.SetReferences(
+                    bgmBuildReferences.AudioSourceBgm,
+                    settingsPanel.ToggleVolumeMute,
+                    settingsPanel.SliderVolume,
+                    settingsPanel.TextVolumeMute,
+                    settingsPanel.TextVolumeValue,
+                    bgmBuildReferences.AudioClipsBgm,
+                    BgmVolume);
                 EditorUtility.SetDirty(bgmBuildReferences.Controller);
             }
         }
@@ -359,11 +337,10 @@ namespace Cinderkeep.UI.Editor
 
         private static void UpdateBuildSettings()
         {
-            EditorBuildSettings.scenes = new[]
-            {
-                new EditorBuildSettingsScene(MainMenuScenePath, true),
-                new EditorBuildSettingsScene(GameScenePath, true)
-            };
+            EditorBuildSettingsScene[] scenes = new EditorBuildSettingsScene[2];
+            scenes[0] = new EditorBuildSettingsScene(MainMenuScenePath, true);
+            scenes[1] = new EditorBuildSettingsScene(GameScenePath, true);
+            EditorBuildSettings.scenes = scenes;
         }
 
         private sealed class SettingsPanelReferences
@@ -380,8 +357,6 @@ namespace Cinderkeep.UI.Editor
         {
             public MainMenuBgmController Controller { get; set; }
             public AudioSource AudioSourceBgm { get; set; }
-            public Button ButtonBgmToggle { get; set; }
-            public Text TextBgmToggle { get; set; }
             public AudioClip[] AudioClipsBgm { get; set; }
         }
     }
