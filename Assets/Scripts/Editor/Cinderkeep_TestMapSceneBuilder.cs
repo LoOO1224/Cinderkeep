@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 namespace Cinderkeep.MainGame.Editor
 {
-    // Cinderkeep_Game 씬에 MVP 테스트용 플레이어 리그와 간단 맵을 배치하는 에디터 도구입니다.
-    // 플레이어 담당 스크립트가 오면 Player 오브젝트에 붙여 바로 테스트합니다.
+    // Cinderkeep_Game 씬에 MVP 테스트용 플레이어와 기본 UI를 배치하는 에디터 도구입니다.
+    // 씬 오브젝트 이름도 실제 게임 기준 네이밍으로 맞춰 팀원이 Hierarchy를 쉽게 읽게 합니다.
     public static class Cinderkeep_TestMapSceneBuilder
     {
         private const string _gameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
@@ -18,6 +18,7 @@ namespace Cinderkeep.MainGame.Editor
         private const string _markerMaterialPath = _materialFolderPath + "/TestMap_Marker.mat";
         private const string _flameHeartMaterialPath = _materialFolderPath + "/FlameHeart_Red.mat";
         private const string _horizonMaterialPath = _materialFolderPath + "/TestMap_Horizon.mat";
+        private const string _centerChunkPrefabPath = "Assets/Prefabs/Map/PF_Map_TestMapGroup.prefab";
         private const string _cinderHeartTagName = "CinderHeart";
 
         [MenuItem("Cinderkeep/Main Game/Rebuild First Person Test Map")]
@@ -49,6 +50,24 @@ namespace Cinderkeep.MainGame.Editor
             Debug.Log("Cinderkeep_TestMapSceneBuilder: first person test map was rebuilt.");
         }
 
+        [MenuItem("Cinderkeep/Main Game/Normalize Main Game Hierarchy")]
+        public static void NormalizeMainGameHierarchy()
+        {
+            Scene scene = EditorSceneManager.OpenScene(_gameScenePath, OpenSceneMode.Single);
+
+            DestroyRootObjectIfExists(scene, "Legacy_MainGame_TestMapGroup_Disabled");
+            RenameSceneObjects(scene);
+            MoveObjectUnderManagerGroup(scene, "MapManager");
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+
+            RenameCenterChunkPrefabObjects();
+            AssetDatabase.SaveAssets();
+
+            Debug.Log("Cinderkeep_TestMapSceneBuilder: main game hierarchy was normalized.");
+        }
+
         private static void CreateTestMap(
             Transform root,
             Material iceMaterial,
@@ -59,7 +78,7 @@ namespace Cinderkeep.MainGame.Editor
         {
             GameObject ground = CreatePrimitive(
                 PrimitiveType.Cube,
-                "Cube_Ground_IcePlane",
+                "Ground_IcePlane",
                 root,
                 new Vector3(0f, -0.05f, 0f),
                 new Vector3(120f, 0.1f, 120f),
@@ -67,22 +86,22 @@ namespace Cinderkeep.MainGame.Editor
 
             ground.isStatic = true;
 
-            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_North", root, new Vector3(0f, 0.55f, 54f), new Vector3(120f, 1.1f, 2f), horizonMaterial);
-            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_South", root, new Vector3(0f, 0.45f, -54f), new Vector3(120f, 0.9f, 2f), horizonMaterial);
-            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_East", root, new Vector3(54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
-            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_West", root, new Vector3(-54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "HorizonRidge_North", root, new Vector3(0f, 0.55f, 54f), new Vector3(120f, 1.1f, 2f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "HorizonRidge_South", root, new Vector3(0f, 0.45f, -54f), new Vector3(120f, 0.9f, 2f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "HorizonRidge_East", root, new Vector3(54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "HorizonRidge_West", root, new Vector3(-54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
 
             GameObject flameHeart = CreatePrimitive(PrimitiveType.Cube, "CinderHeart", root, new Vector3(0f, 1f, 0f), new Vector3(1.8f, 1.8f, 1.8f), flameHeartMaterial);
             flameHeart.tag = _cinderHeartTagName;
-            CreatePointLight("Light_FlameHeart_Red", flameHeart.transform, new Vector3(0f, 1.2f, 0f), new Color(1f, 0.12f, 0.04f, 1f), 3f, 9f);
-            CreateMarker(root, "Marker_PlayerSpawn_Test", new Vector3(0f, 0f, -8f));
+            CreatePointLight("Light_CinderHeart_Red", flameHeart.transform, new Vector3(0f, 1.2f, 0f), new Color(1f, 0.12f, 0.04f, 1f), 3f, 9f);
+            CreateMarker(root, "Marker_PlayerSpawn", new Vector3(0f, 0f, -8f));
             CreateMarker(root, "Marker_EnemySpawn_North", new Vector3(0f, 0f, 15f));
             CreateMarker(root, "Marker_EnemySpawn_East", new Vector3(15f, 0f, 0f));
 
-            CreatePrimitive(PrimitiveType.Cube, "Cube_ResourceNode_Stone_01", root, new Vector3(-7f, 0.45f, -2f), new Vector3(1.4f, 0.9f, 1.4f), wallMaterial);
-            CreatePrimitive(PrimitiveType.Cube, "Cube_ResourceNode_Wood_01", root, new Vector3(7f, 0.75f, -2f), new Vector3(0.8f, 1.5f, 0.8f), wallMaterial);
-            CreatePrimitive(PrimitiveType.Cylinder, "Cylinder_BuildPoint_Wall_North", root, new Vector3(-4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
-            CreatePrimitive(PrimitiveType.Cylinder, "Cylinder_BuildPoint_Turret_East", root, new Vector3(4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "ResourceNode_Stone_01", root, new Vector3(-7f, 0.45f, -2f), new Vector3(1.4f, 0.9f, 1.4f), wallMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "ResourceNode_Wood_01", root, new Vector3(7f, 0.75f, -2f), new Vector3(0.8f, 1.5f, 0.8f), wallMaterial);
+            CreatePrimitive(PrimitiveType.Cylinder, "BuildPoint_Wall_North", root, new Vector3(-4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
+            CreatePrimitive(PrimitiveType.Cylinder, "BuildPoint_Turret_East", root, new Vector3(4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
         }
 
         private static void CreatePlayerTestRig(Scene scene)
@@ -107,7 +126,7 @@ namespace Cinderkeep.MainGame.Editor
 
             GameObject visual = CreatePrimitive(
                 PrimitiveType.Capsule,
-                "Capsule_PlayerVisual_Test",
+                "PlayerVisual_DebugCapsule",
                 player.transform,
                 new Vector3(0f, 0.85f, 0f),
                 new Vector3(0.7f, 0.85f, 0.7f),
@@ -139,7 +158,7 @@ namespace Cinderkeep.MainGame.Editor
 
         private static void CreateRuntimeManagers(Scene scene)
         {
-            GameObject group = GetOrCreateRoot(scene, "MainGame_RuntimeManagers");
+            GameObject group = GetOrCreateRoot(scene, "MainGame_Managers");
             ClearChildren(group.transform);
 
             GameObject gameManagerObject = CreateEmpty("GameManager", group.transform, Vector3.zero);
@@ -171,7 +190,7 @@ namespace Cinderkeep.MainGame.Editor
 
         private static void CreateTestHud(Scene scene)
         {
-            GameObject canvasObject = GetOrCreateRoot(scene, "Canvas_GameHUD_Test");
+            GameObject canvasObject = GetOrCreateRoot(scene, "Canvas_GameHUD");
             ClearChildren(canvasObject.transform);
 
             Canvas canvas = GetOrAddComponent<Canvas>(canvasObject);
@@ -185,13 +204,13 @@ namespace Cinderkeep.MainGame.Editor
 
             GameObject hudRoot = CreateUiPanel("Panel_HUDRoot", canvasObject.transform, new Vector2(20f, -20f), new Vector2(360f, 120f), new Color(0f, 0f, 0f, 0.45f));
             CreateUiText("Text_HUD_Guide", hudRoot.transform, "HP / Stamina HUD 연결 자리", 24, TextAnchor.MiddleLeft);
-            GameObject inventoryRoot = CreateUiPanel("Panel_InventoryRoot_TestDisabled", canvasObject.transform, new Vector2(20f, -160f), new Vector2(360f, 120f), new Color(0f, 0f, 0f, 0.35f));
-            GameObject gameOverRoot = CreateUiPanel("Panel_GameOver_TestDisabled", canvasObject.transform, new Vector2(-240f, 140f), new Vector2(480f, 180f), new Color(0.08f, 0.02f, 0.02f, 0.75f));
+            GameObject inventoryRoot = CreateUiPanel("Panel_InventoryRoot_Disabled", canvasObject.transform, new Vector2(20f, -160f), new Vector2(360f, 120f), new Color(0f, 0f, 0f, 0.35f));
+            GameObject gameOverRoot = CreateUiPanel("Panel_GameOver_Disabled", canvasObject.transform, new Vector2(-240f, 140f), new Vector2(480f, 180f), new Color(0.08f, 0.02f, 0.02f, 0.75f));
             CreateUiText("Text_GameOver_Guide", gameOverRoot.transform, "GameOver UI 연결 자리", 24, TextAnchor.MiddleCenter);
             inventoryRoot.SetActive(false);
             gameOverRoot.SetActive(false);
 
-            GameObject managerGroup = GetOrCreateRoot(scene, "MainGame_RuntimeManagers");
+            GameObject managerGroup = GetOrCreateRoot(scene, "MainGame_Managers");
             Transform uiManagerTransform = FindChildByName(managerGroup.transform, "UIManager");
             if (uiManagerTransform == null)
             {
@@ -343,6 +362,127 @@ namespace Cinderkeep.MainGame.Editor
                 }
 
                 Transform found = FindChildByName(child, objectName);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static void RenameSceneObjects(Scene scene)
+        {
+            RenameObjectInScene(scene, "Cube_Ground_IcePlane", "Ground_IcePlane");
+            RenameObjectInScene(scene, "Cube_HorizonRidge_North", "HorizonRidge_North");
+            RenameObjectInScene(scene, "Cube_HorizonRidge_South", "HorizonRidge_South");
+            RenameObjectInScene(scene, "Cube_HorizonRidge_East", "HorizonRidge_East");
+            RenameObjectInScene(scene, "Cube_HorizonRidge_West", "HorizonRidge_West");
+            RenameObjectInScene(scene, "Light_FlameHeart_Red", "Light_CinderHeart_Red");
+            RenameObjectInScene(scene, "Marker_PlayerSpawn_Test", "Marker_PlayerSpawn");
+            RenameObjectInScene(scene, "Cube_ResourceNode_Stone_01", "ResourceNode_Stone_01");
+            RenameObjectInScene(scene, "Cube_ResourceNode_Wood_01", "ResourceNode_Wood_01");
+            RenameObjectInScene(scene, "Cylinder_BuildPoint_Wall_North", "BuildPoint_Wall_North");
+            RenameObjectInScene(scene, "Cylinder_BuildPoint_Turret_East", "BuildPoint_Turret_East");
+            RenameObjectInScene(scene, "Capsule_PlayerVisual_Test", "PlayerVisual_DebugCapsule");
+            RenameObjectInScene(scene, "GroundCheck", "Transform_GroundCheck");
+            RenameObjectInScene(scene, "MainGame_RuntimeManagers", "MainGame_Managers");
+            RenameObjectInScene(scene, "Canvas_GameHUD_Test", "Canvas_GameHUD");
+            RenameObjectInScene(scene, "Panel_InventoryRoot_TestDisabled", "Panel_InventoryRoot_Disabled");
+            RenameObjectInScene(scene, "Panel_GameOver_TestDisabled", "Panel_GameOver_Disabled");
+        }
+
+        private static void RenameCenterChunkPrefabObjects()
+        {
+            GameObject prefabRoot = PrefabUtility.LoadPrefabContents(_centerChunkPrefabPath);
+            if (prefabRoot == null)
+            {
+                Debug.LogWarning("Cinderkeep_TestMapSceneBuilder: center chunk prefab was not found.");
+                return;
+            }
+
+            RenameObjectInChildren(prefabRoot.transform, "Cube_Ground_IcePlane", "Ground_IcePlane");
+            RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_North", "HorizonRidge_North");
+            RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_South", "HorizonRidge_South");
+            RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_East", "HorizonRidge_East");
+            RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_West", "HorizonRidge_West");
+            RenameObjectInChildren(prefabRoot.transform, "Light_FlameHeart_Red", "Light_CinderHeart_Red");
+            RenameObjectInChildren(prefabRoot.transform, "Marker_PlayerSpawn_Test", "Marker_PlayerSpawn");
+            RenameObjectInChildren(prefabRoot.transform, "Cube_ResourceNode_Stone_01", "ResourceNode_Stone_01");
+            RenameObjectInChildren(prefabRoot.transform, "Cube_ResourceNode_Wood_01", "ResourceNode_Wood_01");
+            RenameObjectInChildren(prefabRoot.transform, "Cylinder_BuildPoint_Wall_North", "BuildPoint_Wall_North");
+            RenameObjectInChildren(prefabRoot.transform, "Cylinder_BuildPoint_Turret_East", "BuildPoint_Turret_East");
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, _centerChunkPrefabPath);
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        private static void RenameObjectInScene(Scene scene, string beforeName, string afterName)
+        {
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                RenameObjectInChildren(rootObjects[i].transform, beforeName, afterName);
+            }
+        }
+
+        private static void RenameObjectInChildren(Transform root, string beforeName, string afterName)
+        {
+            if (root.name == beforeName)
+            {
+                root.name = afterName;
+                EditorUtility.SetDirty(root.gameObject);
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                RenameObjectInChildren(root.GetChild(i), beforeName, afterName);
+            }
+        }
+
+        private static void DestroyRootObjectIfExists(Scene scene, string objectName)
+        {
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                if (rootObjects[i].name == objectName)
+                {
+                    UnityEngine.Object.DestroyImmediate(rootObjects[i]);
+                    return;
+                }
+            }
+        }
+
+        private static void MoveObjectUnderManagerGroup(Scene scene, string objectName)
+        {
+            Transform target = FindTransformInScene(scene, objectName);
+            if (target == null)
+            {
+                return;
+            }
+
+            GameObject managerGroup = GetOrCreateRoot(scene, "MainGame_Managers");
+            if (target.parent == managerGroup.transform)
+            {
+                return;
+            }
+
+            target.SetParent(managerGroup.transform);
+            EditorUtility.SetDirty(target.gameObject);
+            EditorUtility.SetDirty(managerGroup);
+        }
+
+        private static Transform FindTransformInScene(Scene scene, string objectName)
+        {
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                if (rootObjects[i].name == objectName)
+                {
+                    return rootObjects[i].transform;
+                }
+
+                Transform found = FindChildByName(rootObjects[i].transform, objectName);
                 if (found != null)
                 {
                     return found;

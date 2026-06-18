@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 910000000000000003}
   - component: {fileID: 910000000000000004}
   m_Layer: 0
-  m_Name: Cube_HorizonRidge_North
+  m_Name: HorizonRidge_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 910000000000000008}
   - component: {fileID: 910000000000000009}
   m_Layer: 0
-  m_Name: Cube_HorizonRidge_South
+  m_Name: HorizonRidge_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 910000000000000013}
   - component: {fileID: 910000000000000014}
   m_Layer: 0
-  m_Name: Cube_HorizonRidge_East
+  m_Name: HorizonRidge_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -349,7 +349,7 @@ GameObject:
   - component: {fileID: 910000000000000018}
   - component: {fileID: 910000000000000019}
   m_Layer: 0
-  m_Name: Cube_HorizonRidge_West
+  m_Name: HorizonRidge_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -595,7 +595,7 @@ GameObject:
   - component: {fileID: 5444623934071234474}
   - component: {fileID: 3312480302210111331}
   m_Layer: 0
-  m_Name: Cube_Ground_IcePlane
+  m_Name: Ground_IcePlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -707,7 +707,7 @@ GameObject:
   - component: {fileID: 3555700372876693963}
   - component: {fileID: 2914718321484356535}
   m_Layer: 0
-  m_Name: Cylinder_BuildPoint_Turret_East
+  m_Name: BuildPoint_Turret_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -820,7 +820,7 @@ GameObject:
   - component: {fileID: 3072469365455852280}
   - component: {fileID: 3964646890339777372}
   m_Layer: 0
-  m_Name: Light_FlameHeart_Red
+  m_Name: Light_CinderHeart_Red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -948,7 +948,7 @@ GameObject:
   - component: {fileID: 7725028027789212482}
   - component: {fileID: 3064730473183195266}
   m_Layer: 0
-  m_Name: Cube_ResourceNode_Stone_01
+  m_Name: ResourceNode_Stone_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1057,7 +1057,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3087473939172193004}
   m_Layer: 0
-  m_Name: Marker_PlayerSpawn_Test
+  m_Name: Marker_PlayerSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1122,7 +1122,7 @@ GameObject:
   - component: {fileID: 5856556503298576}
   - component: {fileID: 2474403145514999047}
   m_Layer: 0
-  m_Name: Cylinder_BuildPoint_Wall_North
+  m_Name: BuildPoint_Wall_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1236,7 +1236,7 @@ GameObject:
   - component: {fileID: 7675829939578896029}
   - component: {fileID: 4139552249334510219}
   m_Layer: 0
-  m_Name: Cube_ResourceNode_Wood_01
+  m_Name: ResourceNode_Wood_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

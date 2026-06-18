@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // 모듈형 맵 조각을 GameManager의 초기화 순서에 맞춰 준비하는 매니저입니다.
-    // 중앙 청크는 플레이어 시작, 건축, 전투 테스트가 가능하도록 평평한 안전 구역으로 유지합니다.
+    // GameManager의 초기화 순서에 맞춰 모듈형 맵 청크를 준비하는 매니저입니다.
+    // 중앙 청크는 CinderHeart 방어, 전투, 건축 테스트가 가능하도록 고정된 평지 구역으로 둡니다.
     public sealed class MapManager : MonoBehaviour, IGameInitializable
     {
         [Header("Chunk Settings")]
@@ -159,7 +159,7 @@ namespace Cinderkeep.Gameplay
             Vector3 worldPosition = new Vector3(gridPosition.x * _chunkSize, 0f, gridPosition.y * _chunkSize);
             Quaternion rotation = GetChunkRotation(gridPosition);
 
-            // 맵 조각은 씬 시작 구조물이라 MapManager 아래에 묶어 하이어라키를 정리합니다.
+            // 생성된 청크는 MapManager 아래에 묶어 Hierarchy에서 맵 구조를 쉽게 확인합니다.
             GameObject chunk = Instantiate(prefab, worldPosition, rotation, transform);
             chunk.name = "MapChunk_" + gridPosition.x + "_" + gridPosition.y;
 
