@@ -10,7 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3541862929913638734, guid: 511bc39fca2f03c4e91f2f2117aec7a6, type: 3}
       propertyPath: m_Name
-      value: Wall_4
+      value: PF_Building_Wall_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3541862929913638734, guid: 511bc39fca2f03c4e91f2f2117aec7a6, type: 3}
+      propertyPath: m_TagString
+      value: Build
       objectReference: {fileID: 0}
     - target: {fileID: 4209996200659662324, guid: 511bc39fca2f03c4e91f2f2117aec7a6, type: 3}
       propertyPath: m_LocalPosition.x

@@ -50,7 +50,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
       propertyPath: m_Name
-      value: Wall_3
+      value: PF_Building_Wall_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
+      propertyPath: m_TagString
+      value: Build
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

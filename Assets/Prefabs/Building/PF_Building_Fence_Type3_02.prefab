@@ -10,7 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
       propertyPath: m_Name
-      value: Fence Type3 02
+      value: PF_Building_Fence_Type3_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+      propertyPath: m_TagString
+      value: Build
       objectReference: {fileID: 0}
     - target: {fileID: 471366, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
       propertyPath: m_LocalPosition.x
