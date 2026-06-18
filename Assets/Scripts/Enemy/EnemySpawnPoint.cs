@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
@@ -11,6 +10,7 @@ public enum EnemySpawnStep
 
 // 씬에 배치되는 적 스폰 지점입니다.
 // GameFlowEnemySpawnDirector가 낮/밤/보스 모드와 일차를 알려주면, 이 클래스가 실제 생성 숫자를 계산합니다.
+// 생존 적 추적은 EnemySpawnRuntimeTracker가 맡고, 위치 계산은 EnemySpawnPositionSelector가 맡습니다.
 public sealed class EnemySpawnPoint : MonoBehaviour
 {
     [Header("Managers")]
@@ -54,7 +54,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private bool _showGizmo = true;
     [SerializeField] private Color _gizmoColor = Color.red;
 
-    private readonly List<GameObject> _spawnedEnemies = new List<GameObject>();
+    private readonly EnemySpawnRuntimeTracker _runtimeTracker = new EnemySpawnRuntimeTracker();
+    private readonly EnemySpawnPositionSelector _positionSelector = new EnemySpawnPositionSelector();
     private EnemySpawnMode _spawnMode = EnemySpawnMode.Day;
     private int _currentDay = 1;
     private float _lastSpawnTime;
@@ -170,7 +171,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return false;
         }
 
-        if (GetAliveEnemyCount() >= spawnRule.MaxAliveEnemyCount)
+        if (_runtimeTracker.GetAliveEnemyCount() >= spawnRule.MaxAliveEnemyCount)
         {
             return false;
         }
@@ -199,38 +200,10 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private int GetAllowedSpawnCount(EnemySpawnRule spawnRule)
     {
-        int aliveCount = GetAliveEnemyCount();
+        int aliveCount = _runtimeTracker.GetAliveEnemyCount();
         int remainingCount = spawnRule.MaxAliveEnemyCount - aliveCount;
         int spawnCount = Mathf.Min(spawnRule.SpawnCountPerWave, remainingCount);
         return Mathf.Max(0, spawnCount);
-    }
-
-    private int GetAliveEnemyCount()
-    {
-        RemoveMissingEnemies();
-        int aliveCount = 0;
-
-        for (int i = 0; i < _spawnedEnemies.Count; i++)
-        {
-            GameObject enemyObject = _spawnedEnemies[i];
-            if (enemyObject != null && enemyObject.activeInHierarchy == true)
-            {
-                aliveCount++;
-            }
-        }
-
-        return aliveCount;
-    }
-
-    private void RemoveMissingEnemies()
-    {
-        for (int i = _spawnedEnemies.Count - 1; i >= 0; i--)
-        {
-            if (_spawnedEnemies[i] == null)
-            {
-                _spawnedEnemies.RemoveAt(i);
-            }
-        }
     }
 
     private GameObject GetRandomEnemyPrefab(GameObject[] enemyPrefabs)
@@ -246,10 +219,15 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return;
         }
 
-        Vector3 spawnPosition = GetSpawnPosition(index, totalCount);
-        Quaternion spawnRotation = GetSpawnRotation();
+        Vector3 spawnPosition = _positionSelector.GetSpawnPosition(
+            _centerTransform,
+            _spawnCandidatePoints,
+            _spawnSpacing,
+            index,
+            totalCount);
+        Quaternion spawnRotation = _positionSelector.GetSpawnRotation(_centerTransform);
         GameObject createdEnemy = _gameObjectManager.CreateGameObject(enemyPrefab, spawnPosition, spawnRotation);
-        _spawnedEnemies.Add(createdEnemy);
+        _runtimeTracker.RegisterEnemy(createdEnemy);
         InitializeCreatedEnemy(createdEnemy, enemyDataId);
     }
 
@@ -338,57 +316,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         return _night3Rule;
     }
 
-    private Vector3 GetSpawnPosition(int index, int totalCount)
-    {
-        Vector3 spawnPosition = GetSpawnCenterPosition();
-        float centerOffset = (totalCount - 1) * 0.5f;
-        float xOffset = (index - centerOffset) * _spawnSpacing;
-        spawnPosition.x += xOffset;
-        return spawnPosition;
-    }
-
-    private Vector3 GetSpawnCenterPosition()
-    {
-        Transform candidatePoint = GetRandomSpawnCandidatePoint();
-        if (candidatePoint != null)
-        {
-            return candidatePoint.position;
-        }
-
-        return _centerTransform.position;
-    }
-
-    private Transform GetRandomSpawnCandidatePoint()
-    {
-        if (_spawnCandidatePoints == null)
-        {
-            return null;
-        }
-
-        if (_spawnCandidatePoints.Length == 0)
-        {
-            return null;
-        }
-
-        int randomStartIndex = Random.Range(0, _spawnCandidatePoints.Length);
-        for (int i = 0; i < _spawnCandidatePoints.Length; i++)
-        {
-            int candidateIndex = (randomStartIndex + i) % _spawnCandidatePoints.Length;
-            Transform candidatePoint = _spawnCandidatePoints[candidateIndex];
-            if (candidatePoint != null)
-            {
-                return candidatePoint;
-            }
-        }
-
-        return null;
-    }
-
-    private Quaternion GetSpawnRotation()
-    {
-        return _centerTransform.rotation;
-    }
-
     private void OnValidate()
     {
         ClampSpawnRules();
@@ -448,17 +375,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
         for (int i = 0; i < enemyPrefabs.Length; i++)
         {
-            Vector3 position = GetGizmoPosition(centerPosition, i, enemyPrefabs.Length);
+            Vector3 position = _positionSelector.GetGizmoPosition(centerPosition, _spawnSpacing, i, enemyPrefabs.Length);
             Gizmos.DrawWireSphere(position, 0.25f);
         }
-    }
-
-    private Vector3 GetGizmoPosition(Vector3 centerPosition, int index, int totalCount)
-    {
-        float centerOffset = (totalCount - 1) * 0.5f;
-        float xOffset = (index - centerOffset) * _spawnSpacing;
-        Vector3 position = centerPosition;
-        position.x += xOffset;
-        return position;
     }
 }
