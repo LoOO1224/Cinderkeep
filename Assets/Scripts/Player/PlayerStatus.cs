@@ -1,7 +1,8 @@
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // 플레이어의 체력과 스태미나를 관리하는 컴포넌트입니다.
-// 이동 입력과 HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산만 담당합니다.
+// 이동 입력과 HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산과 사망 처리만 담당합니다.
 public sealed class PlayerStatus : MonoBehaviour
 {
     [Header("Health")]
@@ -16,6 +17,7 @@ public sealed class PlayerStatus : MonoBehaviour
     [SerializeField] private float _exhaustedRecoveryPoint = 30f;
 
     private bool _isExhausted;
+    private bool _isGameOverRequested;
     private PlayerMovement _playerMovement;
 
     public float CurrentHealth
@@ -108,10 +110,15 @@ public sealed class PlayerStatus : MonoBehaviour
             return;
         }
 
+        if (amount <= 0f)
+        {
+            return;
+        }
+
         _health -= amount;
         _health = Mathf.Max(_health, 0f);
 
-        Debug.Log("[PlayerStatus] 피해를 받았습니다. 현재 체력: " + _health + " / " + _maxHealth);
+        Debug.Log("[PlayerStatus] 피해: " + amount + ", 현재 체력: " + _health + " / " + _maxHealth);
 
         if (IsDead() == true)
         {
@@ -122,6 +129,11 @@ public sealed class PlayerStatus : MonoBehaviour
     public void Heal(float amount)
     {
         if (IsDead() == true)
+        {
+            return;
+        }
+
+        if (amount <= 0f)
         {
             return;
         }
@@ -206,6 +218,19 @@ public sealed class PlayerStatus : MonoBehaviour
 
     private void ProcessDeath()
     {
-        Debug.LogWarning("[PlayerStatus] 플레이어 사망 처리 진입점입니다. 이후 GameOver UI와 연결합니다.");
+        if (_isGameOverRequested == true)
+        {
+            return;
+        }
+
+        _isGameOverRequested = true;
+        Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 게임 오버를 요청합니다.");
+
+        if (GameManager.Inst == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.EndGame();
     }
 }
