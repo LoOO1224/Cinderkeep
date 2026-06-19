@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
 
-// 민석님 Enemy HP 작업을 기존 EnemyStatus 구조와 충돌하지 않게 연결하는 보조 컴포넌트입니다.
-// 실제 체력 원본은 EnemyStatus가 담당하고, 이 스크립트는 테스트 호출과 HUD 갱신을 돕습니다.
-// 기준: 새 체력 로직은 이 파일에 추가하지 않고 EnemyStatus를 기준으로 작업합니다.
-// 이 컴포넌트는 기존 작업 호환 여부를 확인한 뒤 EnemyStatus 기준으로 흡수하거나 제거할 예정입니다.
+// 기존 Enemy HP 작업을 EnemyStatus 기준 구조와 연결하는 호환용 컴포넌트입니다.
+// 기준: 적 체력 원본은 EnemyStatus입니다.
+// 이 클래스는 체력을 직접 보관하지 않고 EnemyStatus로 요청을 전달합니다.
+// 새 체력 기능, HUD 갱신, 사망 처리는 EnemyStatus에 추가합니다.
 public sealed class EnemyHp : MonoBehaviour
 {
     [SerializeField] private EnemyStatus _targetEnemyStatus;
-    [SerializeField] private EnemyHud _enemyHud;
 
     private void Awake()
     {
         ConnectComponents();
-        RefreshHud();
     }
 
     public void TakeDamage(int damage)
@@ -30,10 +28,19 @@ public sealed class EnemyHp : MonoBehaviour
         }
 
         _targetEnemyStatus.TakeDamage(damage);
-        RefreshHud();
     }
 
     public int GetCurHp()
+    {
+        return GetCurrentHp();
+    }
+
+    public int GetMaxHp()
+    {
+        return GetMaximumHp();
+    }
+
+    public int GetCurrentHp()
     {
         if (_targetEnemyStatus == null)
         {
@@ -43,7 +50,7 @@ public sealed class EnemyHp : MonoBehaviour
         return Mathf.RoundToInt(_targetEnemyStatus.GetCurrentHealth());
     }
 
-    public int GetMaxHp()
+    public int GetMaximumHp()
     {
         if (_targetEnemyStatus == null)
         {
@@ -55,7 +62,12 @@ public sealed class EnemyHp : MonoBehaviour
 
     public void PrintHp()
     {
-        Debug.Log(gameObject.name + " 현재 체력 : " + GetCurHp() + " / 최대 체력 : " + GetMaxHp());
+        PrintCurrentHp();
+    }
+
+    public void PrintCurrentHp()
+    {
+        Debug.Log(gameObject.name + " 현재 체력 : " + GetCurrentHp() + " / 최대 체력 : " + GetMaximumHp());
     }
 
     private void ConnectComponents()
@@ -64,20 +76,5 @@ public sealed class EnemyHp : MonoBehaviour
         {
             _targetEnemyStatus = GetComponent<EnemyStatus>();
         }
-
-        if (_enemyHud == null)
-        {
-            _enemyHud = GetComponentInChildren<EnemyHud>();
-        }
-    }
-
-    private void RefreshHud()
-    {
-        if (_enemyHud == null)
-        {
-            return;
-        }
-
-        _enemyHud.RefreshHealth(GetCurHp(), GetMaxHp());
     }
 }

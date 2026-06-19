@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 // 몬스터 머리 위 체력 UI를 표시하는 컴포넌트입니다.
-// 체력 계산은 EnemyStatus가 담당하고, 이 스크립트는 화면 표시만 담당합니다.
+// 체력 계산과 사망 처리는 EnemyStatus가 담당하고, 이 스크립트는 화면 표시만 담당합니다.
 public sealed class EnemyHud : MonoBehaviour
 {
     [SerializeField] private GameObject _hudRoot;
