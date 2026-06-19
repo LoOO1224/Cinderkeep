@@ -12,10 +12,13 @@ public sealed class EnemyStatus : MonoBehaviour
     public static event Action<EnemyStatus> EnemyDamaged;
 
     [Header("Health")]
+    [Tooltip("몬스터 최대 체력입니다. EnemyData로 초기화되며, 데이터가 없을 때 fallback 값으로 사용됩니다.")]
     [SerializeField] private float _maxHealth = 1f;
+    [Tooltip("체력이 0이 되었을 때 오브젝트를 비활성화할지 결정합니다.")]
     [SerializeField] private bool _deactivateOnDeath = true;
 
     [Header("Connected Components")]
+    [Tooltip("몬스터 머리 위 HP UI입니다. 비어 있으면 자식 오브젝트에서 찾습니다.")]
     [SerializeField] private EnemyHud _enemyHud;
 
     private EnemyDetector _enemyDetector;

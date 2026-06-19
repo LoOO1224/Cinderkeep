@@ -10,13 +10,19 @@ namespace Cinderkeep.Gameplay
     public sealed class MapManager : MonoBehaviour, IGameInitializable
     {
         [Header("Chunk Settings")]
+        [Tooltip("GameManager 초기화 시 자동으로 모듈형 맵을 생성할지 결정합니다.")]
         [SerializeField] private bool _generateOnInitialize;
+        [Tooltip("청크 하나의 월드 크기입니다. 청크 간 배치 간격으로 사용됩니다.")]
         [SerializeField] private float _chunkSize = 120f;
+        [Tooltip("중앙 청크 기준으로 몇 칸까지 맵을 생성할지 결정합니다. 1이면 3x3 구조입니다.")]
         [SerializeField] private int _mapRadius = 2;
 
         [Header("Chunk Prefabs")]
+        [Tooltip("중앙에 배치할 평평한 코어 청크 프리팹입니다.")]
         [SerializeField] private GameObject _centerChunkPrefab;
+        [Tooltip("중앙과 외곽 사이에 랜덤 배치할 일반 청크 프리팹 목록입니다.")]
         [SerializeField] private List<GameObject> _normalChunkPrefabs = new List<GameObject>();
+        [Tooltip("맵 바깥쪽에 랜덤 배치할 외곽 청크 프리팹 목록입니다.")]
         [SerializeField] private List<GameObject> _edgeChunkPrefabs = new List<GameObject>();
 
         private Dictionary<Vector2Int, GameObject> _spawnedChunks = new Dictionary<Vector2Int, GameObject>();

@@ -7,8 +7,11 @@ public sealed class EnemyAttack : MonoBehaviour
 {
     private const string CinderHeartTag = "CinderHeart";
 
+    [Tooltip("플레이어나 일반 피해 대상에게 줄 기본 공격 피해량입니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _attackDamage;
+    [Tooltip("CinderHeart를 공격할 때 사용할 피해량입니다.")]
     [SerializeField] private float _cinderHeartAttackDamage = 10f;
+    [Tooltip("공격 후 다음 공격까지 기다리는 시간입니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _attackInterval = 1f;
 
     private float _lastAttackTime;

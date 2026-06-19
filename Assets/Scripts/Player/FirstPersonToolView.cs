@@ -5,15 +5,21 @@
 public sealed class FirstPersonToolView : MonoBehaviour
 {
     [Header("Connected Components")]
+    [Tooltip("현재 장착 도구 정보를 제공하는 컴포넌트입니다.")]
     [SerializeField] private PlayerToolController _playerToolController;
 
     [Header("Tool View Objects")]
+    [Tooltip("1번 도끼 선택 시 보여줄 1인칭 도구 오브젝트입니다.")]
     [SerializeField] private GameObject _axeView;
+    [Tooltip("2번 곡괭이 선택 시 보여줄 1인칭 도구 오브젝트입니다.")]
     [SerializeField] private GameObject _pickaxeView;
+    [Tooltip("3번 맨손 선택 시 보여줄 1인칭 손 오브젝트입니다.")]
     [SerializeField] private GameObject _handView;
 
     [Header("Simple Swing")]
+    [Tooltip("도구를 휘두를 때 회전하는 최대 각도입니다.")]
     [SerializeField] private float _swingAngle = 22f;
+    [Tooltip("도구 휘두르기 속도입니다.")]
     [SerializeField] private float _swingSpeed = 18f;
 
     private Transform _currentToolTransform;

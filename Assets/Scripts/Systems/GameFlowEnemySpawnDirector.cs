@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
 {
     [Header("Enemy Spawn")]
+    [Tooltip("GameFlowController의 현재 페이즈에 맞춰 켜고 끌 적 스폰 지점 목록입니다.")]
     [SerializeField] private EnemySpawnPoint[] _enemySpawnPoints;
 
     private GameObjectManager _gameObjectManager;

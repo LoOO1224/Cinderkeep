@@ -7,14 +7,19 @@ using UnityEngine;
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
     [Header("Day Loop Time")]
+    [Tooltip("낮 페이즈 지속 시간입니다. 180이면 3분입니다.")]
     [SerializeField] private float _dayDuration = 180f;
+    [Tooltip("밤 페이즈 지속 시간입니다. 120이면 2분입니다.")]
     [SerializeField] private float _nightDuration = 120f;
+    [Tooltip("밤이 끝난 뒤 다음 날로 넘어가기 전 보상 시간을 의미합니다.")]
     [SerializeField] private float _morningRewardDuration = 15f;
 
     [Header("Boss Flow Time")]
+    [Tooltip("마지막 날 밤 이후 보스 접근 페이즈가 지속되는 시간입니다.")]
     [SerializeField] private float _bossApproachDuration = 180f;
 
     [Header("Enemy Spawn Director")]
+    [Tooltip("현재 낮, 밤, 보스 페이즈에 맞춰 적 스폰 지점들을 켜고 끄는 컴포넌트입니다.")]
     [SerializeField] private GameFlowEnemySpawnDirector _enemySpawnDirector;
 
     private GameManager _gameManager;

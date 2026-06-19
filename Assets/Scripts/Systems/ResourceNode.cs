@@ -6,10 +6,15 @@ using UnityEngine;
 public sealed class ResourceNode : MonoBehaviour, IInteractable
 {
     [Header("Resource Data")]
+    [Tooltip("지급할 자원 ID입니다. PlayerModel의 ResourceWood, ResourceStone 같은 값과 맞춰 사용합니다.")]
     [SerializeField] private string _resourceId = PlayerModel.ResourceStone;
+    [Tooltip("한 번 채집하거나 주웠을 때 지급할 자원 수량입니다.")]
     [SerializeField] private int _amount = 1;
+    [Tooltip("채집에 필요한 도구입니다. None이면 E로 줍는 자원입니다.")]
     [SerializeField] private GatherToolType _requiredToolType = GatherToolType.None;
+    [Tooltip("채집 후 이 오브젝트를 비활성화할지 결정합니다.")]
     [SerializeField] private bool _disableAfterGather = true;
+    [Tooltip("현재 이 자원을 채집하거나 주울 수 있는지 결정합니다.")]
     [SerializeField] private bool _canInteract = true;
 
     public string ResourceId

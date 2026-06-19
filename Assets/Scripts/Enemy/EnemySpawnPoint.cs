@@ -14,44 +14,67 @@ public enum EnemySpawnStep
 public sealed class EnemySpawnPoint : MonoBehaviour
 {
     [Header("Managers")]
+    [Tooltip("적 프리팹을 생성하고 InstanceId를 부여하는 관리자입니다.")]
     [SerializeField] private GameObjectManager _gameObjectManager;
+    [Tooltip("생성된 적에게 EnemyStatus, EnemyAttack, EnemyMovement 같은 런타임 컴포넌트를 연결합니다.")]
     [SerializeField] private EnemyLoopConnector _enemyLoopConnector;
 
     [Header("Spawn Point")]
+    [Tooltip("스폰 지점을 구분하기 위한 번호입니다. 디버깅과 QA 기록용입니다.")]
     [SerializeField] private int _spawnPointId;
+    [Tooltip("이 스폰 지점이 현재 적을 생성할 수 있는지 결정합니다.")]
     [SerializeField] private bool _isActive = true;
 
     [Header("Spawn Step")]
+    [Tooltip("현재 스폰 지점이 사용할 적 단계입니다. 1단계는 기본, 2단계는 강화, 3단계는 특수 후보입니다.")]
     [SerializeField] private EnemySpawnStep _spawnStep = EnemySpawnStep.Step1;
+    [Tooltip("1단계 적에게 적용할 EnemyData ID입니다. enemies.json의 _id와 같아야 합니다.")]
     [SerializeField] private string _step1EnemyDataId = "ice_zombie";
+    [Tooltip("2단계 적에게 적용할 EnemyData ID입니다. enemies.json의 _id와 같아야 합니다.")]
     [SerializeField] private string _step2EnemyDataId = "ice_zombie";
+    [Tooltip("3단계 적에게 적용할 EnemyData ID입니다. enemies.json의 _id와 같아야 합니다.")]
     [SerializeField] private string _step3EnemyDataId = "ice_zombie";
 
     [Header("Enemy Prefabs")]
+    [Tooltip("1단계에서 랜덤으로 뽑을 적 프리팹 목록입니다.")]
     [SerializeField] private GameObject[] _step1EnemyPrefabs;
+    [Tooltip("2단계에서 랜덤으로 뽑을 적 프리팹 목록입니다.")]
     [SerializeField] private GameObject[] _step2EnemyPrefabs;
+    [Tooltip("3단계에서 랜덤으로 뽑을 적 프리팹 목록입니다.")]
     [SerializeField] private GameObject[] _step3EnemyPrefabs;
 
     [Header("Day Spawn Rules")]
+    [Tooltip("1일차 낮 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _day1Rule = new EnemySpawnRule(25f, 2, 9, true);
+    [Tooltip("2일차 낮 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _day2Rule = new EnemySpawnRule(20f, 2, 12, true);
+    [Tooltip("3일차 낮 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _day3Rule = new EnemySpawnRule(15f, 3, 16, true);
 
     [Header("Night Spawn Rules")]
+    [Tooltip("1일차 밤 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _night1Rule = new EnemySpawnRule(12f, 2, 12, true);
+    [Tooltip("2일차 밤 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _night2Rule = new EnemySpawnRule(8f, 3, 18, true);
+    [Tooltip("3일차 밤 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _night3Rule = new EnemySpawnRule(6f, 4, 24, true);
 
     [Header("Boss Spawn Rule")]
+    [Tooltip("보스 접근 또는 보스 전투 페이즈에서 사용할 스폰 규칙입니다.")]
     [SerializeField] private EnemySpawnRule _bossRule = new EnemySpawnRule(5f, 4, 28, true);
 
     [Header("Spawn Position")]
+    [Tooltip("한 웨이브에서 여러 적이 동시에 생성될 때 서로 벌어지는 간격입니다.")]
     [SerializeField] private float _spawnSpacing = 1.2f;
+    [Tooltip("후보 지점이 비어 있을 때 기준으로 사용할 중심 위치입니다.")]
     [SerializeField] private Transform _centerTransform;
+    [Tooltip("실제로 적이 생성될 수 있는 후보 위치들입니다. 비어 있으면 Center Transform 위치를 사용합니다.")]
     [SerializeField] private Transform[] _spawnCandidatePoints;
 
     [Header("Gizmo")]
+    [Tooltip("Scene View에서 스폰 후보 위치를 확인할지 결정합니다.")]
     [SerializeField] private bool _showGizmo = true;
+    [Tooltip("Scene View에 표시할 스폰 위치 Gizmo 색상입니다.")]
     [SerializeField] private Color _gizmoColor = Color.red;
 
     private readonly EnemySpawnRuntimeTracker _runtimeTracker = new EnemySpawnRuntimeTracker();

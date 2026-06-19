@@ -8,10 +8,15 @@ public sealed class EnemyBrain : MonoBehaviour
     private const string BuildTag = "Build";
     private const string CinderHeartTag = "CinderHeart";
 
+    [Tooltip("플레이어 감지 결과를 가져오는 컴포넌트입니다.")]
     [SerializeField] private EnemyDetector _enemyDetector;
+    [Tooltip("실제 피해 적용과 공격 쿨타임을 담당하는 컴포넌트입니다.")]
     [SerializeField] private EnemyAttack _enemyAttack;
+    [Tooltip("플레이어를 감지하지 못했을 때 공격할 CinderHeart 피해 대상입니다.")]
     [SerializeField] private Damageable _cinderHeartDamageable;
+    [Tooltip("플레이어와 구조물을 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _attackDistance = 2.3f;
+    [Tooltip("CinderHeart를 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _cinderHeartAttackDistance = 3f;
 
     private Damageable _currentAttackTarget;

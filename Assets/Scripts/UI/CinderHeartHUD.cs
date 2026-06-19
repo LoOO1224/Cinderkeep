@@ -7,16 +7,21 @@ using UnityEngine.UI;
 public sealed class CinderHeartHUD : MonoBehaviour
 {
     [Header("Connected Component")]
+    [Tooltip("체력을 표시할 CinderHeart 컴포넌트입니다.")]
     [SerializeField] private CinderHeart _targetCinderHeart;
 
     [Header("Root")]
+    [Tooltip("HUD 표시와 숨김을 제어하는 CanvasGroup입니다.")]
     [SerializeField] private CanvasGroup _canvasGroup;
 
     [Header("Health UI")]
+    [Tooltip("CinderHeart 체력 비율을 표시하는 Slider입니다.")]
     [SerializeField] private Slider _healthSlider;
+    [Tooltip("CinderHeart 체력을 숫자로 표시하는 TMP 텍스트입니다.")]
     [SerializeField] private TMP_Text _healthText;
 
     [Header("Visibility")]
+    [Tooltip("체력이 줄지 않아도 항상 표시할지 결정합니다.")]
     [SerializeField] private bool _isAlwaysVisible = true;
 
     private void Start()

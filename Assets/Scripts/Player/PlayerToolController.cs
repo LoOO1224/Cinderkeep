@@ -5,11 +5,15 @@ using UnityEngine;
 public sealed class PlayerToolController : MonoBehaviour
 {
     [Header("Tool Keys")]
+    [Tooltip("도끼를 장착하는 입력 키입니다.")]
     [SerializeField] private KeyCode _axeKey = KeyCode.Alpha1;
+    [Tooltip("곡괭이를 장착하는 입력 키입니다.")]
     [SerializeField] private KeyCode _pickaxeKey = KeyCode.Alpha2;
+    [Tooltip("맨손으로 전환하는 입력 키입니다.")]
     [SerializeField] private KeyCode _emptyHandKey = KeyCode.Alpha3;
 
     [Header("Current Tool")]
+    [Tooltip("현재 플레이어가 장착한 도구입니다.")]
     [SerializeField] private GatherToolType _currentToolType = GatherToolType.Axe;
 
     public GatherToolType CurrentToolType

@@ -7,13 +7,16 @@ public sealed class PlayerView : MonoBehaviour
 {
     [Header("View Settings")]
     [FormerlySerializedAs("mouseSensitivity")]
+    [Tooltip("마우스 시점 회전 민감도입니다. 값이 클수록 더 빠르게 회전합니다.")]
     [SerializeField] private float _mouseSensitivity = 285f;
 
     [Header("Connected Objects")]
     [FormerlySerializedAs("playerBody")]
     [FormerlySerializedAs("Transform_PlayerBody")]
+    [Tooltip("좌우 회전이 적용될 플레이어 몸체 Transform입니다.")]
     [SerializeField] private Transform _playerBody;
     [FormerlySerializedAs("Transform_Camera")]
+    [Tooltip("상하 회전이 적용될 1인칭 카메라 Transform입니다.")]
     [SerializeField] private Transform _cameraTransform;
 
     private float _xRotation;

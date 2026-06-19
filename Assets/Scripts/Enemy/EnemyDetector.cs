@@ -6,6 +6,7 @@ using UnityEngine;
 // 감지 결과만 들고 있고, 이동과 공격은 EnemyMovement와 EnemyBrain이 처리합니다.
 public sealed class EnemyDetector : MonoBehaviour
 {
+    [Tooltip("몬스터가 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
     [SerializeField] private float _viewAngle = 90f;
 
     private const string PlayerTag = "Player";

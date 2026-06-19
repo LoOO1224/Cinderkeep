@@ -4,6 +4,7 @@ using UnityEngine;
 // 무기, 몬스터 공격 판정, 함정 오브젝트에 붙여 재사용할 수 있습니다.
 public sealed class DamageDealer : MonoBehaviour
 {
+    [Tooltip("이 공격 판정이 대상에게 전달할 피해량입니다.")]
     [SerializeField] private float _damage = 40f;
 
     public float GetDamageValue()

@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class Damageable : MonoBehaviour
 {
     [Header("Fallback Health")]
+    [Tooltip("역할 컴포넌트가 없을 때만 사용하는 fallback 체력입니다. 적은 EnemyStatus를 기준으로 사용합니다.")]
     [SerializeField] private float _maxHealth = 100f;
 
     private PlayerStatus _playerStatus;

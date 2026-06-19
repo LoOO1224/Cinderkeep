@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class BuildingHp : MonoBehaviour
 {
     [Header("Health")]
+    [Tooltip("건축물 최대 체력입니다. 0이 되면 파괴됩니다.")]
     [SerializeField] private float _maxHp = 100f;
 
     private float _currentHp;

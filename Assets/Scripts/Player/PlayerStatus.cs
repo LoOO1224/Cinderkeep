@@ -6,14 +6,21 @@ using UnityEngine;
 public sealed class PlayerStatus : MonoBehaviour
 {
     [Header("Health")]
+    [Tooltip("현재 플레이어 체력입니다. 0이 되면 게임 오버 흐름으로 연결됩니다.")]
     [SerializeField] private float _health = 100f;
+    [Tooltip("플레이어 최대 체력입니다.")]
     [SerializeField] private float _maxHealth = 100f;
 
     [Header("Stamina")]
+    [Tooltip("현재 플레이어 스태미나입니다. 달리면 감소하고 멈추면 회복됩니다.")]
     [SerializeField] private float _stamina = 150f;
+    [Tooltip("플레이어 최대 스태미나입니다.")]
     [SerializeField] private float _maxStamina = 150f;
+    [Tooltip("달리지 않을 때 초당 회복되는 스태미나 양입니다.")]
     [SerializeField] private float _staminaRecoveryRate = 15f;
+    [Tooltip("달리는 동안 초당 소모되는 스태미나 양입니다.")]
     [SerializeField] private float _staminaConsumeRate = 15f;
+    [Tooltip("스태미나가 고갈된 뒤 다시 달릴 수 있게 되는 회복 기준점입니다.")]
     [SerializeField] private float _exhaustedRecoveryPoint = 30f;
 
     private bool _isExhausted;

@@ -6,9 +6,11 @@ using UnityEngine;
 public sealed class CinderHeart : MonoBehaviour
 {
     [Header("Health")]
+    [Tooltip("CinderHeart 최대 체력입니다. 0이 되면 게임 오버가 됩니다.")]
     [SerializeField] private float _maxHealth = 500f;
 
     [Header("Damage Test")]
+    [Tooltip("디버그용 테스트 피해량입니다. 실제 적 공격 피해는 EnemyAttack에서 조절합니다.")]
     [SerializeField] private float _testDamage = 1f;
 
     private float _currentHealth;

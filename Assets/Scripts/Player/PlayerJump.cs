@@ -6,10 +6,12 @@ using UnityEngine.Serialization;
 public sealed class PlayerJump : MonoBehaviour
 {
     [FormerlySerializedAs("m_jumpForce")]
+    [Tooltip("Space 입력 시 플레이어에게 적용되는 점프 힘입니다.")]
     [SerializeField] private float _jumpForce = 5f;
 
     [Header("Connected Components")]
     [FormerlySerializedAs("PlayerMovement_PlayerMovement")]
+    [Tooltip("실제 점프 이동을 처리하는 PlayerMovement입니다. 비어 있으면 같은 오브젝트에서 찾습니다.")]
     [SerializeField] private PlayerMovement _playerMovement;
 
     private void Start()

@@ -5,9 +5,13 @@ using UnityEngine.AI;
 
 public sealed class EnemyMovement : MonoBehaviour
 {
+    [Tooltip("플레이어 감지 결과를 제공하는 컴포넌트입니다.")]
     [SerializeField] private EnemyDetector _enemyDetector;
+    [Tooltip("플레이어를 못 봤을 때 몬스터가 향하는 CinderHeart Transform입니다.")]
     [SerializeField] private Transform _cinderHeartTarget;
+    [Tooltip("몬스터 이동 속도입니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _moveSpeed;
+    [Tooltip("목표와 이 거리 안에 들어오면 이동을 멈춥니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _stopDistance;
 
     private const float PathUpdateInterval = 0.2f;

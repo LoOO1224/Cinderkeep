@@ -6,10 +6,14 @@ using UnityEngine.Serialization;
 public sealed class PlayerMovement : MonoBehaviour
 {
     [FormerlySerializedAs("moveSpeed")]
+    [Tooltip("플레이어 기본 걷기 속도입니다.")]
     [SerializeField] private float _moveSpeed = 5f;
     [FormerlySerializedAs("runSpeed")]
+    [Tooltip("Shift를 누르고 이동할 때 적용되는 달리기 속도입니다.")]
     [SerializeField] private float _runSpeed = 10f;
+    [Tooltip("플레이어에게 적용되는 중력 값입니다. 음수 값이 아래 방향입니다.")]
     [SerializeField] private float _gravity = -20f;
+    [Tooltip("땅에 붙어 있을 때 아래로 살짝 눌러주는 속도입니다. CharacterController가 지면을 안정적으로 인식하게 돕습니다.")]
     [SerializeField] private float _groundStickVelocity = -2f;
 
     private PlayerStatus _playerStatus;

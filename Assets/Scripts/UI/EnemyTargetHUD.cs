@@ -7,13 +7,17 @@ using UnityEngine.UI;
 public sealed class EnemyTargetHUD : MonoBehaviour
 {
     [Header("Root")]
+    [Tooltip("최근 피격된 적 HP HUD의 표시와 숨김을 제어합니다.")]
     [SerializeField] private CanvasGroup _canvasGroup;
 
     [Header("Health UI")]
+    [Tooltip("최근 피격된 적 체력 비율을 표시하는 Slider입니다.")]
     [SerializeField] private Slider _healthSlider;
+    [Tooltip("최근 피격된 적 체력을 숫자로 표시하는 TMP 텍스트입니다.")]
     [SerializeField] private TMP_Text _healthText;
 
     [Header("Visibility")]
+    [Tooltip("적을 공격한 뒤 HP HUD를 유지할 시간입니다.")]
     [SerializeField] private float _visibleSeconds = 3f;
 
     private EnemyStatus _currentEnemyStatus;

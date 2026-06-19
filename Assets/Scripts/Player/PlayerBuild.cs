@@ -5,9 +5,12 @@ public sealed class PlayerBuild : MonoBehaviour
 {
     [FormerlySerializedAs("Prefab_Fence")]
     [FormerlySerializedAs("GameObject_BuildingPrefab")]
+    [Tooltip("검증용으로 플레이어 앞에 생성할 건축 프리팹입니다.")]
     [SerializeField] private GameObject _buildingPrefab;
     [FormerlySerializedAs("SpawnDistance")]
+    [Tooltip("플레이어 앞에서 건축물이 생성될 거리입니다.")]
     [SerializeField] private float _spawnDistance = 3f;
+    [Tooltip("검증용 건축물을 생성하는 입력 키입니다.")]
     [SerializeField] private KeyCode _buildKey = KeyCode.B;
 
     private void Update()

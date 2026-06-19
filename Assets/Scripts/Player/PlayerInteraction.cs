@@ -6,12 +6,16 @@ using UnityEngine.Serialization;
 public sealed class PlayerInteraction : MonoBehaviour
 {
     [Header("Interaction Settings")]
+    [Tooltip("E 상호작용이 닿는 최대 거리입니다.")]
     [SerializeField] private float _interactionDistance = 3f;
+    [Tooltip("E 상호작용으로 감지할 레이어입니다.")]
     [SerializeField] private LayerMask _interactionLayerMask;
+    [Tooltip("상호작용 입력 키입니다.")]
     [SerializeField] private KeyCode _interactionKey = KeyCode.E;
 
     [Header("Connected Objects")]
     [FormerlySerializedAs("Transform_Camera")]
+    [Tooltip("상호작용 Ray가 시작되는 카메라 Transform입니다. 비어 있으면 자식 카메라를 찾습니다.")]
     [SerializeField] private Transform _cameraTransform;
 
     private void Start()
