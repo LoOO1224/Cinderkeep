@@ -1,0 +1,54 @@
+{
+  "Items": [
+    {
+      "_id": "Wood",
+      "_displayName": "Wood",
+      "_resourceType": "Material",
+      "_tier": 1,
+      "_description": "Basic material used for early walls, towers, and tool handles.",
+      "_iconKey": "Icon_Resource_Wood",
+      "_prefabKey": "PF_ResourceDrop_Wood",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "Stone",
+      "_displayName": "Stone",
+      "_resourceType": "Material",
+      "_tier": 1,
+      "_description": "Basic material used for stone tools and tower foundations.",
+      "_iconKey": "Icon_Resource_Stone",
+      "_prefabKey": "PF_ResourceDrop_Stone",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "Iron",
+      "_displayName": "Iron",
+      "_resourceType": "Metal",
+      "_tier": 2,
+      "_description": "Metal material used for stronger tools, weapons, armor, and buildings.",
+      "_iconKey": "Icon_Resource_Iron",
+      "_prefabKey": "PF_ResourceDrop_Iron",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "Gold",
+      "_displayName": "Gold",
+      "_resourceType": "Metal",
+      "_tier": 3,
+      "_description": "Fast progression material used for quick tools and special building tiers.",
+      "_iconKey": "Icon_Resource_Gold",
+      "_prefabKey": "PF_ResourceDrop_Gold",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "Adamantium",
+      "_displayName": "Adamantium",
+      "_resourceType": "Metal",
+      "_tier": 4,
+      "_description": "Late progression material used for the strongest equipment and defenses.",
+      "_iconKey": "Icon_Resource_Adamantium",
+      "_prefabKey": "PF_ResourceDrop_Adamantium",
+      "_maxStackCount": 999
+    }
+  ]
+}

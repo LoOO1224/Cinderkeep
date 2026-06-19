@@ -595,6 +595,66 @@
           "_amount": 3
         }
       ]
+    },
+    {
+      "_id": "recipe_cinderheart_tier_2",
+      "_displayName": "Reinforce CinderHeart Tier 2",
+      "_resultDataType": "CinderHeartUpgrade",
+      "_resultItemId": "cinderheart_tier_2",
+      "_resultCount": 1,
+      "_stationType": "CinderHeart",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 8
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 8
+        }
+      ]
+    },
+    {
+      "_id": "recipe_cinderheart_tier_3",
+      "_displayName": "Reinforce CinderHeart Tier 3",
+      "_resultDataType": "CinderHeartUpgrade",
+      "_resultItemId": "cinderheart_tier_3",
+      "_resultCount": 1,
+      "_stationType": "CinderHeart",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Iron",
+          "_amount": 8
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 4
+        }
+      ]
+    },
+    {
+      "_id": "recipe_cinderheart_tier_4",
+      "_displayName": "Reinforce CinderHeart Tier 4",
+      "_resultDataType": "CinderHeartUpgrade",
+      "_resultItemId": "cinderheart_tier_4",
+      "_resultCount": 1,
+      "_stationType": "CinderHeart",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 6
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 6
+        }
+      ]
     }
   ]
 }

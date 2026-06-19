@@ -8,18 +8,38 @@ namespace Cinderkeep.Gameplay
     public sealed class GameDataManager : MonoBehaviour, IGameInitializable
     {
         [SerializeField] private string _enemyDataResourcePath = GameUtil.EnemyDataResourcePath;
+        [SerializeField] private string _resourceDataResourcePath = GameUtil.ResourceDataResourcePath;
+        [SerializeField] private string _harvestNodeDataResourcePath = GameUtil.HarvestNodeDataResourcePath;
         [SerializeField] private string _toolDataResourcePath = GameUtil.ToolDataResourcePath;
         [SerializeField] private string _weaponDataResourcePath = GameUtil.WeaponDataResourcePath;
         [SerializeField] private string _armorDataResourcePath = GameUtil.ArmorDataResourcePath;
         [SerializeField] private string _buildingDataResourcePath = GameUtil.BuildingDataResourcePath;
         [SerializeField] private string _craftingRecipeDataResourcePath = GameUtil.CraftingRecipeDataResourcePath;
+        [SerializeField] private string _enemySpawnRuleDataResourcePath = GameUtil.EnemySpawnRuleDataResourcePath;
+        [SerializeField] private string _gameFlowPhaseDataResourcePath = GameUtil.GameFlowPhaseDataResourcePath;
+        [SerializeField] private string _lootDropDataResourcePath = GameUtil.LootDropDataResourcePath;
+        [SerializeField] private string _cinderHeartUpgradeDataResourcePath = GameUtil.CinderHeartUpgradeDataResourcePath;
+        [SerializeField] private string _statusEffectDataResourcePath = GameUtil.StatusEffectDataResourcePath;
+        [SerializeField] private string _bossDataResourcePath = GameUtil.BossDataResourcePath;
+        [SerializeField] private string _bossPatternDataResourcePath = GameUtil.BossPatternDataResourcePath;
+        [SerializeField] private string _buildingUpgradeDataResourcePath = GameUtil.BuildingUpgradeDataResourcePath;
 
         private readonly Dictionary<string, EnemyData> _enemyDataList = new Dictionary<string, EnemyData>();
+        private readonly Dictionary<string, ResourceData> _resourceDataList = new Dictionary<string, ResourceData>();
+        private readonly Dictionary<string, HarvestNodeData> _harvestNodeDataList = new Dictionary<string, HarvestNodeData>();
         private readonly Dictionary<string, ToolData> _toolDataList = new Dictionary<string, ToolData>();
         private readonly Dictionary<string, WeaponData> _weaponDataList = new Dictionary<string, WeaponData>();
         private readonly Dictionary<string, ArmorData> _armorDataList = new Dictionary<string, ArmorData>();
         private readonly Dictionary<string, BuildingData> _buildingDataList = new Dictionary<string, BuildingData>();
         private readonly Dictionary<string, CraftingRecipeData> _craftingRecipeDataList = new Dictionary<string, CraftingRecipeData>();
+        private readonly Dictionary<string, EnemySpawnRuleData> _enemySpawnRuleDataList = new Dictionary<string, EnemySpawnRuleData>();
+        private readonly Dictionary<string, GameFlowPhaseData> _gameFlowPhaseDataList = new Dictionary<string, GameFlowPhaseData>();
+        private readonly Dictionary<string, LootDropData> _lootDropDataList = new Dictionary<string, LootDropData>();
+        private readonly Dictionary<string, CinderHeartUpgradeData> _cinderHeartUpgradeDataList = new Dictionary<string, CinderHeartUpgradeData>();
+        private readonly Dictionary<string, StatusEffectData> _statusEffectDataList = new Dictionary<string, StatusEffectData>();
+        private readonly Dictionary<string, BossData> _bossDataList = new Dictionary<string, BossData>();
+        private readonly Dictionary<string, BossPatternData> _bossPatternDataList = new Dictionary<string, BossPatternData>();
+        private readonly Dictionary<string, BuildingUpgradeData> _buildingUpgradeDataList = new Dictionary<string, BuildingUpgradeData>();
         private bool _isInitialized;
 
         public IReadOnlyDictionary<string, EnemyData> EnemyDataList
@@ -35,6 +55,22 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _isInitialized;
+            }
+        }
+
+        public IReadOnlyDictionary<string, ResourceData> ResourceDataList
+        {
+            get
+            {
+                return _resourceDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, HarvestNodeData> HarvestNodeDataList
+        {
+            get
+            {
+                return _harvestNodeDataList;
             }
         }
 
@@ -75,6 +111,70 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _craftingRecipeDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, EnemySpawnRuleData> EnemySpawnRuleDataList
+        {
+            get
+            {
+                return _enemySpawnRuleDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, GameFlowPhaseData> GameFlowPhaseDataList
+        {
+            get
+            {
+                return _gameFlowPhaseDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, LootDropData> LootDropDataList
+        {
+            get
+            {
+                return _lootDropDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, CinderHeartUpgradeData> CinderHeartUpgradeDataList
+        {
+            get
+            {
+                return _cinderHeartUpgradeDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, StatusEffectData> StatusEffectDataList
+        {
+            get
+            {
+                return _statusEffectDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, BossData> BossDataList
+        {
+            get
+            {
+                return _bossDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, BossPatternData> BossPatternDataList
+        {
+            get
+            {
+                return _bossPatternDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, BuildingUpgradeData> BuildingUpgradeDataList
+        {
+            get
+            {
+                return _buildingUpgradeDataList;
             }
         }
 
@@ -126,6 +226,84 @@ namespace Cinderkeep.Gameplay
             }
 
             return _enemyDataList[id];
+        }
+
+        public void LoadResourceData(string resourcePath)
+        {
+            _resourceDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: resource JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            ResourceDataCatalog catalog = JsonUtility.FromJson<ResourceDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: resource JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_resourceDataList, catalog.Items[i]);
+            }
+        }
+
+        public ResourceData GetResource(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_resourceDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _resourceDataList[id];
+        }
+
+        public void LoadHarvestNodeData(string resourcePath)
+        {
+            _harvestNodeDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: harvest node JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            HarvestNodeDataCatalog catalog = JsonUtility.FromJson<HarvestNodeDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: harvest node JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_harvestNodeDataList, catalog.Items[i]);
+            }
+        }
+
+        public HarvestNodeData GetHarvestNode(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_harvestNodeDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _harvestNodeDataList[id];
         }
 
         public void LoadToolData(string resourcePath)
@@ -323,9 +501,331 @@ namespace Cinderkeep.Gameplay
             return _craftingRecipeDataList[id];
         }
 
+        public void LoadEnemySpawnRuleData(string resourcePath)
+        {
+            _enemySpawnRuleDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: enemy spawn rule JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            EnemySpawnRuleDataCatalog catalog = JsonUtility.FromJson<EnemySpawnRuleDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: enemy spawn rule JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_enemySpawnRuleDataList, catalog.Items[i]);
+            }
+        }
+
+        public EnemySpawnRuleData GetEnemySpawnRule(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_enemySpawnRuleDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _enemySpawnRuleDataList[id];
+        }
+
+        public void LoadGameFlowPhaseData(string resourcePath)
+        {
+            _gameFlowPhaseDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: game flow phase JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            GameFlowPhaseDataCatalog catalog = JsonUtility.FromJson<GameFlowPhaseDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: game flow phase JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_gameFlowPhaseDataList, catalog.Items[i]);
+            }
+        }
+
+        public GameFlowPhaseData GetGameFlowPhase(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_gameFlowPhaseDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _gameFlowPhaseDataList[id];
+        }
+
+        public void LoadLootDropData(string resourcePath)
+        {
+            _lootDropDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: loot drop JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            LootDropDataCatalog catalog = JsonUtility.FromJson<LootDropDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: loot drop JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_lootDropDataList, catalog.Items[i]);
+            }
+        }
+
+        public LootDropData GetLootDrop(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_lootDropDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _lootDropDataList[id];
+        }
+
+        public void LoadCinderHeartUpgradeData(string resourcePath)
+        {
+            _cinderHeartUpgradeDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: CinderHeart upgrade JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            CinderHeartUpgradeDataCatalog catalog = JsonUtility.FromJson<CinderHeartUpgradeDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: CinderHeart upgrade JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_cinderHeartUpgradeDataList, catalog.Items[i]);
+            }
+        }
+
+        public CinderHeartUpgradeData GetCinderHeartUpgrade(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_cinderHeartUpgradeDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _cinderHeartUpgradeDataList[id];
+        }
+
+        public void LoadStatusEffectData(string resourcePath)
+        {
+            _statusEffectDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: status effect JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            StatusEffectDataCatalog catalog = JsonUtility.FromJson<StatusEffectDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: status effect JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_statusEffectDataList, catalog.Items[i]);
+            }
+        }
+
+        public StatusEffectData GetStatusEffect(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_statusEffectDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _statusEffectDataList[id];
+        }
+
+        public void LoadBossData(string resourcePath)
+        {
+            _bossDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: boss JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            BossDataCatalog catalog = JsonUtility.FromJson<BossDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: boss JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_bossDataList, catalog.Items[i]);
+            }
+        }
+
+        public BossData GetBoss(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_bossDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _bossDataList[id];
+        }
+
+        public void LoadBossPatternData(string resourcePath)
+        {
+            _bossPatternDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: boss pattern JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            BossPatternDataCatalog catalog = JsonUtility.FromJson<BossPatternDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: boss pattern JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_bossPatternDataList, catalog.Items[i]);
+            }
+        }
+
+        public BossPatternData GetBossPattern(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_bossPatternDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _bossPatternDataList[id];
+        }
+
+        public void LoadBuildingUpgradeData(string resourcePath)
+        {
+            _buildingUpgradeDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: building upgrade JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            BuildingUpgradeDataCatalog catalog = JsonUtility.FromJson<BuildingUpgradeDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: building upgrade JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_buildingUpgradeDataList, catalog.Items[i]);
+            }
+        }
+
+        public BuildingUpgradeData GetBuildingUpgrade(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_buildingUpgradeDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _buildingUpgradeDataList[id];
+        }
+
         public string GetEnemyDataResourcePath()
         {
             return _enemyDataResourcePath;
+        }
+
+        public string GetResourceDataResourcePath()
+        {
+            return _resourceDataResourcePath;
+        }
+
+        public string GetHarvestNodeDataResourcePath()
+        {
+            return _harvestNodeDataResourcePath;
         }
 
         public string GetToolDataResourcePath()
@@ -351,6 +851,46 @@ namespace Cinderkeep.Gameplay
         public string GetCraftingRecipeDataResourcePath()
         {
             return _craftingRecipeDataResourcePath;
+        }
+
+        public string GetEnemySpawnRuleDataResourcePath()
+        {
+            return _enemySpawnRuleDataResourcePath;
+        }
+
+        public string GetGameFlowPhaseDataResourcePath()
+        {
+            return _gameFlowPhaseDataResourcePath;
+        }
+
+        public string GetLootDropDataResourcePath()
+        {
+            return _lootDropDataResourcePath;
+        }
+
+        public string GetCinderHeartUpgradeDataResourcePath()
+        {
+            return _cinderHeartUpgradeDataResourcePath;
+        }
+
+        public string GetStatusEffectDataResourcePath()
+        {
+            return _statusEffectDataResourcePath;
+        }
+
+        public string GetBossDataResourcePath()
+        {
+            return _bossDataResourcePath;
+        }
+
+        public string GetBossPatternDataResourcePath()
+        {
+            return _bossPatternDataResourcePath;
+        }
+
+        public string GetBuildingUpgradeDataResourcePath()
+        {
+            return _buildingUpgradeDataResourcePath;
         }
 
         private void AddData<TData>(Dictionary<string, TData> target, TData data)

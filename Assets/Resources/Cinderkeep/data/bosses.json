@@ -1,0 +1,15 @@
+{
+  "Items": [
+    {
+      "_id": "frost_colossus",
+      "_displayName": "Frost Colossus",
+      "_health": 500,
+      "_moveSpeed": 1.2,
+      "_attackDamage": 25,
+      "_attackInterval": 2.5,
+      "_stopDistance": 2.5,
+      "_phaseCount": 3,
+      "_prefabKey": "PF_Boss_FrostColossus"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "Items": [
+    {
+      "_id": "upgrade_wall_wood_to_iron",
+      "_fromBuildingId": "wood_wall",
+      "_toBuildingId": "iron_wall",
+      "_craftingRecipeId": "recipe_iron_wall",
+      "_requiredDay": 2,
+      "_description": "Upgrade a wood wall into an iron wall."
+    },
+    {
+      "_id": "upgrade_wall_iron_to_gold",
+      "_fromBuildingId": "iron_wall",
+      "_toBuildingId": "gold_wall",
+      "_craftingRecipeId": "recipe_gold_wall",
+      "_requiredDay": 3,
+      "_description": "Upgrade an iron wall into a gold wall."
+    },
+    {
+      "_id": "upgrade_wall_gold_to_adamantium",
+      "_fromBuildingId": "gold_wall",
+      "_toBuildingId": "adamantium_wall",
+      "_craftingRecipeId": "recipe_adamantium_wall",
+      "_requiredDay": 4,
+      "_description": "Upgrade a gold wall into an adamantium wall."
+    },
+    {
+      "_id": "upgrade_tower_wood_to_iron",
+      "_fromBuildingId": "wood_tower",
+      "_toBuildingId": "iron_tower",
+      "_craftingRecipeId": "recipe_iron_tower",
+      "_requiredDay": 2,
+      "_description": "Upgrade a wood tower into an iron tower."
+    },
+    {
+      "_id": "upgrade_tower_iron_to_gold",
+      "_fromBuildingId": "iron_tower",
+      "_toBuildingId": "gold_tower",
+      "_craftingRecipeId": "recipe_gold_tower",
+      "_requiredDay": 3,
+      "_description": "Upgrade an iron tower into a gold tower."
+    },
+    {
+      "_id": "upgrade_tower_gold_to_adamantium",
+      "_fromBuildingId": "gold_tower",
+      "_toBuildingId": "adamantium_tower",
+      "_craftingRecipeId": "recipe_adamantium_tower",
+      "_requiredDay": 4,
+      "_description": "Upgrade a gold tower into an adamantium tower."
+    }
+  ]
+}

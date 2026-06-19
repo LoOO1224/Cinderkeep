@@ -1,0 +1,34 @@
+{
+  "Items": [
+    {
+      "_id": "frost_colossus_basic_slam",
+      "_bossId": "frost_colossus",
+      "_patternType": "Slam",
+      "_triggerHealthRate": 1.0,
+      "_cooldown": 3,
+      "_damage": 25,
+      "_range": 3,
+      "_effectKey": "FX_Boss_Slam"
+    },
+    {
+      "_id": "frost_colossus_ice_wave",
+      "_bossId": "frost_colossus",
+      "_patternType": "IceWave",
+      "_triggerHealthRate": 0.65,
+      "_cooldown": 8,
+      "_damage": 18,
+      "_range": 9,
+      "_effectKey": "FX_Boss_IceWave"
+    },
+    {
+      "_id": "frost_colossus_heart_crush",
+      "_bossId": "frost_colossus",
+      "_patternType": "HeartCrush",
+      "_triggerHealthRate": 0.3,
+      "_cooldown": 12,
+      "_damage": 50,
+      "_range": 4,
+      "_effectKey": "FX_Boss_HeartCrush"
+    }
+  ]
+}

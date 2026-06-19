@@ -1,0 +1,76 @@
+{
+  "Items": [
+    {
+      "_id": "tree_basic",
+      "_displayName": "Frozen Tree",
+      "_resourceId": "Wood",
+      "_requiredToolType": "Axe",
+      "_requiredToolTier": 1,
+      "_gatherAmount": 3,
+      "_maxGatherCount": 4,
+      "_respawnSeconds": 60,
+      "_prefabKey": "PF_Resource_Tree",
+      "_materialKey": "MAT_Resource_Wood"
+    },
+    {
+      "_id": "stone_pickup",
+      "_displayName": "Loose Stone",
+      "_resourceId": "Stone",
+      "_requiredToolType": "None",
+      "_requiredToolTier": 0,
+      "_gatherAmount": 1,
+      "_maxGatherCount": 1,
+      "_respawnSeconds": 30,
+      "_prefabKey": "PF_Resource_StonePickup",
+      "_materialKey": "MAT_Resource_Stone"
+    },
+    {
+      "_id": "rock_basic",
+      "_displayName": "Stone Rock",
+      "_resourceId": "Stone",
+      "_requiredToolType": "Pickaxe",
+      "_requiredToolTier": 1,
+      "_gatherAmount": 4,
+      "_maxGatherCount": 3,
+      "_respawnSeconds": 75,
+      "_prefabKey": "PF_Resource_Rock",
+      "_materialKey": "MAT_Resource_Stone"
+    },
+    {
+      "_id": "iron_ore",
+      "_displayName": "Iron Ore",
+      "_resourceId": "Iron",
+      "_requiredToolType": "Pickaxe",
+      "_requiredToolTier": 2,
+      "_gatherAmount": 2,
+      "_maxGatherCount": 3,
+      "_respawnSeconds": 90,
+      "_prefabKey": "PF_Resource_IronOre",
+      "_materialKey": "MAT_Resource_Iron"
+    },
+    {
+      "_id": "gold_ore",
+      "_displayName": "Gold Ore",
+      "_resourceId": "Gold",
+      "_requiredToolType": "Pickaxe",
+      "_requiredToolTier": 3,
+      "_gatherAmount": 2,
+      "_maxGatherCount": 2,
+      "_respawnSeconds": 110,
+      "_prefabKey": "PF_Resource_GoldOre",
+      "_materialKey": "MAT_Resource_Gold"
+    },
+    {
+      "_id": "adamantium_ore",
+      "_displayName": "Adamantium Ore",
+      "_resourceId": "Adamantium",
+      "_requiredToolType": "Pickaxe",
+      "_requiredToolTier": 4,
+      "_gatherAmount": 1,
+      "_maxGatherCount": 2,
+      "_respawnSeconds": 140,
+      "_prefabKey": "PF_Resource_AdamantiumOre",
+      "_materialKey": "MAT_Resource_Adamantium"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "Items": [
+    {
+      "_id": "loot_ice_zombie_stone",
+      "_ownerId": "ice_zombie",
+      "_dropResourceId": "Stone",
+      "_minAmount": 1,
+      "_maxAmount": 2,
+      "_dropChance": 0.7,
+      "_dropPrefabKey": "PF_ResourceDrop_Stone"
+    },
+    {
+      "_id": "loot_ice_zombie_iron",
+      "_ownerId": "ice_zombie",
+      "_dropResourceId": "Iron",
+      "_minAmount": 1,
+      "_maxAmount": 1,
+      "_dropChance": 0.25,
+      "_dropPrefabKey": "PF_ResourceDrop_Iron"
+    },
+    {
+      "_id": "loot_frost_wolf_gold",
+      "_ownerId": "frost_wolf",
+      "_dropResourceId": "Gold",
+      "_minAmount": 1,
+      "_maxAmount": 2,
+      "_dropChance": 0.35,
+      "_dropPrefabKey": "PF_ResourceDrop_Gold"
+    },
+    {
+      "_id": "loot_boss_adamantium",
+      "_ownerId": "frost_colossus",
+      "_dropResourceId": "Adamantium",
+      "_minAmount": 5,
+      "_maxAmount": 8,
+      "_dropChance": 1.0,
+      "_dropPrefabKey": "PF_ResourceDrop_Adamantium"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "Items": [
+    {
+      "_id": "cinderheart_tier_2",
+      "_displayName": "CinderHeart Reinforcement I",
+      "_tier": 2,
+      "_description": "Early reinforcement that increases CinderHeart survival time.",
+      "_requiredDay": 1,
+      "_maxHealthBonus": 150,
+      "_defenseBonus": 2,
+      "_auraRange": 12,
+      "_statusEffectId": "cinder_aura_stamina",
+      "_craftingRecipeId": "recipe_cinderheart_tier_2"
+    },
+    {
+      "_id": "cinderheart_tier_3",
+      "_displayName": "CinderHeart Reinforcement II",
+      "_tier": 3,
+      "_description": "Mid loop reinforcement for stronger night waves.",
+      "_requiredDay": 2,
+      "_maxHealthBonus": 250,
+      "_defenseBonus": 4,
+      "_auraRange": 16,
+      "_statusEffectId": "cinder_aura_warmth",
+      "_craftingRecipeId": "recipe_cinderheart_tier_3"
+    },
+    {
+      "_id": "cinderheart_tier_4",
+      "_displayName": "CinderHeart Reinforcement III",
+      "_tier": 4,
+      "_description": "Late reinforcement for boss pressure.",
+      "_requiredDay": 3,
+      "_maxHealthBonus": 400,
+      "_defenseBonus": 8,
+      "_auraRange": 20,
+      "_statusEffectId": "cinder_aura_defense",
+      "_craftingRecipeId": "recipe_cinderheart_tier_4"
+    }
+  ]
+}

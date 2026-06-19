@@ -1,0 +1,104 @@
+{
+  "Items": [
+    {
+      "_id": "day_1_day",
+      "_day": 1,
+      "_phase": "Day",
+      "_durationSeconds": 180,
+      "_nextPhaseId": "day_1_night",
+      "_bgmKey": "BGM_Day",
+      "_skyboxKey": "Skybox_Day",
+      "_lightPresetKey": "Light_Day"
+    },
+    {
+      "_id": "day_1_night",
+      "_day": 1,
+      "_phase": "Night",
+      "_durationSeconds": 120,
+      "_nextPhaseId": "day_1_reward",
+      "_bgmKey": "BGM_Night",
+      "_skyboxKey": "Skybox_Night",
+      "_lightPresetKey": "Light_Night"
+    },
+    {
+      "_id": "day_1_reward",
+      "_day": 1,
+      "_phase": "MorningReward",
+      "_durationSeconds": 15,
+      "_nextPhaseId": "day_2_day",
+      "_bgmKey": "BGM_Reward",
+      "_skyboxKey": "Skybox_Dawn",
+      "_lightPresetKey": "Light_Dawn"
+    },
+    {
+      "_id": "day_2_day",
+      "_day": 2,
+      "_phase": "Day",
+      "_durationSeconds": 180,
+      "_nextPhaseId": "day_2_night",
+      "_bgmKey": "BGM_Day",
+      "_skyboxKey": "Skybox_Day",
+      "_lightPresetKey": "Light_Day"
+    },
+    {
+      "_id": "day_2_night",
+      "_day": 2,
+      "_phase": "Night",
+      "_durationSeconds": 120,
+      "_nextPhaseId": "day_2_reward",
+      "_bgmKey": "BGM_Night",
+      "_skyboxKey": "Skybox_Night",
+      "_lightPresetKey": "Light_Night"
+    },
+    {
+      "_id": "day_2_reward",
+      "_day": 2,
+      "_phase": "MorningReward",
+      "_durationSeconds": 15,
+      "_nextPhaseId": "day_3_day",
+      "_bgmKey": "BGM_Reward",
+      "_skyboxKey": "Skybox_Dawn",
+      "_lightPresetKey": "Light_Dawn"
+    },
+    {
+      "_id": "day_3_day",
+      "_day": 3,
+      "_phase": "Day",
+      "_durationSeconds": 180,
+      "_nextPhaseId": "day_3_night",
+      "_bgmKey": "BGM_Day",
+      "_skyboxKey": "Skybox_Day",
+      "_lightPresetKey": "Light_Day"
+    },
+    {
+      "_id": "day_3_night",
+      "_day": 3,
+      "_phase": "Night",
+      "_durationSeconds": 120,
+      "_nextPhaseId": "boss_approach",
+      "_bgmKey": "BGM_Night",
+      "_skyboxKey": "Skybox_Night",
+      "_lightPresetKey": "Light_Night"
+    },
+    {
+      "_id": "boss_approach",
+      "_day": 3,
+      "_phase": "BossApproach",
+      "_durationSeconds": 30,
+      "_nextPhaseId": "boss_fight",
+      "_bgmKey": "BGM_BossApproach",
+      "_skyboxKey": "Skybox_Boss",
+      "_lightPresetKey": "Light_Boss"
+    },
+    {
+      "_id": "boss_fight",
+      "_day": 3,
+      "_phase": "BossFight",
+      "_durationSeconds": 180,
+      "_nextPhaseId": "clear",
+      "_bgmKey": "BGM_Boss",
+      "_skyboxKey": "Skybox_Boss",
+      "_lightPresetKey": "Light_Boss"
+    }
+  ]
+}

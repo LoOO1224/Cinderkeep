@@ -1,0 +1,44 @@
+{
+  "Items": [
+    {
+      "_id": "cold_exposure",
+      "_displayName": "Cold Exposure",
+      "_effectType": "StaminaDrain",
+      "_value": 2,
+      "_durationSeconds": 10,
+      "_stackable": false,
+      "_iconKey": "Icon_Status_Cold",
+      "_description": "Prototype cold pressure effect for later survival expansion."
+    },
+    {
+      "_id": "cinder_aura_stamina",
+      "_displayName": "Cinder Aura: Stamina",
+      "_effectType": "StaminaRecoveryBonus",
+      "_value": 0.15,
+      "_durationSeconds": 0,
+      "_stackable": false,
+      "_iconKey": "Icon_Status_CinderAura",
+      "_description": "CinderHeart aura that helps stamina recovery near the base."
+    },
+    {
+      "_id": "cinder_aura_warmth",
+      "_displayName": "Cinder Aura: Warmth",
+      "_effectType": "ColdResistance",
+      "_value": 0.25,
+      "_durationSeconds": 0,
+      "_stackable": false,
+      "_iconKey": "Icon_Status_Warmth",
+      "_description": "CinderHeart aura that reduces cold pressure near the base."
+    },
+    {
+      "_id": "cinder_aura_defense",
+      "_displayName": "Cinder Aura: Defense",
+      "_effectType": "DefenseBonus",
+      "_value": 2,
+      "_durationSeconds": 0,
+      "_stackable": false,
+      "_iconKey": "Icon_Status_Defense",
+      "_description": "CinderHeart aura that supports the final defense line."
+    }
+  ]
+}
