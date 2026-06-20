@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // EnemySpawnRule JSON의 한 줄을 담는 데이터 클래스입니다.
+    // EnemySpawnRule JSON 한 줄을 읽는 데이터 클래스입니다.
     // 낮/밤/일차별 몬스터 스폰 주기와 최대 생존 수를 코드 밖에서 조절하기 위한 데이터입니다.
     [Serializable]
     public sealed class EnemySpawnRuleData : GameDataBase
@@ -101,7 +101,7 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // EnemySpawnRuleData도 JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
+    // JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
     [Serializable]
     public sealed class EnemySpawnRuleDataCatalog
     {

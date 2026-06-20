@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 한 스폰 지점에서 만든 적 목록을 추적하는 클래스입니다.
+// 한 스폰 지점이 만든 적 목록을 추적하는 클래스입니다.
 // EnemySpawnPoint가 스폰 규칙을 판단할 때 현재 살아 있는 적 수를 확인할 수 있게 돕습니다.
 public sealed class EnemySpawnRuntimeTracker
 {
