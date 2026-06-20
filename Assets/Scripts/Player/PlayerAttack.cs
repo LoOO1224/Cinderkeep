@@ -32,6 +32,14 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private float _lastAttackTime;
 
+    public string WeaponDataId
+    {
+        get
+        {
+            return _weaponDataId;
+        }
+    }
+
     private void Start()
     {
         ConnectComponents();
