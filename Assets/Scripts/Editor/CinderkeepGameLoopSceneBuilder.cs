@@ -35,6 +35,20 @@ public static class CinderkeepGameLoopSceneBuilder
     private const string FireBowlPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
     private const string FontPath = "Assets/Fonts/NotoSansKR-Medium SDF3.asset";
 
+    // 자원 테스트 필드에서 쓰는 재질 묶음입니다.
+    // 4.30은 최종 맵 아트가 아니라 자원 비율과 티어 체감을 확인하기 위한 단계입니다.
+    private sealed class ResourceMaterialSet
+    {
+        public Material WoodTier1;
+        public Material WoodTier2;
+        public Material WoodTier3;
+        public Material WoodTier4;
+        public Material Stone;
+        public Material Iron;
+        public Material Gold;
+        public Material Adamantium;
+    }
+
     [MenuItem("Cinderkeep/Main Game/Apply Game Loop")]
     public static void ApplyGameLoop()
     {
@@ -44,20 +58,17 @@ public static class CinderkeepGameLoopSceneBuilder
 
         Material cinderHeartMaterial = GetOrCreateMaterial("MAT_4_0_CinderHeart_Red", new Color(1f, 0.08f, 0.02f, 1f));
         Material iceMaterial = GetOrCreateMaterial("MAT_4_0_Ice_Blue", new Color(0.35f, 0.72f, 1f, 1f));
-        Material woodMaterial = GetOrCreateMaterial("MAT_4_0_Wood", new Color(0.46f, 0.26f, 0.1f, 1f));
-        Material stoneMaterial = GetOrCreateMaterial("MAT_4_0_Stone", new Color(0.42f, 0.46f, 0.5f, 1f));
-        Material ironMaterial = GetOrCreateMaterial("MAT_4_0_IronOre", new Color(0.55f, 0.65f, 0.72f, 1f));
-        Material goldMaterial = GetOrCreateMaterial("MAT_4_0_GoldOre", new Color(1f, 0.72f, 0.18f, 1f));
+        ResourceMaterialSet resourceMaterials = CreateResourceMaterialSet();
         Material enemyMaterial = GetOrCreateMaterial("MAT_4_0_IceZombie", new Color(0.55f, 0.8f, 0.95f, 1f));
 
-        CreateSandboxPrefabs(cinderHeartMaterial, iceMaterial, woodMaterial, stoneMaterial, ironMaterial, goldMaterial, enemyMaterial);
+        CreateSandboxPrefabs(cinderHeartMaterial, iceMaterial, resourceMaterials, enemyMaterial);
 
         GameObject cinderHeart = SetupCinderHeart(cinderHeartMaterial);
         GameObject player = SetupPlayer();
         GameObject runtimeRoot = GetOrCreateRootObject("MainGame_RuntimeObjects");
-        SetupResources(runtimeRoot.transform, woodMaterial, stoneMaterial, ironMaterial, goldMaterial);
+        SetupResources(runtimeRoot.transform, resourceMaterials);
         GameObject enemy = SetupEnemy(runtimeRoot.transform, enemyMaterial);
-        SetupBuildPreviewObjects(runtimeRoot.transform, woodMaterial);
+        SetupBuildPreviewObjects(runtimeRoot.transform, resourceMaterials.WoodTier1);
         SetupHud(player, cinderHeart, enemy);
         SetupGameLoopConnector(player, cinderHeart, enemy);
         SetupManagersForGameLoop();
@@ -80,10 +91,7 @@ public static class CinderkeepGameLoopSceneBuilder
 
         Material cinderHeartMaterial = GetOrCreateMaterial("MAT_4_0_CinderHeart_Red", new Color(1f, 0.08f, 0.02f, 1f));
         GetOrCreateMaterial("MAT_4_0_Ice_Blue", new Color(0.35f, 0.72f, 1f, 1f));
-        GetOrCreateMaterial("MAT_4_0_Wood", new Color(0.46f, 0.26f, 0.1f, 1f));
-        GetOrCreateMaterial("MAT_4_0_Stone", new Color(0.42f, 0.46f, 0.5f, 1f));
-        GetOrCreateMaterial("MAT_4_0_IronOre", new Color(0.55f, 0.65f, 0.72f, 1f));
-        GetOrCreateMaterial("MAT_4_0_GoldOre", new Color(1f, 0.72f, 0.18f, 1f));
+        CreateResourceMaterialSet();
         GetOrCreateMaterial("MAT_4_0_IceZombie", new Color(0.55f, 0.8f, 0.95f, 1f));
         GetOrCreateMaterial("MAT_4_0_PlayerHand", new Color(0.82f, 0.58f, 0.42f, 1f));
         GetOrCreateMaterial("MAT_4_0_Tool_DarkWood", new Color(0.38f, 0.22f, 0.1f, 1f));
@@ -110,19 +118,16 @@ public static class CinderkeepGameLoopSceneBuilder
 
         Material cinderHeartMaterial = GetOrCreateMaterial("MAT_4_0_CinderHeart_Red", new Color(1f, 0.08f, 0.02f, 1f));
         Material iceMaterial = GetOrCreateMaterial("MAT_4_0_Ice_Blue", new Color(0.35f, 0.72f, 1f, 1f));
-        Material woodMaterial = GetOrCreateMaterial("MAT_4_0_Wood", new Color(0.46f, 0.26f, 0.1f, 1f));
-        Material stoneMaterial = GetOrCreateMaterial("MAT_4_0_Stone", new Color(0.42f, 0.46f, 0.5f, 1f));
-        Material ironMaterial = GetOrCreateMaterial("MAT_4_0_IronOre", new Color(0.55f, 0.65f, 0.72f, 1f));
-        Material goldMaterial = GetOrCreateMaterial("MAT_4_0_GoldOre", new Color(1f, 0.72f, 0.18f, 1f));
+        ResourceMaterialSet resourceMaterials = CreateResourceMaterialSet();
         Material enemyMaterial = GetOrCreateMaterial("MAT_4_0_IceZombie", new Color(0.55f, 0.8f, 0.95f, 1f));
 
-        CreateSandboxPrefabs(cinderHeartMaterial, iceMaterial, woodMaterial, stoneMaterial, ironMaterial, goldMaterial, enemyMaterial);
+        CreateSandboxPrefabs(cinderHeartMaterial, iceMaterial, resourceMaterials, enemyMaterial);
 
         GameObject player = GetSceneObjectByName("Player");
         SetupPlayerToolUse(player);
 
         GameObject runtimeRoot = GetOrCreateRootObject("MainGame_RuntimeObjects");
-        SetupResources(runtimeRoot.transform, woodMaterial, stoneMaterial, ironMaterial, goldMaterial);
+        SetupResources(runtimeRoot.transform, resourceMaterials);
 
         GameObject canvasObject = GetOrCreateRootObject("Canvas_GameHUD");
         GameManager gameManager = GetSceneComponentByName<GameManager>("GameManager");
@@ -134,6 +139,28 @@ public static class CinderkeepGameLoopSceneBuilder
         AssetDatabase.Refresh();
 
         Debug.Log("Cinderkeep player tool use, resource field, and timer HUD setup completed.");
+    }
+
+    [MenuItem("Cinderkeep/Main Game/Apply Resource Tier Field Only")]
+    public static void ApplyResourceTierFieldOnly()
+    {
+        EnsureProjectFolders();
+        EnsureTags();
+        OpenTargetScene();
+
+        ResourceMaterialSet resourceMaterials = CreateResourceMaterialSet();
+
+        CreateResourceTierPrefabs(resourceMaterials);
+
+        GameObject runtimeRoot = GetOrCreateRootObject("MainGame_RuntimeObjects");
+        SetupResources(runtimeRoot.transform, resourceMaterials);
+
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log("Cinderkeep resource tier field setup completed.");
     }
 
     private static void SetupGameFlowTimerHud(Transform canvasTransform, GameManager gameManager)
@@ -344,28 +371,47 @@ public static class CinderkeepGameLoopSceneBuilder
         return Shader.Find("Standard");
     }
 
+    private static ResourceMaterialSet CreateResourceMaterialSet()
+    {
+        ResourceMaterialSet resourceMaterials = new ResourceMaterialSet();
+        resourceMaterials.WoodTier1 = GetOrCreateMaterial("MAT_4_0_Tree_Wood", new Color(0.46f, 0.26f, 0.1f, 1f));
+        resourceMaterials.WoodTier2 = GetOrCreateMaterial("MAT_4_0_Tree_Frostwood", new Color(0.42f, 0.58f, 0.68f, 1f));
+        resourceMaterials.WoodTier3 = GetOrCreateMaterial("MAT_4_0_Tree_Cinderwood", new Color(0.66f, 0.22f, 0.12f, 1f));
+        resourceMaterials.WoodTier4 = GetOrCreateMaterial("MAT_4_0_Tree_Heartwood", new Color(0.23f, 0.08f, 0.25f, 1f));
+        resourceMaterials.Stone = GetOrCreateMaterial("MAT_4_0_Rock_Stone", new Color(0.42f, 0.46f, 0.5f, 1f));
+        resourceMaterials.Iron = GetOrCreateMaterial("MAT_4_0_Rock_IronOre", new Color(0.55f, 0.65f, 0.72f, 1f));
+        resourceMaterials.Gold = GetOrCreateMaterial("MAT_4_0_Rock_GoldOre", new Color(1f, 0.72f, 0.18f, 1f));
+        resourceMaterials.Adamantium = GetOrCreateMaterial("MAT_4_0_Rock_AdamantiumOre", new Color(0.34f, 0.12f, 0.55f, 1f));
+        return resourceMaterials;
+    }
+
     private static void CreateSandboxPrefabs(
         Material cinderHeartMaterial,
         Material iceMaterial,
-        Material woodMaterial,
-        Material stoneMaterial,
-        Material ironMaterial,
-        Material goldMaterial,
+        ResourceMaterialSet resourceMaterials,
         Material enemyMaterial)
     {
         CreateCinderHeartPrefab(cinderHeartMaterial, iceMaterial);
-        CreateResourcePrefab("PF_4_0_Resource_Tree", TreeModelPath, woodMaterial, new Vector3(1.2f, 1.2f, 1.2f));
-        CreateResourcePrefab("PF_4_0_Resource_StonePickup", StoneModelPath, stoneMaterial, new Vector3(0.5f, 0.5f, 0.5f));
-        CreateResourcePrefab("PF_4_0_Resource_Rock", RockModelPath, stoneMaterial, new Vector3(1.2f, 1.2f, 1.2f));
-        CreateResourcePrefab("PF_4_0_Resource_IronOre", OreRockModelPath, ironMaterial, new Vector3(1.1f, 1.1f, 1.1f));
-        CreateResourcePrefab("PF_4_0_Resource_GoldOre", OreRockModelPath, goldMaterial, new Vector3(1.1f, 1.1f, 1.1f));
-        CreatePickaxePrefab(woodMaterial, ironMaterial);
-        CreateWorkbenchPrefab(woodMaterial);
-        CreateTurretPrefab(woodMaterial);
+        CreateResourceTierPrefabs(resourceMaterials);
+        CreatePickaxePrefab(resourceMaterials.WoodTier1, resourceMaterials.Iron);
+        CreateWorkbenchPrefab(resourceMaterials.WoodTier1);
+        CreateTurretPrefab(resourceMaterials.WoodTier1);
         CreateEnemyPrefab(enemyMaterial);
         CreateSecondPriorityPreviewPrefab("PF_4_0_Candidate_PlayerVisual_MageBlack", MageBlackPath);
         CreateSecondPriorityPreviewPrefab("PF_4_0_Candidate_RuinTower", TowerModelPath);
         CreateSecondPriorityPreviewPrefab("PF_4_0_Candidate_FireBowl", FireBowlPath);
+    }
+
+    private static void CreateResourceTierPrefabs(ResourceMaterialSet resourceMaterials)
+    {
+        CreateResourcePrefab("PF_4_0_Resource_Tree_Wood", TreeModelPath, resourceMaterials.WoodTier1, new Vector3(1.2f, 1.2f, 1.2f));
+        CreateResourcePrefab("PF_4_0_Resource_Tree_Frostwood", TreeModelPath, resourceMaterials.WoodTier2, new Vector3(1.25f, 1.25f, 1.25f));
+        CreateResourcePrefab("PF_4_0_Resource_Tree_Cinderwood", TreeModelPath, resourceMaterials.WoodTier3, new Vector3(1.35f, 1.35f, 1.35f));
+        CreateResourcePrefab("PF_4_0_Resource_Tree_Heartwood", TreeModelPath, resourceMaterials.WoodTier4, new Vector3(1.45f, 1.45f, 1.45f));
+        CreateResourcePrefab("PF_4_0_Resource_Rock_Stone", RockModelPath, resourceMaterials.Stone, new Vector3(1.25f, 1.25f, 1.25f));
+        CreateResourcePrefab("PF_4_0_Resource_Rock_IronOre", OreRockModelPath, resourceMaterials.Iron, new Vector3(1.2f, 1.2f, 1.2f));
+        CreateResourcePrefab("PF_4_0_Resource_Rock_GoldOre", OreRockModelPath, resourceMaterials.Gold, new Vector3(1.2f, 1.2f, 1.2f));
+        CreateResourcePrefab("PF_4_0_Resource_Rock_AdamantiumOre", OreRockModelPath, resourceMaterials.Adamantium, new Vector3(1.25f, 1.25f, 1.25f));
     }
 
     private static void CreateCinderHeartPrefab(Material cinderHeartMaterial, Material iceMaterial)
@@ -566,14 +612,13 @@ public static class CinderkeepGameLoopSceneBuilder
         SetObjectReference(toolView, "_handView", handView);
     }
 
-    private static void SetupResources(Transform runtimeRoot, Material woodMaterial, Material stoneMaterial, Material ironMaterial, Material goldMaterial)
+    private static void SetupResources(Transform runtimeRoot, ResourceMaterialSet resourceMaterials)
     {
         Transform resourceRoot = GetOrCreateChild(runtimeRoot, "Resources_GameLoop");
         ClearChildren(resourceRoot);
 
-        CreateTreeResourceField(resourceRoot, woodMaterial);
-        CreateRockResourceField(resourceRoot, stoneMaterial);
-        CreateOreResourceField(resourceRoot, ironMaterial, goldMaterial);
+        CreateTreeResourceField(resourceRoot, resourceMaterials);
+        CreateRockResourceField(resourceRoot, resourceMaterials);
     }
 
     private static void SetupPlayerToolUse(GameObject player)
@@ -599,71 +644,176 @@ public static class CinderkeepGameLoopSceneBuilder
         EditorUtility.SetDirty(playerToolUse);
     }
 
-    private static void CreateTreeResourceField(Transform resourceRoot, Material woodMaterial)
+    private static void CreateTreeResourceField(Transform resourceRoot, ResourceMaterialSet resourceMaterials)
     {
-        int treeIndex = 1;
-        for (int x = -54; x <= 54; x += 12)
+        int resourceIndex = 0;
+        resourceIndex = CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Tree_Wood",
+            "tree_wood_tier1",
+            SandboxPrefabPath + "/PF_4_0_Resource_Tree_Wood.prefab",
+            PlayerModel.ResourceWood,
+            3,
+            GatherToolType.Axe,
+            1,
+            50,
+            resourceIndex,
+            0f,
+            0f,
+            new Vector3(1.15f, 1.15f, 1.15f),
+            resourceMaterials.WoodTier1);
+
+        resourceIndex = CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Tree_Frostwood",
+            "tree_frostwood_tier2",
+            SandboxPrefabPath + "/PF_4_0_Resource_Tree_Frostwood.prefab",
+            PlayerModel.ResourceWood,
+            4,
+            GatherToolType.Axe,
+            2,
+            30,
+            resourceIndex,
+            19f,
+            0f,
+            new Vector3(1.25f, 1.25f, 1.25f),
+            resourceMaterials.WoodTier2);
+
+        resourceIndex = CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Tree_Cinderwood",
+            "tree_cinderwood_tier3",
+            SandboxPrefabPath + "/PF_4_0_Resource_Tree_Cinderwood.prefab",
+            PlayerModel.ResourceWood,
+            5,
+            GatherToolType.Axe,
+            3,
+            10,
+            resourceIndex,
+            41f,
+            0f,
+            new Vector3(1.35f, 1.35f, 1.35f),
+            resourceMaterials.WoodTier3);
+
+        CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Tree_Heartwood",
+            "tree_heartwood_tier4",
+            SandboxPrefabPath + "/PF_4_0_Resource_Tree_Heartwood.prefab",
+            PlayerModel.ResourceWood,
+            6,
+            GatherToolType.Axe,
+            4,
+            5,
+            resourceIndex,
+            67f,
+            0f,
+            new Vector3(1.45f, 1.45f, 1.45f),
+            resourceMaterials.WoodTier4);
+    }
+
+    private static void CreateRockResourceField(Transform resourceRoot, ResourceMaterialSet resourceMaterials)
+    {
+        int resourceIndex = 0;
+        resourceIndex = CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Rock_Stone",
+            "rock_stone",
+            SandboxPrefabPath + "/PF_4_0_Resource_Rock_Stone.prefab",
+            PlayerModel.ResourceStone,
+            4,
+            GatherToolType.Pickaxe,
+            1,
+            50,
+            resourceIndex,
+            103f,
+            0.35f,
+            new Vector3(2.2f, 2.2f, 2.2f),
+            resourceMaterials.Stone);
+
+        resourceIndex = CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Rock_IronOre",
+            "rock_iron_ore",
+            SandboxPrefabPath + "/PF_4_0_Resource_Rock_IronOre.prefab",
+            PlayerModel.ResourceIron,
+            2,
+            GatherToolType.Pickaxe,
+            2,
+            30,
+            resourceIndex,
+            127f,
+            0.35f,
+            new Vector3(1.75f, 1.75f, 1.75f),
+            resourceMaterials.Iron);
+
+        resourceIndex = CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Rock_GoldOre",
+            "rock_gold_ore",
+            SandboxPrefabPath + "/PF_4_0_Resource_Rock_GoldOre.prefab",
+            PlayerModel.ResourceGold,
+            2,
+            GatherToolType.Pickaxe,
+            3,
+            10,
+            resourceIndex,
+            151f,
+            0.35f,
+            new Vector3(1.75f, 1.75f, 1.75f),
+            resourceMaterials.Gold);
+
+        CreateResourceFieldByCount(
+            resourceRoot,
+            "Resource_Rock_AdamantiumOre",
+            "rock_adamantium_ore",
+            SandboxPrefabPath + "/PF_4_0_Resource_Rock_AdamantiumOre.prefab",
+            PlayerModel.ResourceAdamantium,
+            1,
+            GatherToolType.Pickaxe,
+            4,
+            5,
+            resourceIndex,
+            173f,
+            0.35f,
+            new Vector3(1.85f, 1.85f, 1.85f),
+            resourceMaterials.Adamantium);
+    }
+
+    private static int CreateResourceFieldByCount(
+        Transform resourceRoot,
+        string objectPrefix,
+        string harvestNodeDataId,
+        string prefabPath,
+        string resourceId,
+        int amount,
+        GatherToolType requiredToolType,
+        int requiredToolTier,
+        int count,
+        int startIndex,
+        float angleOffset,
+        float height,
+        Vector3 visualScale,
+        Material fallbackMaterial)
+    {
+        for (int i = 0; i < count; i++)
         {
-            for (int z = -54; z <= 54; z += 12)
-            {
-                if (treeIndex > 50)
-                {
-                    return;
-                }
-
-                if (IsInsideBaseArea(x, z))
-                {
-                    continue;
-                }
-
-                Vector3 offset = GetResourceOffset(treeIndex);
-                Vector3 position = new Vector3(x, 0f, z) + offset;
-                CreateResourceNode(resourceRoot, "Resource_Tree_Axe_" + treeIndex.ToString("00"), SandboxPrefabPath + "/PF_4_0_Resource_Tree.prefab", position, PlayerModel.ResourceWood, 3, GatherToolType.Axe, new Vector3(1.15f, 1.15f, 1.15f), woodMaterial);
-                treeIndex++;
-            }
+            int resourceIndex = startIndex + i + 1;
+            string objectName = objectPrefix + "_" + resourceIndex.ToString("00");
+            Vector3 position = GetResourceFieldPosition(resourceIndex, angleOffset, height);
+            CreateResourceNode(resourceRoot, objectName, prefabPath, position, harvestNodeDataId, resourceId, amount, requiredToolType, requiredToolTier, visualScale, fallbackMaterial);
         }
+
+        return startIndex + count;
     }
 
-    private static void CreateRockResourceField(Transform resourceRoot, Material stoneMaterial)
+    private static Vector3 GetResourceFieldPosition(int index, float angleOffset, float height)
     {
-        int rockIndex = 1;
-        for (int x = -48; x <= 48; x += 24)
-        {
-            for (int z = -48; z <= 48; z += 24)
-            {
-                if (IsInsideBaseArea(x, z))
-                {
-                    continue;
-                }
-
-                Vector3 position = new Vector3(x + 5f, 0.35f, z - 5f);
-                CreateResourceNode(resourceRoot, "Resource_Rock_Pickaxe_" + rockIndex.ToString("00"), SandboxPrefabPath + "/PF_4_0_Resource_Rock.prefab", position, PlayerModel.ResourceStone, 4, GatherToolType.Pickaxe, new Vector3(2f, 2f, 2f), stoneMaterial);
-                rockIndex++;
-            }
-        }
-    }
-
-    private static void CreateOreResourceField(Transform resourceRoot, Material ironMaterial, Material goldMaterial)
-    {
-        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(30f, 0.35f, 30f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), ironMaterial);
-        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_02", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(-42f, 0.35f, 18f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), ironMaterial);
-        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_03", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(42f, 0.35f, -18f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), ironMaterial);
-        CreateResourceNode(resourceRoot, "Resource_GoldOre_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_GoldOre.prefab", new Vector3(-30f, 0.35f, 30f), PlayerModel.ResourceGold, 1, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), goldMaterial);
-        CreateResourceNode(resourceRoot, "Resource_GoldOre_Pickaxe_02", SandboxPrefabPath + "/PF_4_0_Resource_GoldOre.prefab", new Vector3(48f, 0.35f, 42f), PlayerModel.ResourceGold, 1, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), goldMaterial);
-    }
-
-    private static bool IsInsideBaseArea(int x, int z)
-    {
-        return Mathf.Abs(x) < 24 && Mathf.Abs(z) < 24;
-    }
-
-    private static Vector3 GetResourceOffset(int index)
-    {
-        int xOffsetIndex = index % 3;
-        int zOffsetIndex = index % 4;
-        float xOffset = (xOffsetIndex - 1) * 1.4f;
-        float zOffset = (zOffsetIndex - 1) * 1.1f;
-        return new Vector3(xOffset, 0f, zOffset);
+        float angle = (index * 137.508f + angleOffset) * Mathf.Deg2Rad;
+        float radius = 28f + (index * 7 % 28);
+        float x = Mathf.Cos(angle) * radius;
+        float z = Mathf.Sin(angle) * radius;
+        return new Vector3(x, height, z);
     }
 
     private static void AddAxeFallbackShape(Transform parent, Material handleMaterial, Material headMaterial)
@@ -697,9 +847,11 @@ public static class CinderkeepGameLoopSceneBuilder
         string objectName,
         string prefabPath,
         Vector3 position,
+        string harvestNodeDataId,
         string resourceId,
         int amount,
         GatherToolType requiredToolType,
+        int requiredToolTier,
         Vector3 visualScale,
         Material fallbackMaterial)
     {
@@ -718,9 +870,11 @@ public static class CinderkeepGameLoopSceneBuilder
         resourceBase.Initialize(resourceId, amount);
 
         ResourceNode resourceNode = EnsureComponent<ResourceNode>(resourceObject);
+        SetString(resourceNode, "_harvestNodeDataId", harvestNodeDataId);
         SetString(resourceNode, "_resourceId", resourceId);
         SetInt(resourceNode, "_amount", amount);
         SetEnum(resourceNode, "_requiredToolType", (int)requiredToolType);
+        SetInt(resourceNode, "_requiredToolTier", requiredToolTier);
         SetBool(resourceNode, "_disableAfterGather", true);
         SetBool(resourceNode, "_canInteract", true);
     }
