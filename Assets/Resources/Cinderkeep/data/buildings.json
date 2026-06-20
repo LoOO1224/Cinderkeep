@@ -119,6 +119,51 @@
       "_prefabKey": "PF_Building_Tower_Adamantium",
       "_materialKey": "MAT_Building_Adamantium",
       "_craftingRecipeId": "recipe_adamantium_tower"
+    },
+    {
+      "_id": "workbench",
+      "_displayName": "Workbench",
+      "_buildingType": "Station",
+      "_tier": 1,
+      "_description": "Crafting station for early tools, weapons, and basic defenses.",
+      "_maxHealth": 150,
+      "_defense": 0,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 0,
+      "_prefabKey": "PF_Building_Workbench",
+      "_materialKey": "MAT_Building_Wood",
+      "_craftingRecipeId": "recipe_workbench"
+    },
+    {
+      "_id": "furnace",
+      "_displayName": "Furnace",
+      "_buildingType": "Station",
+      "_tier": 1,
+      "_description": "Smelting station that turns ore into ingots.",
+      "_maxHealth": 180,
+      "_defense": 1,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 0,
+      "_prefabKey": "PF_Building_Furnace",
+      "_materialKey": "MAT_Building_Stone",
+      "_craftingRecipeId": "recipe_furnace"
+    },
+    {
+      "_id": "anvil",
+      "_displayName": "Anvil",
+      "_buildingType": "Station",
+      "_tier": 1,
+      "_description": "Equipment station for metal tools, weapons, and armor.",
+      "_maxHealth": 200,
+      "_defense": 2,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 0,
+      "_prefabKey": "PF_Building_Anvil",
+      "_materialKey": "MAT_Building_Iron",
+      "_craftingRecipeId": "recipe_anvil"
     }
   ]
 }

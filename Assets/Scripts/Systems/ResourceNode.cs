@@ -160,17 +160,17 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return GetSafeMultiplier(toolData.StoneGatherMultiplier);
         }
 
-        if (_resourceId == PlayerModel.ResourceIron)
+        if (_resourceId == PlayerModel.ResourceIron || _resourceId == PlayerModel.ResourceIronOre)
         {
             return GetSafeMultiplier(toolData.IronGatherMultiplier);
         }
 
-        if (_resourceId == PlayerModel.ResourceGold)
+        if (_resourceId == PlayerModel.ResourceGold || _resourceId == PlayerModel.ResourceGoldOre)
         {
             return GetSafeMultiplier(toolData.GoldGatherMultiplier);
         }
 
-        if (_resourceId == PlayerModel.ResourceAdamantium)
+        if (_resourceId == PlayerModel.ResourceAdamantium || _resourceId == PlayerModel.ResourceAdamantiumOre)
         {
             return GetSafeMultiplier(toolData.AdamantiumGatherMultiplier);
         }

@@ -75,7 +75,7 @@
     {
       "_id": "rock_iron_ore",
       "_displayName": "Iron Ore Rock",
-      "_resourceId": "Iron",
+      "_resourceId": "IronOre",
       "_requiredToolType": "Pickaxe",
       "_requiredToolTier": 2,
       "_gatherAmount": 2,
@@ -87,7 +87,7 @@
     {
       "_id": "rock_gold_ore",
       "_displayName": "Gold Ore Rock",
-      "_resourceId": "Gold",
+      "_resourceId": "GoldOre",
       "_requiredToolType": "Pickaxe",
       "_requiredToolTier": 3,
       "_gatherAmount": 2,
@@ -99,7 +99,7 @@
     {
       "_id": "rock_adamantium_ore",
       "_displayName": "Adamantium Ore Rock",
-      "_resourceId": "Adamantium",
+      "_resourceId": "AdamantiumOre",
       "_requiredToolType": "Pickaxe",
       "_requiredToolTier": 4,
       "_gatherAmount": 1,

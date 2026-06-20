@@ -1,0 +1,37 @@
+{
+  "Items": [
+    {
+      "_id": "smelt_iron_ingot",
+      "_displayName": "Smelt Iron Ingot",
+      "_inputResourceId": "IronOre",
+      "_inputAmount": 1,
+      "_outputResourceId": "IronIngot",
+      "_outputAmount": 1,
+      "_smeltSeconds": 4,
+      "_stationType": "Furnace",
+      "_requiredStationTier": 1
+    },
+    {
+      "_id": "smelt_gold_ingot",
+      "_displayName": "Smelt Gold Ingot",
+      "_inputResourceId": "GoldOre",
+      "_inputAmount": 1,
+      "_outputResourceId": "GoldIngot",
+      "_outputAmount": 1,
+      "_smeltSeconds": 5,
+      "_stationType": "Furnace",
+      "_requiredStationTier": 1
+    },
+    {
+      "_id": "smelt_adamantium_ingot",
+      "_displayName": "Smelt Adamantium Ingot",
+      "_inputResourceId": "AdamantiumOre",
+      "_inputAmount": 1,
+      "_outputResourceId": "AdamantiumIngot",
+      "_outputAmount": 1,
+      "_smeltSeconds": 7,
+      "_stationType": "Furnace",
+      "_requiredStationTier": 2
+    }
+  ]
+}

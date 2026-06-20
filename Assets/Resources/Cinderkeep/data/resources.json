@@ -49,6 +49,66 @@
       "_iconKey": "Icon_Resource_Adamantium",
       "_prefabKey": "PF_ResourceDrop_Adamantium",
       "_maxStackCount": 999
+    },
+    {
+      "_id": "IronOre",
+      "_displayName": "Iron Ore",
+      "_resourceType": "Ore",
+      "_tier": 2,
+      "_description": "Raw iron ore. Smelt it in a furnace to make Iron Ingot.",
+      "_iconKey": "Icon_Resource_IronOre",
+      "_prefabKey": "PF_ResourceDrop_IronOre",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "GoldOre",
+      "_displayName": "Gold Ore",
+      "_resourceType": "Ore",
+      "_tier": 3,
+      "_description": "Raw gold ore. Smelt it in a furnace to make Gold Ingot.",
+      "_iconKey": "Icon_Resource_GoldOre",
+      "_prefabKey": "PF_ResourceDrop_GoldOre",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "AdamantiumOre",
+      "_displayName": "Adamantium Ore",
+      "_resourceType": "Ore",
+      "_tier": 4,
+      "_description": "Raw adamantium ore. Smelt it in a furnace to make Adamantium Ingot.",
+      "_iconKey": "Icon_Resource_AdamantiumOre",
+      "_prefabKey": "PF_ResourceDrop_AdamantiumOre",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "IronIngot",
+      "_displayName": "Iron Ingot",
+      "_resourceType": "Ingot",
+      "_tier": 2,
+      "_description": "Smelted iron used for iron tools, weapons, armor, walls, and towers.",
+      "_iconKey": "Icon_Resource_IronIngot",
+      "_prefabKey": "PF_ResourceDrop_IronIngot",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "GoldIngot",
+      "_displayName": "Gold Ingot",
+      "_resourceType": "Ingot",
+      "_tier": 3,
+      "_description": "Smelted gold used for fast late tools, weapons, armor, walls, and towers.",
+      "_iconKey": "Icon_Resource_GoldIngot",
+      "_prefabKey": "PF_ResourceDrop_GoldIngot",
+      "_maxStackCount": 999
+    },
+    {
+      "_id": "AdamantiumIngot",
+      "_displayName": "Adamantium Ingot",
+      "_resourceType": "Ingot",
+      "_tier": 4,
+      "_description": "Smelted adamantium used for the strongest equipment and defenses.",
+      "_iconKey": "Icon_Resource_AdamantiumIngot",
+      "_prefabKey": "PF_ResourceDrop_AdamantiumIngot",
+      "_maxStackCount": 999
     }
   ]
 }

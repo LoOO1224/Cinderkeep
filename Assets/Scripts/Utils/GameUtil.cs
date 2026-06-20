@@ -15,6 +15,7 @@ namespace Cinderkeep.Gameplay
         public const string BuildingDataResourcePath = "Cinderkeep/data/buildings";
         public const string CraftingRecipeDataResourcePath = "Cinderkeep/data/crafting_recipes";
         public const string CraftingStationDataResourcePath = "Cinderkeep/data/crafting_stations";
+        public const string SmeltingRecipeDataResourcePath = "Cinderkeep/data/smelting_recipes";
         public const string EnemySpawnRuleDataResourcePath = "Cinderkeep/data/enemy_spawn_rules";
         public const string GameFlowPhaseDataResourcePath = "Cinderkeep/data/game_flow_phases";
         public const string LootDropDataResourcePath = "Cinderkeep/data/loot_drops";
@@ -41,6 +42,7 @@ namespace Cinderkeep.Gameplay
             gameDataManager.LoadBuildingData(gameDataManager.GetBuildingDataResourcePath());
             gameDataManager.LoadCraftingRecipeData(gameDataManager.GetCraftingRecipeDataResourcePath());
             gameDataManager.LoadCraftingStationData(gameDataManager.GetCraftingStationDataResourcePath());
+            gameDataManager.LoadSmeltingRecipeData(gameDataManager.GetSmeltingRecipeDataResourcePath());
             gameDataManager.LoadEnemySpawnRuleData(gameDataManager.GetEnemySpawnRuleDataResourcePath());
             gameDataManager.LoadGameFlowPhaseData(gameDataManager.GetGameFlowPhaseDataResourcePath());
             gameDataManager.LoadLootDropData(gameDataManager.GetLootDropDataResourcePath());

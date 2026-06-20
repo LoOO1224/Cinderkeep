@@ -13,6 +13,12 @@ namespace Cinderkeep.Gameplay
         public const string ResourceGold = "Gold";
         public const string ResourceMithril = "Mithril";
         public const string ResourceAdamantium = "Adamantium";
+        public const string ResourceIronOre = "IronOre";
+        public const string ResourceGoldOre = "GoldOre";
+        public const string ResourceAdamantiumOre = "AdamantiumOre";
+        public const string ResourceIronIngot = "IronIngot";
+        public const string ResourceGoldIngot = "GoldIngot";
+        public const string ResourceAdamantiumIngot = "AdamantiumIngot";
 
         private int _health;
         private int _maxHealth;
@@ -25,6 +31,12 @@ namespace Cinderkeep.Gameplay
         private int _gold;
         private int _mithril;
         private int _adamantium;
+        private int _ironOre;
+        private int _goldOre;
+        private int _adamantiumOre;
+        private int _ironIngot;
+        private int _goldIngot;
+        private int _adamantiumIngot;
 
         public int Health
         {
@@ -114,6 +126,54 @@ namespace Cinderkeep.Gameplay
             }
         }
 
+        public int IronOre
+        {
+            get
+            {
+                return _ironOre;
+            }
+        }
+
+        public int GoldOre
+        {
+            get
+            {
+                return _goldOre;
+            }
+        }
+
+        public int AdamantiumOre
+        {
+            get
+            {
+                return _adamantiumOre;
+            }
+        }
+
+        public int IronIngot
+        {
+            get
+            {
+                return _ironIngot;
+            }
+        }
+
+        public int GoldIngot
+        {
+            get
+            {
+                return _goldIngot;
+            }
+        }
+
+        public int AdamantiumIngot
+        {
+            get
+            {
+                return _adamantiumIngot;
+            }
+        }
+
         public event Action OnResourceChanged;
 
         public void InitializeDefault()
@@ -130,6 +190,12 @@ namespace Cinderkeep.Gameplay
             _gold = 0;
             _mithril = 0;
             _adamantium = 0;
+            _ironOre = 0;
+            _goldOre = 0;
+            _adamantiumOre = 0;
+            _ironIngot = 0;
+            _goldIngot = 0;
+            _adamantiumIngot = 0;
         }
 
         public void AddResource(string resourceType, int amount)
@@ -161,6 +227,51 @@ namespace Cinderkeep.Gameplay
             return isSuccess;
         }
 
+        public bool HasResource(string resourceType, int amount)
+        {
+            if (amount <= 0)
+            {
+                return true;
+            }
+
+            return GetResourceAmount(resourceType) >= amount;
+        }
+
+        public int GetResourceAmount(string resourceType)
+        {
+            string safeResourceType = NormalizeResourceType(resourceType);
+
+            switch (safeResourceType)
+            {
+                case ResourceWood:
+                    return _wood;
+                case ResourceStone:
+                    return _stone;
+                case ResourceIron:
+                    return _iron;
+                case ResourceGold:
+                    return _gold;
+                case ResourceMithril:
+                    return _mithril;
+                case ResourceAdamantium:
+                    return _adamantium;
+                case ResourceIronOre:
+                    return _ironOre;
+                case ResourceGoldOre:
+                    return _goldOre;
+                case ResourceAdamantiumOre:
+                    return _adamantiumOre;
+                case ResourceIronIngot:
+                    return _ironIngot;
+                case ResourceGoldIngot:
+                    return _goldIngot;
+                case ResourceAdamantiumIngot:
+                    return _adamantiumIngot;
+            }
+
+            return 0;
+        }
+
         private bool TryAddResource(string resourceType, int amount)
         {
             string safeResourceType = NormalizeResourceType(resourceType);
@@ -185,6 +296,24 @@ namespace Cinderkeep.Gameplay
                 case ResourceAdamantium:
                     _adamantium += amount;
                     return true;
+                case ResourceIronOre:
+                    _ironOre += amount;
+                    return true;
+                case ResourceGoldOre:
+                    _goldOre += amount;
+                    return true;
+                case ResourceAdamantiumOre:
+                    _adamantiumOre += amount;
+                    return true;
+                case ResourceIronIngot:
+                    _ironIngot += amount;
+                    return true;
+                case ResourceGoldIngot:
+                    _goldIngot += amount;
+                    return true;
+                case ResourceAdamantiumIngot:
+                    _adamantiumIngot += amount;
+                    return true;
             }
 
             return false;
@@ -208,6 +337,18 @@ namespace Cinderkeep.Gameplay
                     return TrySpendMithril(amount);
                 case ResourceAdamantium:
                     return TrySpendAdamantium(amount);
+                case ResourceIronOre:
+                    return TrySpendIronOre(amount);
+                case ResourceGoldOre:
+                    return TrySpendGoldOre(amount);
+                case ResourceAdamantiumOre:
+                    return TrySpendAdamantiumOre(amount);
+                case ResourceIronIngot:
+                    return TrySpendIronIngot(amount);
+                case ResourceGoldIngot:
+                    return TrySpendGoldIngot(amount);
+                case ResourceAdamantiumIngot:
+                    return TrySpendAdamantiumIngot(amount);
             }
 
             return false;
@@ -279,6 +420,72 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        private bool TrySpendIronOre(int amount)
+        {
+            if (_ironOre < amount)
+            {
+                return false;
+            }
+
+            _ironOre -= amount;
+            return true;
+        }
+
+        private bool TrySpendGoldOre(int amount)
+        {
+            if (_goldOre < amount)
+            {
+                return false;
+            }
+
+            _goldOre -= amount;
+            return true;
+        }
+
+        private bool TrySpendAdamantiumOre(int amount)
+        {
+            if (_adamantiumOre < amount)
+            {
+                return false;
+            }
+
+            _adamantiumOre -= amount;
+            return true;
+        }
+
+        private bool TrySpendIronIngot(int amount)
+        {
+            if (_ironIngot < amount)
+            {
+                return false;
+            }
+
+            _ironIngot -= amount;
+            return true;
+        }
+
+        private bool TrySpendGoldIngot(int amount)
+        {
+            if (_goldIngot < amount)
+            {
+                return false;
+            }
+
+            _goldIngot -= amount;
+            return true;
+        }
+
+        private bool TrySpendAdamantiumIngot(int amount)
+        {
+            if (_adamantiumIngot < amount)
+            {
+                return false;
+            }
+
+            _adamantiumIngot -= amount;
+            return true;
+        }
+
         private void NotifyResourceChanged()
         {
             if (OnResourceChanged == null)
@@ -311,6 +518,24 @@ namespace Cinderkeep.Gameplay
                     return ResourceMithril;
                 case "adamantium":
                     return ResourceAdamantium;
+                case "ironore":
+                case "iron_ore":
+                    return ResourceIronOre;
+                case "goldore":
+                case "gold_ore":
+                    return ResourceGoldOre;
+                case "adamantiumore":
+                case "adamantium_ore":
+                    return ResourceAdamantiumOre;
+                case "ironingot":
+                case "iron_ingot":
+                    return ResourceIronIngot;
+                case "goldingot":
+                case "gold_ingot":
+                    return ResourceGoldIngot;
+                case "adamantiumingot":
+                case "adamantium_ingot":
+                    return ResourceAdamantiumIngot;
             }
 
             return resourceType;

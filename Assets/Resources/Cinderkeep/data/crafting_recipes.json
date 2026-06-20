@@ -1,4 +1,4 @@
-{
+﻿{
   "Items": [
     {
       "_id": "recipe_stone_axe",
@@ -75,7 +75,7 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 4
         }
       ]
@@ -95,7 +95,7 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 5
         }
       ]
@@ -115,7 +115,7 @@
           "_amount": 3
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 5
         }
       ]
@@ -131,7 +131,7 @@
       "_unlockDay": 2,
       "_costs": [
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 3
         }
       ]
@@ -147,7 +147,7 @@
       "_unlockDay": 2,
       "_costs": [
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 7
         }
       ]
@@ -163,7 +163,7 @@
       "_unlockDay": 2,
       "_costs": [
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 4
         }
       ]
@@ -183,11 +183,11 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 4
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 1
         }
       ]
@@ -207,11 +207,11 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 5
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 1
         }
       ]
@@ -231,11 +231,11 @@
           "_amount": 3
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 5
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 1
         }
       ]
@@ -251,7 +251,7 @@
       "_unlockDay": 3,
       "_costs": [
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 3
         }
       ]
@@ -267,7 +267,7 @@
       "_unlockDay": 3,
       "_costs": [
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 7
         }
       ]
@@ -283,7 +283,7 @@
       "_unlockDay": 3,
       "_costs": [
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 4
         }
       ]
@@ -303,11 +303,11 @@
           "_amount": 5
         },
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 4
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 2
         }
       ]
@@ -327,11 +327,11 @@
           "_amount": 5
         },
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 5
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 2
         }
       ]
@@ -351,11 +351,11 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 6
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 2
         }
       ]
@@ -371,11 +371,11 @@
       "_unlockDay": 4,
       "_costs": [
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 3
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 1
         }
       ]
@@ -391,11 +391,11 @@
       "_unlockDay": 4,
       "_costs": [
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 8
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 2
         }
       ]
@@ -411,11 +411,11 @@
       "_unlockDay": 4,
       "_costs": [
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 4
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 1
         }
       ]
@@ -451,7 +451,7 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 6
         }
       ]
@@ -471,11 +471,11 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 6
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 2
         }
       ]
@@ -495,11 +495,11 @@
           "_amount": 5
         },
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 6
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 2
         }
       ]
@@ -543,7 +543,7 @@
           "_amount": 4
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 8
         }
       ]
@@ -563,11 +563,11 @@
           "_amount": 6
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 8
         },
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 2
         }
       ]
@@ -587,12 +587,60 @@
           "_amount": 8
         },
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 8
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 3
+        }
+      ]
+    },
+    {
+      "_id": "recipe_workbench",
+      "_displayName": "Build Workbench",
+      "_resultDataType": "Building",
+      "_resultItemId": "workbench",
+      "_resultCount": 1,
+      "_stationType": "CinderHeart",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 10
+        }
+      ]
+    },
+    {
+      "_id": "recipe_furnace",
+      "_displayName": "Build Furnace",
+      "_resultDataType": "Building",
+      "_resultItemId": "furnace",
+      "_resultCount": 1,
+      "_stationType": "CinderHeart",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Stone",
+          "_amount": 10
+        }
+      ]
+    },
+    {
+      "_id": "recipe_anvil",
+      "_displayName": "Build Anvil",
+      "_resultDataType": "Building",
+      "_resultItemId": "anvil",
+      "_resultCount": 1,
+      "_stationType": "CinderHeart",
+      "_requiredStationTier": 1,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "IronIngot",
+          "_amount": 10
         }
       ]
     },
@@ -627,11 +675,11 @@
       "_unlockDay": 2,
       "_costs": [
         {
-          "_resourceId": "Iron",
+          "_resourceId": "IronIngot",
           "_amount": 8
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 4
         }
       ]
@@ -647,14 +695,15 @@
       "_unlockDay": 3,
       "_costs": [
         {
-          "_resourceId": "Adamantium",
+          "_resourceId": "AdamantiumIngot",
           "_amount": 6
         },
         {
-          "_resourceId": "Gold",
+          "_resourceId": "GoldIngot",
           "_amount": 6
         }
       ]
     }
   ]
 }
+
