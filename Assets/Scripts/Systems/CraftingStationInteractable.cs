@@ -41,6 +41,7 @@ public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable
         }
 
         _craftingStation.OpenStation(gameObjectInteractor);
+        OpenStationUI(gameObjectInteractor);
     }
 
     private void ConnectCraftingStation()
@@ -51,5 +52,28 @@ public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable
         }
 
         _craftingStation = GetComponent<CraftingStation>();
+    }
+
+    private void OpenStationUI(GameObject gameObjectInteractor)
+    {
+        if (GameManager.Inst == null)
+        {
+            return;
+        }
+
+        UIManager uiManager = GameManager.Inst.GetUIManager();
+        if (uiManager == null)
+        {
+            return;
+        }
+
+        FurnaceStation furnaceStation = GetComponent<FurnaceStation>();
+        if (furnaceStation != null)
+        {
+            uiManager.OpenFurnaceUI(furnaceStation, gameObjectInteractor);
+            return;
+        }
+
+        uiManager.OpenCraftingUI(_craftingStation, gameObjectInteractor);
     }
 }

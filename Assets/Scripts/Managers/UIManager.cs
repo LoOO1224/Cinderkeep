@@ -12,6 +12,8 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameObject _hudRoot;
         [SerializeField] private GameObject _inventoryRoot;
         [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private CraftingUI _craftingUI;
+        [SerializeField] private FurnaceUI _furnaceUI;
 
         private bool _isInitialized;
 
@@ -33,6 +35,8 @@ namespace Cinderkeep.Gameplay
             CloseHud();
             CloseInventory();
             CloseGameOverPanel();
+            CloseCraftingUI();
+            CloseFurnaceUI();
             _isInitialized = true;
         }
 
@@ -64,6 +68,48 @@ namespace Cinderkeep.Gameplay
         public void CloseGameOverPanel()
         {
             SetActive(_gameOverPanel, false);
+        }
+
+        public void OpenCraftingUI(CraftingStation craftingStation, GameObject interactor)
+        {
+            if (_craftingUI == null)
+            {
+                return;
+            }
+
+            CloseFurnaceUI();
+            _craftingUI.OpenStation(craftingStation, interactor);
+        }
+
+        public void CloseCraftingUI()
+        {
+            if (_craftingUI == null)
+            {
+                return;
+            }
+
+            _craftingUI.Close();
+        }
+
+        public void OpenFurnaceUI(FurnaceStation furnaceStation, GameObject interactor)
+        {
+            if (_furnaceUI == null)
+            {
+                return;
+            }
+
+            CloseCraftingUI();
+            _furnaceUI.OpenFurnace(furnaceStation);
+        }
+
+        public void CloseFurnaceUI()
+        {
+            if (_furnaceUI == null)
+            {
+                return;
+            }
+
+            _furnaceUI.Close();
         }
 
         private void SetActive(GameObject targetObject, bool isActive)

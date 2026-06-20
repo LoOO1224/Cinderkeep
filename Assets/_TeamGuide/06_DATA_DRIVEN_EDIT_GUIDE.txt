@@ -13,7 +13,7 @@ Basic Rule
 - 기능 테스트 전에는 한 번에 여러 JSON을 크게 바꾸지 않습니다.
 - 수치를 바꿨다면 반드시 어떤 플레이 체감이 바뀌는지 적습니다.
 
-Current Active Link - 4.38 기준
+Current Active Link - 4.39 기준
 1) harvest_nodes.json
 - 위치: Assets/Resources/Cinderkeep/data/harvest_nodes.json
 - 로드: GameDataManager.LoadHarvestNodeData()
@@ -160,6 +160,9 @@ Prepared Schema - 아직 실제 루프 연결이 약한 데이터
   crafting_stations.json은 어떤 시설에서 제작/제련이 열리는지 관리합니다.
   제작대/용광로/모루는 Building 데이터와 CraftingRecipe 데이터를 함께 사용합니다.
   기본 비용은 제작대 Wood 10, 용광로 Stone 10, 모루 IronIngot 10입니다.
+  CraftingUI는 제작 가능한 목록, 비용, 제작 가능/자원 부족 상태를 표시합니다.
+  CraftingRecipeButtonView는 제작 목록의 한 줄 버튼입니다.
+  CraftingRecipeExecutor는 비용 차감과 결과 지급만 담당합니다.
 
 9) smelting_recipes.json
 - 위치: Assets/Resources/Cinderkeep/data/smelting_recipes.json
@@ -169,6 +172,7 @@ Prepared Schema - 아직 실제 루프 연결이 약한 데이터
   GameDataManager.SmeltingRecipeDataList
 - 사용:
   FurnaceStation: 왼쪽 입력 자원, 진행률, 오른쪽 결과 주괴 수량
+  FurnaceUI: 입력칸, 진행 게이지, 결과칸, 시작/회수 버튼 표시
 - 조절 가능:
   _inputResourceId: 투입할 광석 ID
   _inputAmount: 한 번 제련에 필요한 광석 수
@@ -217,9 +221,42 @@ DM Template
 6) 직접 테스트한 내용:
 7) 다음에 이어서 봐야 할 파일:
 
-Current 4.38 Note
+UI Link Guide - 4.39
+1) 제작 UI
+- 스크립트: Assets/Scripts/UI/CraftingUI.cs
+- 버튼 슬롯: Assets/Scripts/UI/CraftingRecipeButtonView.cs
+- 제작 실행: Assets/Scripts/Systems/CraftingRecipeExecutor.cs
+- 연결 위치:
+  UIManager의 _craftingUI에 CraftingUI를 연결합니다.
+  CraftingUI의 _recipeSlots에는 미리 만든 버튼 슬롯들을 배열로 연결합니다.
+  버튼 슬롯마다 CraftingRecipeButtonView를 붙이고 TMP_Text, Button을 Inspector에서 연결합니다.
+- 규칙:
+  UI는 코드에서 새로 만들지 않습니다.
+  제작 버튼 프리팹이나 씬 오브젝트를 미리 만든 뒤 연결합니다.
+
+2) 용광로 UI
+- 스크립트: Assets/Scripts/UI/FurnaceUI.cs
+- 제련 실행: Assets/Scripts/Systems/FurnaceStation.cs
+- 연결 위치:
+  UIManager의 _furnaceUI에 FurnaceUI를 연결합니다.
+  FurnaceUI에는 왼쪽 입력칸 TMP, 진행 Slider, 오른쪽 결과칸 TMP, 시작/회수 Button을 연결합니다.
+- 현재 기준:
+  드래그 앤 드롭 UI는 아직 2차 작업입니다.
+  1차에서는 FurnaceUI.SetInputResource()로 선택된 광석 ID와 수량을 넘길 수 있게 준비했습니다.
+  이후 DropSlot 컴포넌트를 만들면 왼쪽 칸에서 SetInputResource()만 호출하면 됩니다.
+
+3) 상호작용 흐름
+- 스크립트: Assets/Scripts/Systems/CraftingStationInteractable.cs
+- 제작대:
+  E 상호작용 -> CraftingStation.OpenStation() -> UIManager.OpenCraftingUI()
+- 용광로:
+  E 상호작용 -> CraftingStation.OpenStation() -> UIManager.OpenFurnaceUI()
+
+Current 4.39 Note
 - ResourceNode, PlayerToolController, PlayerToolUse, PlayerAttack, EnemySpawnPoint, GameFlowController는 실제 플레이 수치에 JSON을 사용합니다.
 - buildings.json, building_upgrades.json, crafting_recipes.json, crafting_stations.json, smelting_recipes.json은 제작대/용광로/건축 비용 작업의 기준 데이터입니다.
+- CraftingUI, FurnaceUI는 프리팹/씬에 준비된 UI를 표시하는 1차 뼈대입니다.
+- 드래그 앤 드롭, 장비 인벤토리, 제작 결과 장착은 4.40 이후 PlayerInventory/EquipmentModel 작업과 함께 확장합니다.
 - JSON 값이 없을 때는 각 컴포넌트의 Inspector fallback 값으로 안전하게 동작해야 합니다.
 - 밸런스 수정은 한 번에 한 JSON, 한 ID, 한 목적만 바꾸는 방식이 안전합니다.
 - 팀원이 브랜치를 올릴 때는 "어떤 JSON의 어떤 ID를 바꿨는지"와 "어떤 스크립트에서 체감되는지"를 같이 적어주세요.
