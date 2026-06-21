@@ -59,5 +59,42 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1855164301112197825}
+    - targetCorrespondingSourceObject: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5296987934533457078}
   m_SourcePrefab: {fileID: 100100000, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+--- !u!1 &2905516811528519344 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+  m_PrefabInstance: {fileID: 2905516811528475196}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1855164301112197825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2905516811528519344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0e4c7484074b34890bb238fdb82f1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingHp
+  _maxHp: 100
+--- !u!114 &5296987934533457078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2905516811528519344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Damageable
+  _maxHealth: 100

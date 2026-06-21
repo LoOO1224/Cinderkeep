@@ -1,4 +1,5 @@
 using UnityEngine;
+using Cinderkeep.Gameplay;
 
 // 건축물이 올라갈 수 있는 자리 정보를 가진 컴포넌트입니다.
 // 실제 생성은 BuildingManager가 담당하고, 이 클래스는 자리 상태만 관리합니다.
@@ -30,6 +31,28 @@ public sealed class BuildingSpot : MonoBehaviour
     private void Awake()
     {
         InitializeAnchor();
+    }
+
+    private void Start()
+    {
+        RegisterToBuildingManager();
+    }
+
+    // 씬이 시작될 때 각각의 BuildingSpot들이 스스로 등록하는 로직
+    private void RegisterToBuildingManager()
+    {
+        if(GameManager.Inst == null)
+        {
+            return;
+        }
+
+        BuildingManager buildingManager = GameManager.Inst.GetBuildingManager();
+        if(buildingManager == null)
+        {
+            return;
+        }
+
+        buildingManager.RegisterBuildingSpot(this);
     }
 
     public bool CanBuild()

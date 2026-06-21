@@ -60,6 +60,9 @@ namespace Cinderkeep.Gameplay
 
         public bool TryBuildAtPosition(GameObject buildingPrefab, Vector3 buildPosition, Quaternion buildRotation)
         {
+            Debug.LogWarning("BuildingManager: BuildingSpot이 있는 위치에서만 건축할 수 있습니다.");
+            return false;
+
             Initialize();
 
             if (CanBuildAtPosition(buildingPrefab) == false)
@@ -162,6 +165,12 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
+            if (_buildingSpots.Contains(buildingSpot) == false)
+            {
+                Debug.LogWarning("BuildingManager: 등록되지 않은 건축 지점입니다.");
+                return false;
+            }
+
             if (buildingSpot == null)
             {
                 Debug.LogWarning("BuildingManager: 건축 지점이 비어 있습니다.");
@@ -212,6 +221,8 @@ namespace Cinderkeep.Gameplay
             {
                 buildingHp = buildingObject.AddComponent<BuildingHp>();
             }
+
+            buildingHp.InitializeHp();
 
             RegisterBuilding(buildingHp);
         }
