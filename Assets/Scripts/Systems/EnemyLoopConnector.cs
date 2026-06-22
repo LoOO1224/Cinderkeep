@@ -179,7 +179,6 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 
         if (enemyMovement != null)
         {
-            enemyMovement.SetCinderHeartTarget(_cinderHeartTarget);
             enemyMovement.Initialize(enemyData, enemyDetector);
         }
 

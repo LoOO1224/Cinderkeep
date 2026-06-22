@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 몬스터가 어떤 대상을 공격할지 판단하는 컴포넌트입니다.
-// 이동은 EnemyMovement, 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
+// 몬스터가 어떤 대상을 향해 이동하고 공격할지 판단하는 컴포넌트입니다.
+// 실제 이동은 EnemyMovement, 플레이어 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
 public sealed class EnemyBrain : MonoBehaviour
 {
     private const string PlayerTag = "Player";
@@ -15,25 +15,25 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private EnemyDetector _enemyDetector;
     [Tooltip("실제 피해 적용과 공격 쿨타임을 담당하는 컴포넌트입니다.")]
     [SerializeField] private EnemyAttack _enemyAttack;
-
-    [Tooltip("실제 이동을 담당하는 컴포넌트입니다.")]
+    [Tooltip("실제 이동 실행을 담당하는 컴포넌트입니다.")]
     [SerializeField] private EnemyMovement _enemyMovement;
-
-    [Tooltip("플레이어를 감지하지 못했을 때 공격할 CinderHeart 피해 대상입니다.")]
+    [Tooltip("플레이어를 감지하지 못했을 때 향하고 공격할 CinderHeart 피해 대상입니다.")]
     [SerializeField] private Damageable _cinderHeartDamageable;
     [Tooltip("플레이어와 구조물을 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _attackDistance = 2.3f;
     [Tooltip("CinderHeart를 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _cinderHeartAttackDistance = 3f;
-
     [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 거리입니다.")]
     [SerializeField] private float _blockingBuildingDetectDistance = 5f;
     [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 감지 반경입니다.")]
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
 
+    private readonly NavMeshPath _cinderHeartPath = new NavMeshPath();
+
     private Coroutine _brainDecisionRoutine;
     private Damageable _currentAttackTarget;
     private BuildingHp _currentBuildingAttackTarget;
+    private bool _canChaseCinderHeart = true;
 
     private void Awake()
     {
@@ -55,7 +55,25 @@ public sealed class EnemyBrain : MonoBehaviour
         _cinderHeartDamageable = cinderHeartDamageable;
     }
 
-    // 플레이어, CinderHeart처럼 Damageable을 기준으로 공격할 대상을 지정합니다.
+    public void SetCinderHeartChaseEnabled(bool isEnabled)
+    {
+        _canChaseCinderHeart = isEnabled;
+
+        if (isEnabled == true)
+        {
+            return;
+        }
+
+        ClearCurrentBuildingAttackTarget();
+        ClearCinderHeartAttackTarget();
+
+        if (_enemyMovement != null)
+        {
+            _enemyMovement.StopMoving();
+        }
+    }
+
+    // 플레이어, CinderHeart처럼 Damageable을 기준으로 공격할 대상을 외부에서 지정할 때 사용합니다.
     public void SetAttackTarget(Damageable targetDamageable)
     {
         _currentAttackTarget = targetDamageable;
@@ -72,27 +90,6 @@ public sealed class EnemyBrain : MonoBehaviour
         _currentAttackTarget = null;
     }
 
-    // 건축물이 이동 경로를 막고 있을 때 건축물 공격 대상으로 지정합니다.
-    private void SetBuildingAttackTarget(BuildingHp buildingHp)
-    {
-        if (buildingHp == null)
-        {
-            return;
-        }
-
-        if (buildingHp.IsDestroyed)
-        {
-            return;
-        }
-
-        _currentBuildingAttackTarget = buildingHp;
-
-        if (_currentAttackTarget == _cinderHeartDamageable)
-        {
-            _currentAttackTarget = null;
-        }
-    }
-
     public void ClearBuildingAttackTarget(BuildingHp buildingHp)
     {
         if (_currentBuildingAttackTarget != buildingHp)
@@ -101,24 +98,6 @@ public sealed class EnemyBrain : MonoBehaviour
         }
 
         _currentBuildingAttackTarget = null;
-    }
-
-    private void ClearCurrentBuildingAttackTarget()
-    {
-        _currentBuildingAttackTarget = null;
-    }
-
-    private void MoveToCurrentBuildingAttackTarget()
-    {
-        if (_enemyMovement == null)
-        {
-            return;
-        }
-
-        if (_currentBuildingAttackTarget == null)
-        {
-            return;
-        }
     }
 
     private void ConnectComponents()
@@ -137,7 +116,6 @@ public sealed class EnemyBrain : MonoBehaviour
         {
             _enemyMovement = GetComponent<EnemyMovement>();
         }
-
     }
 
     private void StartBrainRoutine()
@@ -160,79 +138,137 @@ public sealed class EnemyBrain : MonoBehaviour
     private IEnumerator BrainDecisionRoutine()
     {
         // 적 판단은 매 프레임이 아니라 짧은 주기로 갱신해 과한 연산을 피합니다.
-        // 타깃 우선순위는 플레이어 감지 -> 막고 있는 건축물 -> CinderHeart 순서로 유지합니다.
+        // 우선순위는 플레이어 감지 -> 막고 있는 건축물 -> CinderHeart -> 낮 배회 순서입니다.
         WaitForSeconds waitInterval = new WaitForSeconds(DecisionInterval);
 
         while (true)
         {
-            UpdatePlayerTargetFromDetector();
-            UpdateBlockingBuildingTargetIfNeeded();
-            UpdateCinderHeartTargetIfNeeded();
+            RefreshTargets();
+            MoveByCurrentTarget();
             TryAttackCurrentTarget();
 
             yield return waitInterval;
         }
     }
 
-    // CinderHeart로 가는 길이 막혔으면 앞쪽 건축물을 공격 대상으로 잡습니다.
-    private void UpdateBlockingBuildingTargetIfNeeded()
+    private void RefreshTargets()
     {
-        if (_enemyDetector != null && _enemyDetector.HasDetectedPlayer)
+        if (TrySetPlayerTargetFromDetector())
         {
-            ClearCurrentBuildingAttackTarget();
             return;
         }
 
-        if (_cinderHeartDamageable == null)
+        if (TrySetBuildingTargetFromBlockedPath())
+        {
+            return;
+        }
+
+        UpdateCinderHeartTargetIfNeeded();
+    }
+
+    private bool TrySetPlayerTargetFromDetector()
+    {
+        if (_enemyDetector == null || _enemyDetector.HasDetectedPlayer == false)
+        {
+            ClearPlayerAttackTarget();
+            return false;
+        }
+
+        Damageable detectedPlayerDamageable = GetDamageableFromTransform(_enemyDetector.DetectedPlayer);
+        if (detectedPlayerDamageable == null)
+        {
+            ClearPlayerAttackTarget();
+            return false;
+        }
+
+        _currentBuildingAttackTarget = null;
+        _currentAttackTarget = detectedPlayerDamageable;
+        return true;
+    }
+
+    private bool TrySetBuildingTargetFromBlockedPath()
+    {
+        if (_canChaseCinderHeart == false || _cinderHeartDamageable == null)
         {
             ClearCurrentBuildingAttackTarget();
-            return;
+            return false;
         }
 
         if (IsCinderHeartPathBlocked() == false)
         {
             ClearCurrentBuildingAttackTarget();
-            return;
+            return false;
         }
 
         if (_currentBuildingAttackTarget != null && _currentBuildingAttackTarget.IsDestroyed == false)
         {
-            MoveToCurrentBuildingAttackTarget();
-            return;
+            _currentAttackTarget = null;
+            return true;
         }
 
         BuildingHp blockingBuildingHp = FindBlockingBuilding(_cinderHeartDamageable.transform.position);
         if (blockingBuildingHp == null)
         {
             ClearCurrentBuildingAttackTarget();
-            return;
+            return false;
         }
 
         SetBuildingAttackTarget(blockingBuildingHp);
-        MoveToCurrentBuildingAttackTarget();
+        return true;
     }
 
-    private void UpdatePlayerTargetFromDetector()
+    private void SetBuildingAttackTarget(BuildingHp buildingHp)
     {
-        if (_enemyDetector == null)
+        if (buildingHp == null || buildingHp.IsDestroyed)
         {
             return;
         }
 
-        if (_enemyDetector.HasDetectedPlayer == false)
+        _currentBuildingAttackTarget = buildingHp;
+        _currentAttackTarget = null;
+    }
+
+    private void UpdateCinderHeartTargetIfNeeded()
+    {
+        if (_canChaseCinderHeart == false)
         {
-            ClearPlayerAttackTarget();
+            ClearCinderHeartAttackTarget();
             return;
         }
 
-        Damageable detectedPlayerDamageable = GetDamageableFromTransform(_enemyDetector.DetectedPlayer);
-        if (detectedPlayerDamageable == null)
+        if (_currentBuildingAttackTarget != null)
         {
             return;
         }
 
-        _currentBuildingAttackTarget = null;
-        _currentAttackTarget = detectedPlayerDamageable;
+        if (_cinderHeartDamageable == null)
+        {
+            return;
+        }
+
+        _currentAttackTarget = _cinderHeartDamageable;
+    }
+
+    private void MoveByCurrentTarget()
+    {
+        if (_enemyMovement == null)
+        {
+            return;
+        }
+
+        if (_currentBuildingAttackTarget != null)
+        {
+            _enemyMovement.MoveToTarget(_currentBuildingAttackTarget.transform);
+            return;
+        }
+
+        if (_currentAttackTarget != null)
+        {
+            _enemyMovement.MoveToTarget(_currentAttackTarget.transform);
+            return;
+        }
+
+        _enemyMovement.WanderAroundSpawnPoint();
     }
 
     private void TryAttackCurrentTarget()
@@ -287,31 +323,6 @@ public sealed class EnemyBrain : MonoBehaviour
         _enemyAttack.TryAttack(_currentBuildingAttackTarget);
     }
 
-    private void UpdateCinderHeartTargetIfNeeded()
-    {
-        if (_enemyDetector != null && _enemyDetector.HasDetectedPlayer)
-        {
-            return;
-        }
-
-        if (_currentBuildingAttackTarget != null)
-        {
-            return;
-        }
-
-        if (_currentAttackTarget != null && _currentAttackTarget != _cinderHeartDamageable)
-        {
-            return;
-        }
-
-        if (_cinderHeartDamageable == null)
-        {
-            return;
-        }
-
-        _currentAttackTarget = _cinderHeartDamageable;
-    }
-
     private bool CanAttackTarget(GameObject targetObject)
     {
         if (targetObject == null)
@@ -343,7 +354,6 @@ public sealed class EnemyBrain : MonoBehaviour
         return distance <= attackDistance;
     }
 
-    // CinderHeart까지의 NavMesh 경로가 막혔는지 확인합니다.
     private bool IsCinderHeartPathBlocked()
     {
         if (_cinderHeartDamageable == null)
@@ -351,23 +361,34 @@ public sealed class EnemyBrain : MonoBehaviour
             return false;
         }
 
-        NavMeshPath path = new NavMeshPath();
+        NavMeshHit enemyPositionOnNavMesh;
+        if (NavMesh.SamplePosition(transform.position, out enemyPositionOnNavMesh, 2f, NavMesh.AllAreas) == false)
+        {
+            return false;
+        }
+
+        NavMeshHit cinderHeartPositionOnNavMesh;
+        if (NavMesh.SamplePosition(_cinderHeartDamageable.transform.position, out cinderHeartPositionOnNavMesh, 4f, NavMesh.AllAreas) == false)
+        {
+            return false;
+        }
 
         bool hasPath = NavMesh.CalculatePath(
-            transform.position,
-            _cinderHeartDamageable.transform.position,
+            enemyPositionOnNavMesh.position,
+            cinderHeartPositionOnNavMesh.position,
             NavMesh.AllAreas,
-            path);
+            _cinderHeartPath);
 
         if (hasPath == false)
         {
             return true;
         }
 
-        return path.status == NavMeshPathStatus.PathPartial ||
-               path.status == NavMeshPathStatus.PathInvalid;
+        return _cinderHeartPath.status == NavMeshPathStatus.PathPartial ||
+               _cinderHeartPath.status == NavMeshPathStatus.PathInvalid;
     }
 
+    // CinderHeart로 향하는 앞쪽 경로에서 Build 태그를 가진 건축물을 찾습니다.
     private BuildingHp FindBlockingBuilding(Vector3 targetPosition)
     {
         Vector3 direction = targetPosition - transform.position;
@@ -442,6 +463,21 @@ public sealed class EnemyBrain : MonoBehaviour
         {
             _currentAttackTarget = null;
         }
+    }
+
+    private void ClearCinderHeartAttackTarget()
+    {
+        if (_currentAttackTarget != _cinderHeartDamageable)
+        {
+            return;
+        }
+
+        _currentAttackTarget = null;
+    }
+
+    private void ClearCurrentBuildingAttackTarget()
+    {
+        _currentBuildingAttackTarget = null;
     }
 
     private Damageable GetDamageableFromTransform(Transform targetTransform)

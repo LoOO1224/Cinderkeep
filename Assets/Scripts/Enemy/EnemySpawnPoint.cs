@@ -287,13 +287,13 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return;
         }
 
-        EnemyMovement enemyMovement = createdEnemy.GetComponent<EnemyMovement>();
-        if (enemyMovement == null)
+        EnemyBrain enemyBrain = createdEnemy.GetComponent<EnemyBrain>();
+        if (enemyBrain == null)
         {
             return;
         }
 
-        enemyMovement.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
+        enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
     }
 
     private bool CanChaseCinderHeartInCurrentMode()

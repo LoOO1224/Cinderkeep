@@ -29,10 +29,10 @@ public sealed class EnemySpawnRuntimeTracker
                 continue;
             }
 
-            EnemyMovement enemyMovement = enemyObject.GetComponent<EnemyMovement>();
-            if (enemyMovement != null)
+            EnemyBrain enemyBrain = enemyObject.GetComponent<EnemyBrain>();
+            if (enemyBrain != null)
             {
-                enemyMovement.SetCinderHeartChaseEnabled(isEnabled);
+                enemyBrain.SetCinderHeartChaseEnabled(isEnabled);
             }
         }
     }
