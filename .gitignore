@@ -205,3 +205,9 @@ Assets/_Recovery.meta
 *.stackdump
 Assets/ThirdParty/PlayModeComponentSaver
 Assets/ThirdParty/PlayModeComponentSaver.meta
+
+# Local source textures for imported free tool assets. Keep main below asset-size budget.
+/Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.psd
+/Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.PSD
+/Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.psd.meta
+/Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.PSD.meta
