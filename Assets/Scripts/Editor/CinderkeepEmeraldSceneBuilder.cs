@@ -11,7 +11,9 @@ using UnityEngine.UI;
 
 public static class CinderkeepEmeraldSceneBuilder
 {
-    private const string ScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
+    private const string BaseScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
+    private const string EmeraldSceneFolderPath = "Assets/Scenes/EmeraldQuest";
+    private const string EmeraldScenePath = "Assets/Scenes/EmeraldQuest/Cinderkeep_EmeraldQuest.unity";
     private const string PrefabFolderPath = "Assets/Prefabs/Emerald";
     private const string MaterialFolderPath = "Assets/Materials/Generated";
     private const string AddressableGroupName = "Cinderkeep_Emerald";
@@ -23,7 +25,25 @@ public static class CinderkeepEmeraldSceneBuilder
     public static void ApplyPlatinumToEmerald()
     {
         EnsureFolders();
-        OpenTargetScene();
+        OpenTargetScene(BaseScenePath);
+        ApplyToOpenedScene();
+    }
+
+    [MenuItem("Cinderkeep/Emerald/Create Emerald Quest Scene")]
+    public static void CreateEmeraldQuestScene()
+    {
+        EnsureFolders();
+        CopyBaseSceneToEmeraldScene();
+        OpenTargetScene(EmeraldScenePath);
+        ApplyToOpenedScene();
+        AddSceneToBuildSettings(EmeraldScenePath);
+
+        Debug.Log("Cinderkeep Emerald quest scene created: " + EmeraldScenePath);
+    }
+
+    private static void ApplyToOpenedScene()
+    {
+        EnsureFolders();
 
         Material pickupMaterial = GetOrCreateMaterial("MAT_Emerald_HealingPickup", new Color(0.16f, 0.9f, 0.58f, 1f));
         Material zoneMaterial = GetOrCreateMaterial("MAT_Emerald_DamageZone", new Color(0.9f, 0.16f, 0.18f, 0.45f));
@@ -60,6 +80,7 @@ public static class CinderkeepEmeraldSceneBuilder
 
     private static void EnsureFolders()
     {
+        EnsureFolder(EmeraldSceneFolderPath);
         EnsureFolder(PrefabFolderPath);
         EnsureFolder(MaterialFolderPath);
     }
@@ -77,15 +98,58 @@ public static class CinderkeepEmeraldSceneBuilder
         AssetDatabase.CreateFolder(parentPath, folderName);
     }
 
-    private static void OpenTargetScene()
+    private static void CopyBaseSceneToEmeraldScene()
+    {
+        SceneAsset baseSceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(BaseScenePath);
+        if (baseSceneAsset == null)
+        {
+            Debug.LogWarning("CinderkeepEmeraldSceneBuilder: base scene was not found: " + BaseScenePath);
+            return;
+        }
+
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(EmeraldScenePath) != null)
+        {
+            AssetDatabase.DeleteAsset(EmeraldScenePath);
+        }
+
+        bool isCopied = AssetDatabase.CopyAsset(BaseScenePath, EmeraldScenePath);
+        if (isCopied == false)
+        {
+            Debug.LogWarning("CinderkeepEmeraldSceneBuilder: emerald scene copy failed: " + EmeraldScenePath);
+            return;
+        }
+
+        AssetDatabase.ImportAsset(EmeraldScenePath);
+    }
+
+    private static void OpenTargetScene(string scenePath)
     {
         Scene activeScene = SceneManager.GetActiveScene();
-        if (activeScene.path == ScenePath)
+        if (activeScene.path == scenePath)
         {
             return;
         }
 
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+    }
+
+    private static void AddSceneToBuildSettings(string scenePath)
+    {
+        List<EditorBuildSettingsScene> buildScenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+        for (int i = 0; i < buildScenes.Count; i++)
+        {
+            if (buildScenes[i].path != scenePath)
+            {
+                continue;
+            }
+
+            buildScenes[i].enabled = true;
+            EditorBuildSettings.scenes = buildScenes.ToArray();
+            return;
+        }
+
+        buildScenes.Add(new EditorBuildSettingsScene(scenePath, true));
+        EditorBuildSettings.scenes = buildScenes.ToArray();
     }
 
     private static Material GetOrCreateMaterial(string materialName, Color color)
