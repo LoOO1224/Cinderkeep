@@ -59,6 +59,8 @@ public sealed class PlayerBuild : MonoBehaviour
 
     private void TryBuild()
     {
+        // PlayerBuild는 입력과 BuildingSpot 감지만 담당합니다.
+        // 실제 생성, 등록, 비용 처리는 BuildingManager와 데이터 스키마 쪽으로 넘깁니다.
         if (CanRequestBuild() == false)
         {
             return;
@@ -99,6 +101,8 @@ public sealed class PlayerBuild : MonoBehaviour
 
     private BuildingSpot GetBuildingSpotFromRay()
     {
+        // 건축 지점은 BuildSpot 레이어와 BuildingSpot 컴포넌트를 기준으로 찾습니다.
+        // 맵 작업자는 건축 가능한 위치에 BuildingSpot을 배치하고 레이어를 맞춰야 합니다.
         ConnectCamera();
         if (_cameraTransform == null)
         {

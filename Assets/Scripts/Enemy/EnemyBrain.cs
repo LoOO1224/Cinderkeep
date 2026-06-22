@@ -125,6 +125,8 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private IEnumerator BrainDecisionRoutine()
     {
+        // 적 판단은 매 프레임이 아니라 짧은 주기로 갱신해 과한 연산을 피합니다.
+        // 타깃 우선순위는 플레이어 감지 -> 막고 있는 건축물 -> CinderHeart 순서로 유지합니다.
         WaitForSeconds waitInterval = new WaitForSeconds(DecisionInterval);
 
         while (true)

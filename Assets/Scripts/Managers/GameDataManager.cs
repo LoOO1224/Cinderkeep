@@ -767,6 +767,8 @@ namespace Cinderkeep.Gameplay
 
         public void LoadCinderHeartSkillData(string resourcePath)
         {
+            // 아침 보상 스킬 목록은 cinderheart_skills.json에서 로드합니다.
+            // 새 보상은 Data 클래스보다 JSON의 _id, effectType, value를 먼저 맞추는 방식으로 추가합니다.
             _cinderHeartSkillDataList.Clear();
 
             TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);

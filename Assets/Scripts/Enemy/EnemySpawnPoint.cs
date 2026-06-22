@@ -348,6 +348,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private EnemySpawnRule GetCurrentSpawnRule()
     {
+        // enemy_spawn_rules.json에서 현재 일차/페이즈에 맞는 규칙을 찾으면 그 값을 우선 사용합니다.
+        // 데이터가 없으면 Inspector의 낮/밤/보스 fallback 규칙을 사용합니다.
         EnemySpawnRule inspectorRule = GetInspectorSpawnRule();
         if (_currentSpawnRuleData == null)
         {
@@ -422,6 +424,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private void SelectCurrentSpawnRuleData()
     {
+        // 페이즈가 바뀔 때마다 enemy_spawn_rules.json 후보 중 weight 기반으로 하나를 선택합니다.
+        // QA는 JSON의 day, phase, weight, spawn count 값을 조절해 난이도를 빠르게 실험할 수 있습니다.
         _currentSpawnRuleData = GetRandomSpawnRuleData(GetCurrentPhaseName());
     }
 

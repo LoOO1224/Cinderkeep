@@ -157,6 +157,8 @@ public sealed class PlayerToolUse : MonoBehaviour
 
     private float GetToolUseInterval(ResourceNode resourceNode, ToolData toolData)
     {
+        // tools.json의 AttackInterval을 기본 사용 시간으로 보고, ResourceNode의 자원별 배율로 속도를 조절합니다.
+        // 도구 티어별 채집 체감은 tools.json의 Wood/Stone/Iron/Gold/Adamantium 배율을 수정해 조절합니다.
         float interval = _toolUseInterval;
         if (toolData != null && toolData.AttackInterval > 0f)
         {

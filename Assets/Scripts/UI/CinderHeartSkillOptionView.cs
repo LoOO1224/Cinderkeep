@@ -32,6 +32,8 @@ public sealed class CinderHeartSkillOptionView : MonoBehaviour
 
     public void SetSkill(CinderHeartSkillData skillData, CinderHeartSkillSelectionUI owner)
     {
+        // cinderheart_skills.json에서 온 이름/설명을 그대로 표시합니다.
+        // 텍스트를 바꾸고 싶으면 스크립트가 아니라 JSON의 displayName, description을 수정합니다.
         Initialize();
         _skillData = skillData;
         _owner = owner;

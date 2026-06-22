@@ -23,7 +23,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     [Header("CinderHeart Reward")]
     [Tooltip("아침 보상 페이즈에 CinderHeart 스킬 선택창을 엽니다.")]
     [SerializeField] private bool _openCinderHeartSkillOnMorningReward = true;
-    [Tooltip("현재 4.57 기준으로 고정 노출할 CinderHeart 스킬 ID입니다. 랜덤 선택은 후속 작업에서 분리합니다.")]
+    [Tooltip("아침 보상에서 고정 노출할 CinderHeart 스킬 ID입니다. 랜덤 선택은 후속 작업에서 분리합니다.")]
     [SerializeField] private string[] _morningRewardSkillIds =
     {
         "cinderheart_attack_damage_5",
@@ -248,6 +248,8 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private float GetPhaseDuration(GameRunPhase phase, int day, float fallbackDuration)
     {
+        // 낮/밤/아침/보스 시간은 game_flow_phases.json에서 먼저 가져옵니다.
+        // JSON 값이 비어 있거나 잘못되면 Inspector의 GameFlowSettings 값을 fallback으로 사용합니다.
         GameFlowPhaseData phaseData = GetPhaseData(phase, day);
         if (phaseData != null && phaseData.DurationSeconds > 0f)
         {
@@ -341,6 +343,8 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void TryOpenCinderHeartSkillSelection()
     {
+        // MorningReward 페이즈에서 cinderheart_skills.json의 스킬 ID를 읽어 선택 UI를 엽니다.
+        // 선택 후보 랜덤화는 후속 작업이며, 현재는 _morningRewardSkillIds 배열 순서를 사용합니다.
         if (_openCinderHeartSkillOnMorningReward == false)
         {
             return;
@@ -402,6 +406,8 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void PauseGameForCinderHeartSkillSelection()
     {
+        // 보상 선택 중에는 전투/스폰/타이머가 흐르지 않게 Time.timeScale을 잠시 멈춥니다.
+        // UI를 닫을 때 RestoreTimeScaleIfRewardSelectionIsOpen에서 반드시 이전 값으로 복구합니다.
         if (_isWaitingForCinderHeartSkillSelection == true)
         {
             return;

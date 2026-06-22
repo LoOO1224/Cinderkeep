@@ -100,9 +100,9 @@ public sealed class BuildingHp : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // 에디터에서 건축물 피해 처리를 빠르게 확인하는 테스트 메뉴입니다.
-    [ContextMenu("Test Take Damage 50")]
-    private void TestTakeDamage()
+    // 에디터에서 건축물 피해 처리를 빠르게 확인하는 디버그 메뉴입니다.
+    [ContextMenu("Debug Take Damage 50")]
+    private void ApplyDebugDamageFromContext()
     {
         TakeDamage(50f);
     }

@@ -3,7 +3,7 @@ using System;
 namespace Cinderkeep.Gameplay
 {
     // 플레이어가 장착한 장비를 저장하는 Instance Data입니다.
-    // 4.40 기준으로는 헬멧, 갑옷, 무기, 신발 칸만 열어두고 장비 효과 계산은 후속 작업에서 붙입니다.
+    // 현재는 헬멧, 갑옷, 무기, 신발 칸만 열어두고 장비 효과 계산은 후속 작업에서 붙입니다.
     [Serializable]
     public sealed class PlayerEquipmentModel
     {

@@ -36,6 +36,8 @@ namespace Cinderkeep.Gameplay
 
         public bool TryBuildAtSpot(BuildingSpot buildingSpot, GameObject buildingPrefab)
         {
+            // 정식 건축은 반드시 BuildingSpot을 통해 요청합니다.
+            // 건축 비용과 티어 값은 buildings.json, crafting_recipes.json 연결 작업에서 확장합니다.
             Initialize();
 
             if (CanBuildAtSpot(buildingSpot, buildingPrefab) == false)
@@ -176,6 +178,8 @@ namespace Cinderkeep.Gameplay
 
         private void RegisterBuildingComponent(GameObject buildingObject)
         {
+            // 정식 프리팹에는 BuildingHp를 미리 붙이는 것이 기준입니다.
+            // 누락된 팀원 프리팹을 main에서 흡수할 때만 fallback으로 붙여 게임 루프가 끊기지 않게 합니다.
             if (buildingObject == null)
             {
                 return;

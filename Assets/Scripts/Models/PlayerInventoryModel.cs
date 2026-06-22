@@ -20,7 +20,7 @@ namespace Cinderkeep.Gameplay
             InitializeSlotArray(_inventorySlots);
             InitializeSlotArray(_quickSlots);
 
-            // 4.40은 UI 연결 기준을 확인하기 위해 최소 장비 후보만 넣어둡니다.
+            // UI 연결 기준을 확인하기 위해 최소 장비 후보만 넣어둡니다.
             // 제작 루프가 붙으면 이 초기 아이템은 제작 결과로 대체할 수 있습니다.
             SetInventorySlot(0, "stone_sword", InventoryItemType.Weapon, 1);
             SetInventorySlot(1, "stone_helmet", InventoryItemType.Helmet, 1);

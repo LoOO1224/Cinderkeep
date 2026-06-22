@@ -84,6 +84,8 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 
     private void ApplySkillOptions(IReadOnlyList<CinderHeartSkillData> skillOptions)
     {
+        // GameFlowController가 넘긴 CinderHeartSkillData를 3개의 선택지 UI에만 표시합니다.
+        // 실제 수치 적용은 CinderHeartSkillApplier가 맡으므로 이 UI는 표시와 선택 전달만 담당합니다.
         if (_optionViews == null)
         {
             return;

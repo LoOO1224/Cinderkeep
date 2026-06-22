@@ -209,6 +209,8 @@ public sealed class EnemyLoopConnector : MonoBehaviour
     private TComponent AddFallbackComponent<TComponent>(GameObject targetObject, string componentName)
         where TComponent : Component
     {
+        // 정식 적 프리팹은 EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain을 미리 가져야 합니다.
+        // 이 fallback은 오래된 팀원 브랜치 프리팹을 main에서 흡수할 때만 게임 루프가 멈추지 않게 쓰는 안전장치입니다.
         if (_allowFallbackComponentAdd == false)
         {
             LogMissingComponent(targetObject, componentName);

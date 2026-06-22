@@ -143,6 +143,8 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
     public float GetToolGatherMultiplier(ToolData toolData)
     {
+        // tools.json의 자원별 배율을 사용해 같은 도구라도 자원 티어에 따라 효율이 달라지게 합니다.
+        // 예: 금 도구는 하위 자원에는 빠르고, 상위 아다만티움에는 느리게 설정할 수 있습니다.
         if (toolData == null)
         {
             return 1f;
@@ -180,6 +182,8 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
     private int GetGatherAmount(ToolData toolData)
     {
+        // harvest_nodes.json의 기본 채집량에 tools.json의 배율을 곱해 최종 지급량을 계산합니다.
+        // 지급량 밸런싱은 스크립트보다 JSON 값을 먼저 조정하는 것을 기준으로 합니다.
         float multiplier = GetToolGatherMultiplier(toolData);
         float adjustedAmount = _amount * multiplier;
         int roundedAmount = Mathf.RoundToInt(adjustedAmount);
@@ -224,6 +228,8 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
     private void ApplyHarvestNodeDataIfPossible()
     {
+        // harvest_nodes.json 데이터가 있으면 Inspector fallback 값을 덮어씁니다.
+        // 맵에 새 자원 프리팹을 배치할 때는 _harvestNodeDataId를 JSON _id와 맞추는 것이 가장 안전합니다.
         if (_useHarvestNodeData == false)
         {
             return;

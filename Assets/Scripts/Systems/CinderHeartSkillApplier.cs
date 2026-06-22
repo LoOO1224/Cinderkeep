@@ -21,6 +21,8 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
 
     public void ApplySkill(CinderHeartSkillData skillData)
     {
+        // cinderheart_skills.json의 EffectType 문자열을 기준으로 실제 효과를 분기합니다.
+        // 새 스킬을 추가할 때는 JSON의 effectType과 여기의 적용 메서드를 함께 맞춰야 합니다.
         if (skillData == null)
         {
             return;

@@ -63,6 +63,8 @@ namespace Cinderkeep.Gameplay
             GameObjectIdentity identity = targetObject.GetComponent<GameObjectIdentity>();
             if (identity == null)
             {
+                // GameObjectIdentity는 런타임 생성 오브젝트를 추적하기 위한 최소 식별자입니다.
+                // 정식 프리팹에는 미리 붙여도 되고, 누락된 경우에는 여기서 보정해 등록 흐름을 유지합니다.
                 identity = targetObject.AddComponent<GameObjectIdentity>();
             }
 
