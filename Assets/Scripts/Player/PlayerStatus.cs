@@ -30,6 +30,7 @@ public sealed class PlayerStatus : MonoBehaviour
     private DeathCinderHeartView _deathCinderHeartView;
 
     public event Action<float> PlayerDamaged;
+    public event Action<float> PlayerHealed;
 
     public float CurrentHealth
     {
@@ -127,11 +128,14 @@ public sealed class PlayerStatus : MonoBehaviour
             return;
         }
 
+        float beforeHealth = _health;
         _health -= amount;
         _health = Mathf.Max(_health, 0f);
+        float damagedAmount = beforeHealth - _health;
 
-        Debug.Log("[PlayerStatus] 피해: " + amount + ", 현재 체력: " + _health + " / " + _maxHealth);
-        NotifyPlayerDamaged(amount);
+        Debug.Log("[PlayerStatus] 피해: " + damagedAmount + ", 현재 체력: " + _health + " / " + _maxHealth);
+        NotifyPlayerDamaged(damagedAmount);
+        EmeraldQuestEventHub.RaisePlayerDamaged();
 
         if (IsDead() == true)
         {
@@ -139,20 +143,31 @@ public sealed class PlayerStatus : MonoBehaviour
         }
     }
 
-    public void Heal(float amount)
+    public float Heal(float amount)
     {
         if (IsDead() == true)
         {
-            return;
+            return 0f;
         }
 
         if (amount <= 0f)
         {
-            return;
+            return 0f;
         }
 
+        float beforeHealth = _health;
         _health += amount;
         _health = Mathf.Min(_health, _maxHealth);
+        float healedAmount = _health - beforeHealth;
+        if (healedAmount <= 0f)
+        {
+            return 0f;
+        }
+
+        Debug.Log("[PlayerStatus] 회복: " + healedAmount + ", 현재 체력: " + _health + " / " + _maxHealth);
+        NotifyPlayerHealed(healedAmount);
+        EmeraldQuestEventHub.RaisePlayerHealed();
+        return healedAmount;
     }
 
     public bool UseStamina(float amount)
@@ -239,6 +254,16 @@ public sealed class PlayerStatus : MonoBehaviour
         PlayerDamaged(damage);
     }
 
+    private void NotifyPlayerHealed(float amount)
+    {
+        if (PlayerHealed == null)
+        {
+            return;
+        }
+
+        PlayerHealed(amount);
+    }
+
     private void ProcessDeath()
     {
         if (_isGameOverRequested == true)
@@ -247,6 +272,7 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         _isGameOverRequested = true;
+        EmeraldQuestEventHub.RaisePlayerDefeated();
         Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 게임 오버를 요청합니다.");
         ShowDeathView();
 

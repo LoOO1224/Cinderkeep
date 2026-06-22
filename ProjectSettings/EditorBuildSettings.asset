@@ -12,5 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainGame/Cinderkeep_Game.unity
     guid: fb3c3a6c7b20dd8448184b1f55d5686a
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 4b9c3eba27f58794eb60c432eefbab51, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

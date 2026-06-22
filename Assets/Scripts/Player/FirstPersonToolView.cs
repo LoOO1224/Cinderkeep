@@ -48,6 +48,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
 
         _swingTime = 0f;
         _isSwinging = true;
+        EmeraldQuestEventHub.RaiseCombatFeedbackProvided();
     }
 
     private void ConnectComponents()

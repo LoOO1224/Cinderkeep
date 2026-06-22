@@ -1,0 +1,593 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Cinderkeep_Emerald
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Cinderkeep_Emerald
+  m_GUID: ef63218c68d1e7348b5757198264f231
+  m_SerializeEntries:
+  - m_GUID: 04c8b03e4ac45c04a8522caf3f92f6ab
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_Enemy_LowPoly_RedMage
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 050f65e4d2db10840b688031ac0a57e6
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Tree_Cinderwood
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 05363519572514e40bba37e899de15e0
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_StonePickup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 094f4131a80ea1e48af62536f970463d
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_04
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 10e80b1474999484c8ee38831e9fa82b
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageWhite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 122057821181d1049903c1304a147573
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_Enemy_LowPoly_IcePlant
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 13fdd134d760ad046894d3f933e8691e
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageGreen
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15913f96578978c4b8ba0c27c83ef10f
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous_Plant-Yellow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15d585f88e0ee5d44b2ee7aec9396002
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Tree_Heartwood
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19042e9a3b7027c44b6d575a3c797ceb
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_08
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1cbdd0cad1c655c44b2447e3ec356564
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1cd3b105f4c0bd54e84fe463a7e69b18
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_04
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1eb063caa573ed146bfc107932d71c35
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageOrange
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ecc9422173284a42aafffd2acdcf9a5
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Railing_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 202e829c44eeecf4b97cb4949a1aa057
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20aae1cdc1a02b3498b34433b6428d99
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Rock_Stone
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20fe1b814bcc0c24a829453a651216dc
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21e13a3fdb7f2f547846600b4fc0e94f
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_05
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25503d04ae11cb044b32e8a9d06658a9
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_02
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25dbade26a7a0614c995497a7e31063c
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b225f2866f7a6a4c971b6549bbafacf
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Textures/CarnivorousPlant-Green
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e46f2c192585814bab375c902afc1be
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffPurple
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f8ac08dfe62efd498a01442f56338c2
+    m_Address: PF_Emerald_HealingPickup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 307e9db4001114c46a5676f2955a2eb4
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Gate_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 346ed45387a4d1a4eb6452e2b15a47fb
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Building_WoodTurret
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3538ef821d205a3468d321e9b5d897dc
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Statue_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ab7c831683c6304f94a83769f27b93f
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_CrystalShard_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b8a68399a4897d4180b1f7ad383ce5f
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_GoldOre
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e623c423427a59458e7366b16e3b4da
+    m_Address: Emerald/Audio/BGM/Cinderkeep_BGM_V1_2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41c286e639762224bb8c1b1ce052fa48
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Candidate_PlayerVisual_MageBlack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42323cebbb0d6454a8887cc2f00b43a0
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Tree_Wood
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 431f9085ad599234abb25c1031cf7eaf
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_IronOre
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4337be1adb368f146a37c8694236c268
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MagePurple
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4bfee2ef3ccba5642a806665eebe4733
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Textures/MagesTexture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 526a5625d1c1e44449488f045c9a8a7f
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Crafting_Workbench
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56cc64cda6217cb4a895ae552805b54b
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Materials/CarnivorousPlant-Yellow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61aebd76e3ea7454a85a07f19dd05669
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FantasticFoodPack/2d/textures/T_food_MTSM
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64df082732d3fbe448bc264ad8aaba9b
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Enemy_IceZombie
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65069a43f44534a44bb46bfb956f64a8
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_03
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65e8453869f4a284a81f989b0a3d675f
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Equipment_Pickaxe
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 665a8916518a1764fb08648753575a17
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Rock_GoldOre
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6badf189e3d95b343a23621f4e271458
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_02
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6caa6ba269a1a714a86387a3848e637f
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FantasyForest_Background
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76704af4739ba8140bb1604e263e84c5
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffRed
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76e2cbb1eeb9d13408827853d582775e
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageBlack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 772494e5831800b48a692743c6c893d5
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Torch_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c797f59ea94b6245bf3852d11347403
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Buillding_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d4d7c6be8fa5d84ba9a1b9f9f676b0a
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Textures/CarnivorousPlant-Yellow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e990f16ff464fd4984ddb687f32929d
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Textures/MagesTexture2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f85ae776305f0442987ab3d1ee435c3
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_BldgLG_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80bfa067f9362264c99a5d78fecba87b
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/FBX/Materials/MagesTexture
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82f84f154ae3a444285957c2d48e54a9
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_BldgSM_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 849a027325413954799b75489008b77c
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffWhite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87f5ac6c4eb9aaa47adfc19ff8b280eb
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FantasticFoodPack/prefabs/P_PROP_food_apple
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89fc97252a7412a49abe3832e1d892f0
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Heart_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b3683fcbee141344a37e57f1315b882
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_07
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b76e49fdaeba394b8d295e1d3da24cf
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffBlue
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8dc63bfec9a1da84681b56a881ad2780
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Gate_B
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 906c11b5f1f03194c824c89727f1e43a
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageBlue
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93988ddb740756341a05a0ef7460e7d1
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Candidate_RuinTower
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 95766eeb580d94145865071ab78813d8
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_04
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9625e1710aa78284b921378e06f45bdd
+    m_Address: Emerald/Audio/BGM/Cinderkeep_BGM_V1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98995efed025aac408f3c6b0ae14da67
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Candidate_FireBowl
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9eb9efd0d1d7d00439e98d4bdf684c51
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_E
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a012a9216172cae4c923059ddf60c8b3
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_J
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab84d4bda4ca7ff4fb9b96a602cfdadf
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous_Plant-Green
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b32d318280e18fc45bcd92b644e53b9f
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Tree
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b404de91bfe7a8341987a4d0faf999c4
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_BldgMD_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b56e31e0d093c8c4593ef4021c7849ce
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FantasticFoodPack/2d/textures/T_food
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b57019669b7f4da44870fc2273f8ca0e
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageYellow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b64b88582bb08e044be9ab25fbf3923d
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffOrange
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8f153c85f7f2fc448ea4a6b839f866b
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_CinderHeart_Core
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bc3764b09f75aaa488494d25a4364d47
+    m_Address: Emerald/Prefabs/Enemy/PF_Enemy_LowPoly_RedMage
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bdd6c74b8dc985d40a514639f8b5e83e
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Statue_D
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4311b267e2d1be4e84339befa553f76
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Rock_IronOre
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c78786c0e4f0d6e44b4cd81a257fd9a9
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_Enemy_LowPoly_FrostMage
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf908328213ff9d46b5d64eecded75cc
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d262a4ccf365d3a41abb3e5e8fa94854
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/FBX/Materials/MagesTexture2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2e8593a956d61c499f2b41814e87b67
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Rock
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d489496425e5a094593cbd3fdabe56e9
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffYellow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d69a5723d46ef6e44bb1a93240fa7884
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffBlack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da4550692e9f9bd468850a3d63adddcb
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_06
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dca7b5ae45bd7e24f885ecffcd970509
+    m_Address: Emerald/Prefabs/Enemy/PF_Enemy_LowPoly_IcePlant
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de74a305012822b469fa5530e04c2983
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Tree_Frostwood
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df7666c7c607a344687b8ed6686a7c0d
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Firewood_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e701cbbe0104582478d93732c2c43e26
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Materials/CarnivorousPlant-Green
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e94d0c8e6ff06e849b22068082db6026
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FantasticFoodPack/materials/M_food
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec405a2fc0b825c47906cfeae9146a25
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageRed
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: edca916b9e2404d4993b1bd271becba6
+    m_Address: PF_Emerald_CombatTargetSource
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef4e5f7b66143e44aa9f351bf91581ed
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef9c66bf274b779448e6f0a57b60b28d
+    m_Address: PF_Map_GameMapGroup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0e3574a2be57fa49979827738b66259
+    m_Address: Emerald/Prefabs/Map/PF_Map_Chunk_03
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2d02ae612e9f7a468912336d4df767f
+    m_Address: Emerald/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/Weapons/StaffGreen
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4c84f0df2561a142aa4aef8f326c296
+    m_Address: Emerald/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Resource_Rock_AdamantiumOre
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa9fdf6e4b01dfb42b19fa13fa74c7c6
+    m_Address: PF_Emerald_DamageZone
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - emerald_quest
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 634d8c65b3e496f42b40d97688b655e7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: afb37250868b2a94ebd584aca110b1b9, type: 2}
+    - {fileID: 11400000, guid: 4d0310c2a3fb9a04288168a15fcecb6a, type: 2}

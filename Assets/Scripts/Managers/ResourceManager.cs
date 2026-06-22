@@ -1,4 +1,7 @@
+using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Cinderkeep.Gameplay
 {
@@ -31,7 +34,7 @@ namespace Cinderkeep.Gameplay
         }
 
         public TAsset LoadAsset<TAsset>(string resourcePath)
-            where TAsset : Object
+            where TAsset : UnityEngine.Object
         {
             Initialize();
 
@@ -56,8 +59,62 @@ namespace Cinderkeep.Gameplay
             return LoadAsset<GameObject>(resourcePath);
         }
 
+        public AsyncOperationHandle<TAsset> LoadAddressableAssetAsync<TAsset>(string address, Action<TAsset> onLoaded = null)
+            where TAsset : UnityEngine.Object
+        {
+            Initialize();
+
+            AsyncOperationHandle<TAsset> handle = Addressables.LoadAssetAsync<TAsset>(address);
+            handle.Completed += completedHandle =>
+            {
+                if (completedHandle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.LogWarning("ResourceManager: addressable asset was not found: " + address);
+                    return;
+                }
+
+                if (onLoaded == null)
+                {
+                    return;
+                }
+
+                onLoaded.Invoke(completedHandle.Result);
+            };
+
+            return handle;
+        }
+
+        public AsyncOperationHandle<GameObject> InstantiateAddressablePrefabAsync(
+            string address,
+            Vector3 position,
+            Quaternion rotation,
+            Transform parent = null,
+            Action<GameObject> onCreated = null)
+        {
+            Initialize();
+
+            AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(address, position, rotation, parent);
+            handle.Completed += completedHandle =>
+            {
+                if (completedHandle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.LogWarning("ResourceManager: addressable prefab was not instantiated: " + address);
+                    return;
+                }
+
+                if (onCreated == null)
+                {
+                    return;
+                }
+
+                onCreated.Invoke(completedHandle.Result);
+            };
+
+            return handle;
+        }
+
         public bool HasAsset<TAsset>(string resourcePath)
-            where TAsset : Object
+            where TAsset : UnityEngine.Object
         {
             Initialize();
 

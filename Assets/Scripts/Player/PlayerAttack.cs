@@ -65,6 +65,7 @@ public sealed class PlayerAttack : MonoBehaviour
         WeaponData weaponData = GetCurrentWeaponData();
         if (CanAttack(weaponData) == false)
         {
+            EmeraldQuestEventHub.RaiseAttackBlockedByCooldown();
             return;
         }
 
@@ -105,6 +106,7 @@ public sealed class PlayerAttack : MonoBehaviour
     {
         if (CinderkeepInput.WasLeftMousePressedThisFrame())
         {
+            EmeraldQuestEventHub.RaiseAttackInputRead();
             TryAttack();
         }
     }
@@ -236,6 +238,7 @@ public sealed class PlayerAttack : MonoBehaviour
         if (enemyStatus != null)
         {
             enemyStatus.TakeDamage(damage);
+            EmeraldQuestEventHub.RaiseAttackDamageApplied();
             return;
         }
 
@@ -243,6 +246,7 @@ public sealed class PlayerAttack : MonoBehaviour
         if (damageable != null)
         {
             damageable.TakeDamage(damage);
+            EmeraldQuestEventHub.RaiseAttackDamageApplied();
         }
     }
 }

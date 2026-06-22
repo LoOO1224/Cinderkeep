@@ -89,6 +89,7 @@ public sealed class EnemyStatus : MonoBehaviour
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
         RefreshHud();
         NotifyEnemyDamaged();
+        EmeraldQuestEventHub.RaiseEnemyHealthChanged();
         AlertByDamage();
 
         Debug.Log("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
@@ -159,6 +160,7 @@ public sealed class EnemyStatus : MonoBehaviour
     private void ProcessDeath()
     {
         Debug.Log("[EnemyStatus] " + gameObject.name + " 사망 처리");
+        EmeraldQuestEventHub.RaiseEnemyDefeated();
 
         if (_deactivateOnDeath == false)
         {
