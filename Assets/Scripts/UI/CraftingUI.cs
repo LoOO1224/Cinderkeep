@@ -152,6 +152,10 @@ namespace Cinderkeep.Gameplay
 
                 CraftingRecipeData recipeData = _availableRecipes[i];
                 bool canCraft = CanCraftRecipe(recipeData);
+                if (_recipeSlots[i] == null)
+                {
+                    continue;   // 인스펙터에서 비어 있는 슬롯 칸은 건너뜀
+                }
                 _recipeSlots[i].SetRecipe(recipeData, canCraft, this);
             }
         }
