@@ -1,3 +1,4 @@
+using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
@@ -27,6 +28,8 @@ public sealed class PlayerStatus : MonoBehaviour
     private bool _isGameOverRequested;
     private PlayerMovement _playerMovement;
     private DeathCinderHeartView _deathCinderHeartView;
+
+    public event Action<float> PlayerDamaged;
 
     public float CurrentHealth
     {
@@ -128,6 +131,7 @@ public sealed class PlayerStatus : MonoBehaviour
         _health = Mathf.Max(_health, 0f);
 
         Debug.Log("[PlayerStatus] 피해: " + amount + ", 현재 체력: " + _health + " / " + _maxHealth);
+        NotifyPlayerDamaged(amount);
 
         if (IsDead() == true)
         {
@@ -223,6 +227,16 @@ public sealed class PlayerStatus : MonoBehaviour
     private bool IsDead()
     {
         return _health <= 0f;
+    }
+
+    private void NotifyPlayerDamaged(float damage)
+    {
+        if (PlayerDamaged == null)
+        {
+            return;
+        }
+
+        PlayerDamaged(damage);
     }
 
     private void ProcessDeath()
