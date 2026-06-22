@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -198,28 +198,28 @@ public sealed class EnemyLoopConnector : MonoBehaviour
         where TComponent : Component
     {
         TComponent component = targetObject.GetComponent<TComponent>();
-        if (component != null)
+        if (component == null)
         {
-            return component;
+            Debug.LogError($"EnemyLoopConnector: {targetObject.name} 프리팹에 필수 컴포넌트 {componentName}이 없습니다. 프리팹에 추가해주세요");
         }
 
-        return AddFallbackComponent<TComponent>(targetObject, componentName);
+        return component;
     }
 
-    private TComponent AddFallbackComponent<TComponent>(GameObject targetObject, string componentName)
-        where TComponent : Component
-    {
-        // 정식 적 프리팹은 EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain을 미리 가져야 합니다.
-        // 이 fallback은 오래된 팀원 브랜치 프리팹을 main에서 흡수할 때만 게임 루프가 멈추지 않게 쓰는 안전장치입니다.
-        if (_allowFallbackComponentAdd == false)
-        {
-            LogMissingComponent(targetObject, componentName);
-            return null;
-        }
+    //private TComponent AddFallbackComponent<TComponent>(GameObject targetObject, string componentName)
+    //    where TComponent : Component
+    //{
+    //    // 정식 적 프리팹은 EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain을 미리 가져야 합니다.
+    //    // 이 fallback은 오래된 팀원 브랜치 프리팹을 main에서 흡수할 때만 게임 루프가 멈추지 않게 쓰는 안전장치입니다.
+    //    if (_allowFallbackComponentAdd == false)
+    //    {
+    //        LogMissingComponent(targetObject, componentName);
+    //        return null;
+    //    }
 
-        LogFallbackComponentAdded(targetObject, componentName);
-        return targetObject.AddComponent<TComponent>();
-    }
+    //    LogFallbackComponentAdded(targetObject, componentName);
+    //    return targetObject.AddComponent<TComponent>();
+    //}
 
     private void LogMissingComponent(GameObject targetObject, string componentName)
     {
