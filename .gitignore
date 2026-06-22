@@ -155,6 +155,19 @@ Assets/ThirdParty_Premium.meta
 Assets/ThirdParty/AssetStore/Paid/**
 Assets/ThirdParty/PrivateAssets/**
 
+# External large terrain texture packs for Cinderkeep map work.
+# Download these locally from the team drive when needed, but never commit them.
+Assets/ThirdParty/AssetStore/Free/MicroVerse-Extras/
+Assets/ThirdParty/AssetStore/Free/MicroVerse-Extras.meta
+Assets/ThirdParty/AssetStore/Free/DW_TerrainTextures/
+Assets/ThirdParty/AssetStore/Free/DW_TerrainTextures.meta
+Assets/ThirdParty/AssetStore/Free/DW_Terrain_Textures/
+Assets/ThirdParty/AssetStore/Free/DW_Terrain_Textures.meta
+Assets/ThirdParty/AssetStore/Free/DW_Terrain Textures/
+Assets/ThirdParty/AssetStore/Free/DW_Terrain Textures.meta
+Assets/ThirdParty/AssetStore/Free/DW_Terrain Texures/
+Assets/ThirdParty/AssetStore/Free/DW_Terrain Texures.meta
+
 # Local plugin/editor preferences
 ProjectSettings/HueFolders_Prefs.json
 
