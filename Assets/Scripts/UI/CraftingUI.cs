@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -26,6 +26,19 @@ namespace Cinderkeep.Gameplay
         private GameDataManager _gameDataManager;
         private PlayerModel _playerModel;
 
+
+        private bool _isOpen;
+        public bool IsOpen
+        {
+            get
+            {
+                return _isOpen;
+            }
+        }
+
+
+
+
         private void Start()
         {
             Close();
@@ -44,12 +57,14 @@ namespace Cinderkeep.Gameplay
             ConnectRecipeExecutor();
             SetVisible(true);
             RefreshUI();
+
         }
 
         public void Close()
         {
             ClearRecipeSlots();
             SetVisible(false);
+
         }
 
         public void TryCraftRecipe(string recipeId)
@@ -217,6 +232,8 @@ namespace Cinderkeep.Gameplay
 
         private void SetVisible(bool isVisible)
         {
+            _isOpen = isVisible;   
+
             if (_rootObject == null)
             {
                 gameObject.SetActive(isVisible);
@@ -225,5 +242,24 @@ namespace Cinderkeep.Gameplay
 
             _rootObject.SetActive(isVisible);
         }
+
+
+
+
+
+
+
+        public void Toggle(CraftingStation craftingStation, GameObject interactor)
+        {
+            if (_isOpen)
+            {
+                Close();
+                return;
+            }
+
+            OpenStation(craftingStation, interactor);
+        }
+
+
     }
 }
