@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,6 +34,15 @@ namespace Cinderkeep.Gameplay
 
         private FurnaceStation _currentFurnaceStation;
         private PlayerModel _playerModel;
+
+        private bool _isOpen;
+        public bool IsOpen
+        {
+            get
+            {
+                return _isOpen;
+            }
+        }
 
         private void OnEnable()
         {
@@ -274,6 +283,8 @@ namespace Cinderkeep.Gameplay
 
         private void SetVisible(bool isVisible)
         {
+            _isOpen = isVisible;
+
             if (_rootObject == null)
             {
                 gameObject.SetActive(isVisible);

@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // 플레이어가 E키로 제작 시설을 열 수 있게 하는 상호작용 컴포넌트입니다.
@@ -74,6 +74,6 @@ public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable
             return;
         }
 
-        uiManager.OpenCraftingUI(_craftingStation, gameObjectInteractor);
+        uiManager.ToggleCraftingUI(_craftingStation, gameObjectInteractor);
     }
 }
