@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6424323184650767828}
   - component: {fileID: 3805014762285280470}
   - component: {fileID: 1254078877169207162}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PF_Resource_SnowTree04
-  m_TagString: Untagged
+  m_TagString: Resource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

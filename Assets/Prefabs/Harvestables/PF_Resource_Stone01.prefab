@@ -205,9 +205,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1470564491588954710}
   - component: {fileID: 1368989035016640735}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PF_Resource_Stone01
-  m_TagString: Untagged
+  m_TagString: Resource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
