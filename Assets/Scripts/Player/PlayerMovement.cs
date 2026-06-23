@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 // 플레이어의 WASD 이동과 Shift 달리기를 담당하는 컴포넌트입니다.
@@ -126,6 +126,7 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         if (_playerStatus == null)
         {
+            Debug.LogWarning("[PlayerMovement] PlayerStatus가 null입니다. 같은 오브젝트에 붙어있는지 확인하세요.");
             return true;
         }
 

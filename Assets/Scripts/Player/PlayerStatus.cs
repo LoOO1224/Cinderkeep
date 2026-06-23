@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
@@ -11,6 +11,14 @@ public sealed class PlayerStatus : MonoBehaviour
     [SerializeField] private float _health = 100f;
     [Tooltip("플레이어 최대 체력입니다.")]
     [SerializeField] private float _maxHealth = 100f;
+
+    [Header("Satiety")]
+    [Tooltip("플레이어 현재 포만도입니다.")]
+    [SerializeField] private float _satiety = 100f;
+    [Tooltip("플레이어 최대 포만도입니다.")]
+    [SerializeField] private float _maxSatiety = 100f;
+    [Tooltip("초당 소모되는 포만도입니다.")]
+    [SerializeField] private float _satietyConsumeRate = 1f;
 
     [Header("Stamina")]
     [Tooltip("현재 플레이어 스태미나입니다. 달리면 감소하고 멈추면 회복됩니다.")]
@@ -25,6 +33,7 @@ public sealed class PlayerStatus : MonoBehaviour
     [SerializeField] private float _exhaustedRecoveryPoint = 30f;
 
     private bool _isExhausted;
+    private bool _isStarving;
     private bool _isGameOverRequested;
     private PlayerMovement _playerMovement;
     private DeathCinderHeartView _deathCinderHeartView;
@@ -54,12 +63,35 @@ public sealed class PlayerStatus : MonoBehaviour
             return _stamina;
         }
     }
-
     public float MaxStamina
     {
         get
         {
             return _maxStamina;
+        }
+    }
+
+    public float CurrentSatiety
+    {
+        get
+        {
+            return _satiety;
+        }
+    }
+
+    public float MaxSatiety
+    {
+        get
+        {
+            return _maxSatiety;
+        }
+    }
+
+    public bool IsStarving
+    {
+        get
+        {
+            return _isStarving;
         }
     }
 
@@ -73,6 +105,8 @@ public sealed class PlayerStatus : MonoBehaviour
     private void Update()
     {
         RecoverStaminaByTime();
+        HungerByTime();
+        Hunger();
     }
 
     public float GetCurrentHealth()
@@ -95,6 +129,16 @@ public sealed class PlayerStatus : MonoBehaviour
         return _maxStamina;
     }
 
+    public float GetCurrentSatiety()
+    {
+        return _satiety;
+    }
+
+    public float GetMaxSatiety()
+    {
+        return _maxSatiety;
+    }
+
     public bool CanRun()
     {
         if (IsDead() == true)
@@ -108,6 +152,20 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         return _stamina > 0f;
+    }
+
+    public bool Hunger()
+    {
+        if (_satiety > 0f)
+        {
+            _isStarving = false;
+            return false;
+        }
+        else
+        {
+            _isStarving = true;
+            return true;
+        }
     }
 
     public void ConsumeStaminaForRun()
@@ -155,6 +213,17 @@ public sealed class PlayerStatus : MonoBehaviour
         _health = Mathf.Min(_health, _maxHealth);
     }
 
+    public void EatFood(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _satiety += amount;
+        _satiety = Mathf.Min(_satiety, _maxSatiety);
+    }
+
     public bool UseStamina(float amount)
     {
         if (IsDead() == true)
@@ -178,13 +247,18 @@ public sealed class PlayerStatus : MonoBehaviour
 
         return true;
     }
-
     public void RecoverStamina(float amount)
     {
         if (IsDead() == true)
         {
             return;
         }
+
+        // 모든 회복을 막고 싶다면 여기에도 아래 조건을 넣으세요.
+        // if (_isStarving == true)
+        // {
+        //     return;
+        // }
 
         _stamina += amount;
         _stamina = Mathf.Min(_stamina, _maxStamina);
@@ -198,6 +272,11 @@ public sealed class PlayerStatus : MonoBehaviour
 
     private void RecoverStaminaByTime()
     {
+        if (_isStarving == true)
+        {
+            return;
+        }
+
         bool isRunningNow = CheckIsRunningNow();
 
         if (IsDead() == false && _stamina < _maxStamina && isRunningNow == false)
@@ -206,6 +285,16 @@ public sealed class PlayerStatus : MonoBehaviour
         }
     }
 
+    private void HungerByTime()
+    {
+        if (IsDead() == true)
+        {
+            return;
+        }
+
+        _satiety -= _satietyConsumeRate * Time.deltaTime;
+        _satiety = Mathf.Max(_satiety, 0f);
+    }
     private bool CheckIsRunningNow()
     {
         if (_playerMovement == null)
@@ -220,8 +309,10 @@ public sealed class PlayerStatus : MonoBehaviour
     {
         _maxHealth = Mathf.Max(_maxHealth, 1f);
         _maxStamina = Mathf.Max(_maxStamina, 1f);
+        _maxSatiety = Mathf.Max(_maxSatiety, 1f);
         _health = Mathf.Clamp(_health, 0f, _maxHealth);
         _stamina = Mathf.Clamp(_stamina, 0f, _maxStamina);
+        _satiety = Mathf.Clamp(_satiety, 0f, _maxSatiety);
     }
 
     private bool IsDead()
