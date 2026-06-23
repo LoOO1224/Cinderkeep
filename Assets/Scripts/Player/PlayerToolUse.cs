@@ -45,23 +45,22 @@ public sealed class PlayerToolUse : MonoBehaviour
 
         ToolData toolData = _playerToolController.GetCurrentToolData();
         ResourceNode resourceNode = GetResourceNodeFromCast(toolData);
-        if (resourceNode == null)
-        {
-            return;
-        }
 
         if (CanUseToolByInterval(resourceNode, toolData) == false)
         {
             return;
         }
 
-        if (resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType, toolData) == false)
+        // 채집 피드백은 적중 여부와 분리해서, 빈 공간을 찍어도 광질/도끼질 연출이 보이게 합니다.
+        _lastToolUseTime = Time.time;
+        PlayToolUseView();
+
+        if (resourceNode == null)
         {
             return;
         }
 
-        _lastToolUseTime = Time.time;
-        PlayToolUseView();
+        resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType, toolData);
     }
 
     private void ConnectComponents()

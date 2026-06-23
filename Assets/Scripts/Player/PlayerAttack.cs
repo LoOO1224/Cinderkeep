@@ -70,6 +70,10 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
+        // 좌클릭 피드백은 적중 여부와 분리해서, 빗나가도 1인칭 휘두르기가 보이게 합니다.
+        _lastAttackTime = Time.time;
+        PlayAttackView();
+
         Collider targetCollider = GetAttackTargetCollider(weaponData);
         if (targetCollider == null)
         {
@@ -81,9 +85,7 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
-        _lastAttackTime = Time.time;
-        PlayAttackView();
-        ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData));
+        ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData), weaponData);
     }
 
     private void ConnectComponents()
@@ -232,7 +234,7 @@ public sealed class PlayerAttack : MonoBehaviour
         _firstPersonToolView.PlaySwing();
     }
 
-    private void ApplyDamageToHitTarget(Collider targetCollider, float damage)
+    private void ApplyDamageToHitTarget(Collider targetCollider, float damage, WeaponData weaponData)
     {
         if (targetCollider == null)
         {
@@ -249,15 +251,23 @@ public sealed class PlayerAttack : MonoBehaviour
         Damageable damageable = targetCollider.GetComponentInParent<Damageable>();
         if (damageable != null)
         {
-            ApplyDamageToDamageable(damageable, damage);
+            ApplyDamageToDamageable(damageable, damage, weaponData);
         }
     }
 
-    private void ApplyDamageToDamageable(Damageable damageable, float damage)
+    private void ApplyDamageToDamageable(Damageable damageable, float damage, WeaponData weaponData)
     {
         if (_damageDealer != null)
         {
-            _damageDealer.SetDamageValue(damage);
+            if (weaponData != null)
+            {
+                _damageDealer.SetDamageValue(weaponData);
+            }
+            else
+            {
+                _damageDealer.SetDamageValue(damage);
+            }
+
             _damageDealer.ApplyDamage(damageable);
             return;
         }

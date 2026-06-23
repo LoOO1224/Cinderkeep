@@ -26,6 +26,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
     private Quaternion _defaultRotation;
     private float _swingTime;
     private bool _isSwinging;
+    private int _lastSwingFrame = -1;
 
     private void Start()
     {
@@ -46,6 +47,12 @@ public sealed class FirstPersonToolView : MonoBehaviour
             return;
         }
 
+        if (_lastSwingFrame == Time.frameCount)
+        {
+            return;
+        }
+
+        _lastSwingFrame = Time.frameCount;
         _swingTime = 0f;
         _isSwinging = true;
     }
