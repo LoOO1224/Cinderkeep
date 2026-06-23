@@ -33,6 +33,7 @@ public sealed class PlayerAttack : MonoBehaviour
     [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;
+    private PlayerController _playerController;
 
     public string WeaponDataId
     {
@@ -49,7 +50,10 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        ReadAttackInput();
+        if (ShouldReadAttackInputDirectly())
+        {
+            ReadAttackInput();
+        }
     }
 
     public void SetWeaponDataId(string weaponDataId)
@@ -88,6 +92,11 @@ public sealed class PlayerAttack : MonoBehaviour
         ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData), weaponData);
     }
 
+    public void ExecuteAttack()
+    {
+        TryAttack();
+    }
+
     private void ConnectComponents()
     {
         if (_attackOrigin == null)
@@ -108,6 +117,8 @@ public sealed class PlayerAttack : MonoBehaviour
         {
             _damageDealer = GetComponent<DamageDealer>();
         }
+
+        _playerController = GetComponent<PlayerController>();
     }
 
     private void ReadAttackInput()
@@ -118,7 +129,7 @@ public sealed class PlayerAttack : MonoBehaviour
         }
     }
 
-    private bool CanAttack(WeaponData weaponData)
+    public bool CanAttack(WeaponData weaponData)
     {
         return Time.time >= _lastAttackTime + GetAttackInterval(weaponData);
     }
@@ -163,7 +174,7 @@ public sealed class PlayerAttack : MonoBehaviour
         return targetCollider.GetComponentInParent<Damageable>() != null;
     }
 
-    private WeaponData GetCurrentWeaponData()
+    public WeaponData GetCurrentWeaponData()
     {
         if (_useWeaponData == false)
         {
@@ -273,5 +284,10 @@ public sealed class PlayerAttack : MonoBehaviour
         }
 
         damageable.TakeDamage(damage);
+    }
+
+    private bool ShouldReadAttackInputDirectly()
+    {
+        return _playerController == null || _playerController.enabled == false;
     }
 }

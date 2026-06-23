@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 // 플레이어의 WASD 이동과 Shift 달리기를 담당하는 컴포넌트입니다.
-// 체력/스태미나 계산은 PlayerStatus가 담당하고, 이 클래스는 이동 입력만 처리합니다.
+// PlayerController가 있으면 입력 의도를 전달받고, 없으면 기존처럼 직접 입력을 읽어 움직입니다.
 public sealed class PlayerMovement : MonoBehaviour
 {
     [FormerlySerializedAs("moveSpeed")]
@@ -13,23 +13,24 @@ public sealed class PlayerMovement : MonoBehaviour
     [SerializeField] private float _runSpeed = 10f;
     [Tooltip("플레이어에게 적용되는 중력 값입니다. 음수 값이 아래 방향입니다.")]
     [SerializeField] private float _gravity = -20f;
-    [Tooltip("땅에 붙어 있을 때 아래로 살짝 눌러주는 속도입니다. CharacterController가 지면을 안정적으로 인식하게 돕습니다.")]
+    [Tooltip("땅에 붙어 있을 때 아래로 살짝 눌러주는 속도입니다. CharacterController가 지면을 안정적으로 인식하게 합니다.")]
     [SerializeField] private float _groundStickVelocity = -2f;
 
     private PlayerStatus _playerStatus;
+    private PlayerController _playerController;
     private CharacterController _characterController;
     private Vector3 _moveDirection;
     private float _verticalVelocity;
+    private bool _runIntent;
 
     public bool IsRunningNow
     {
         get
         {
-            bool isShiftPressed = CinderkeepInput.IsKeyPressed(KeyCode.LeftShift);
             bool isMoving = _moveDirection.magnitude > 0.01f;
             bool canRun = CheckCanRun();
 
-            return isMoving && isShiftPressed && canRun;
+            return isMoving && _runIntent && canRun;
         }
     }
 
@@ -37,17 +38,29 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         _characterController = GetComponent<CharacterController>();
         _playerStatus = GetComponent<PlayerStatus>();
+        _playerController = GetComponent<PlayerController>();
     }
 
     private void Update()
     {
-        ReadMoveInput();
+        if (ShouldReadMoveInputDirectly())
+        {
+            ReadMoveInput();
+        }
+
         Move();
     }
 
     public void MovePlayer(Vector3 moveDirection)
     {
         _moveDirection = moveDirection;
+    }
+
+    public void ProcessMove(Vector2 moveInput, bool runIntent)
+    {
+        Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
+        _moveDirection = moveDirection.normalized;
+        _runIntent = runIntent;
     }
 
     public void Jump(float jumpForce)
@@ -63,9 +76,7 @@ public sealed class PlayerMovement : MonoBehaviour
     private void ReadMoveInput()
     {
         Vector2 moveInput = CinderkeepInput.GetMoveAxisRaw();
-
-        Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
-        _moveDirection = moveDirection.normalized;
+        ProcessMove(moveInput, CinderkeepInput.IsKeyPressed(KeyCode.LeftShift));
     }
 
     private void Move()
@@ -119,5 +130,10 @@ public sealed class PlayerMovement : MonoBehaviour
         }
 
         return _playerStatus.CanRun();
+    }
+
+    private bool ShouldReadMoveInputDirectly()
+    {
+        return _playerController == null || _playerController.enabled == false;
     }
 }
