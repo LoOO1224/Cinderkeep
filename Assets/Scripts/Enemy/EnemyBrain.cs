@@ -28,6 +28,9 @@ public sealed class EnemyBrain : MonoBehaviour
     [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 감지 반경입니다.")]
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
 
+    [Tooltip("현재 밤 감지 범위를 사용할지 결정합니다.")]
+    [SerializeField] private bool _isNightTime;
+
     private NavMeshPath _cinderHeartPath;
 
     private Coroutine _brainDecisionRoutine;
@@ -41,6 +44,7 @@ public sealed class EnemyBrain : MonoBehaviour
         _cinderHeartPath = new NavMeshPath();
 
         ConnectComponents();
+        ApplyDetectorMode();
     }
 
     private void OnEnable()
@@ -51,6 +55,22 @@ public sealed class EnemyBrain : MonoBehaviour
     private void OnDisable()
     {
         StopBrainRoutine();
+    }
+
+    public void SetNightTime(bool isNightTime)
+    {
+        _isNightTime = isNightTime;
+        ApplyDetectorMode();
+    }
+
+    private void ApplyDetectorMode()
+    {
+        if (_enemyDetector == null)
+        {
+            return;
+        }
+
+        _enemyDetector.SetNightDetectionEnabled(_isNightTime);
     }
 
     public void SetCinderHeartTarget(Damageable cinderHeartDamageable)

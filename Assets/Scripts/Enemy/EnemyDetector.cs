@@ -6,9 +6,12 @@ using UnityEngine;
 // 감지 결과만 들고 있고, 이동과 공격은 EnemyMovement와 EnemyBrain이 처리합니다.
 public sealed class EnemyDetector : MonoBehaviour
 {
-    [Tooltip("몬스터가 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
-    [SerializeField] private float _viewAngle = 90f;
+    [Tooltip("낮에 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
+    [SerializeField] private float _dayViewAngle = 150f;
+    [Tooltip("밤에 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
+    [SerializeField] private float _nightViewAngle = 90f;
 
+    private float _viewAngle = 90f;
     private const string PlayerTag = "Player";
     private const int MaxOverlapCount = 20;
     private const float DetectionInterval = 0.2f;
@@ -16,7 +19,13 @@ public sealed class EnemyDetector : MonoBehaviour
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];
 
     private Coroutine _detectionRoutine;
-    private float _detectorDistance = 8f;
+    [Tooltip("낮에 플레이어를 감지할 수 있는 거리입니다.")]
+    [SerializeField] private float _dayDetectorDistance = 6f;
+    [Tooltip("밤에 플레이어를 감지할 수 있는 거리입니다.")]
+    [SerializeField] private float _nightDetectorDistance = 12f;
+
+    private float _detectorDistance = 12f;
+    private bool _isNightDetectionEnabled;
 
     public Transform DetectedPlayer { get; private set; }
 
@@ -30,6 +39,8 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private void OnEnable()
     {
+        RefreshDetectorDistance();
+        RefreshViewAngle();
         StartDetectionRoutine();
     }
 
@@ -45,7 +56,8 @@ public sealed class EnemyDetector : MonoBehaviour
             return;
         }
 
-        _detectorDistance = enemyData.DetectorDistance;
+        _dayDetectorDistance = enemyData.DetectorDistance;
+        RefreshDetectorDistance();
     }
 
     public void EnableAlertMode()
@@ -56,6 +68,40 @@ public sealed class EnemyDetector : MonoBehaviour
         }
 
         DetectPlayerWithoutViewAngle();
+    }
+
+    public void SetNightDetectionEnabled(bool isEnabled)
+    {
+        _isNightDetectionEnabled = isEnabled;
+        RefreshDetectorDistance();
+        RefreshViewAngle();
+
+        if (HasDetectedPlayer)
+        {
+            ClearPlayerIfOutOfRange();
+        }
+    }
+
+    private void RefreshDetectorDistance()
+    {
+        if (_isNightDetectionEnabled)
+        {
+            _detectorDistance = _nightDetectorDistance;
+            return;
+        }
+
+        _detectorDistance = _dayDetectorDistance;
+    }
+
+    private void RefreshViewAngle()
+    {
+        if (_isNightDetectionEnabled)
+        {
+            _viewAngle = _nightViewAngle;
+            return;
+        }
+
+        _viewAngle = _dayViewAngle;
     }
 
     private void StartDetectionRoutine()

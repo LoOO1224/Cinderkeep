@@ -23,16 +23,24 @@ public sealed class EnemySpawnRuntimeTracker
 
         for (int i = 0; i < _spawnedEnemies.Count; i++)
         {
-            GameObject enemyObject = _spawnedEnemies[i];
-            if (enemyObject == null || enemyObject.activeInHierarchy == false)
-            {
-                continue;
-            }
-
-            EnemyBrain enemyBrain = enemyObject.GetComponent<EnemyBrain>();
+            EnemyBrain enemyBrain = GetAliveEnemyBrain(_spawnedEnemies[i]);
             if (enemyBrain != null)
             {
                 enemyBrain.SetCinderHeartChaseEnabled(isEnabled);
+            }
+        }
+    }
+
+    public void SetNightTimeForAliveEnemies(bool isNightTime)
+    {
+        RemoveMissingEnemies();
+
+        for (int i = 0; i < _spawnedEnemies.Count; i++)
+        {
+            EnemyBrain enemyBrain = GetAliveEnemyBrain(_spawnedEnemies[i]);
+            if (enemyBrain != null)
+            {
+                enemyBrain.SetNightTime(isNightTime);
             }
         }
     }
@@ -63,5 +71,15 @@ public sealed class EnemySpawnRuntimeTracker
                 _spawnedEnemies.RemoveAt(i);
             }
         }
+    }
+
+    private EnemyBrain GetAliveEnemyBrain(GameObject enemyObject)
+    {
+        if (enemyObject == null || enemyObject.activeInHierarchy == false)
+        {
+            return null;
+        }
+
+        return enemyObject.GetComponent<EnemyBrain>();
     }
 }

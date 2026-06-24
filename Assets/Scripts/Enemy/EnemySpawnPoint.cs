@@ -145,6 +145,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         ResetSpawnTime();
 
         _runtimeTracker.SetCinderHeartChaseEnabledForAliveEnemies(CanChaseCinderHeartInCurrentMode());
+        _runtimeTracker.SetNightTimeForAliveEnemies(UsesNightDetectionInCurrentMode());
 
         EnemySpawnRule spawnRule = GetCurrentSpawnRule();
         if (spawnRule.SpawnOnModeStart == true)
@@ -294,11 +295,17 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
+        enemyBrain.SetNightTime(UsesNightDetectionInCurrentMode());
     }
 
     private bool CanChaseCinderHeartInCurrentMode()
     {
         return _spawnMode != EnemySpawnMode.Day;
+    }
+
+    private bool UsesNightDetectionInCurrentMode()
+    {
+        return _spawnMode == EnemySpawnMode.Night || _spawnMode == EnemySpawnMode.Boss;
     }
 
     private void InitializeCreatedEnemy(GameObject createdEnemy, string enemyDataId)
