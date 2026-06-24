@@ -171,13 +171,56 @@ public sealed class PlayerToolController : MonoBehaviour
         }
 
         InventoryItemModel itemModel = inventoryModel.GetQuickSlotItem(slotIndex);
-        if (itemModel == null || itemModel.IsEmpty || itemModel.ItemType != InventoryItemType.Tool)
+        if (itemModel == null || itemModel.IsEmpty)
         {
             EquipTool(GatherToolType.None);
             return;
         }
 
+        if (itemModel.ItemType != InventoryItemType.Tool)
+        {
+            TryEquipNonToolQuickSlot(itemModel);
+            EquipTool(GatherToolType.None);
+            return;
+        }
+
         EquipToolData(itemModel.ItemId);
+    }
+
+    private bool TryEquipNonToolQuickSlot(InventoryItemModel itemModel)
+    {
+        if (itemModel == null || itemModel.IsEmpty || GameManager.Inst == null)
+        {
+            return false;
+        }
+
+        PlayerEquipmentModel equipmentModel = GameManager.Inst.PlayerEquipmentModel;
+        if (equipmentModel == null)
+        {
+            return false;
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Weapon)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Weapon);
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Helmet)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Helmet);
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Armor)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Armor);
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Boots)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Boots);
+        }
+
+        return false;
     }
 
     private PlayerInventoryModel GetInventoryModel()

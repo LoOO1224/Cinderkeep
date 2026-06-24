@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 // 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
 // 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
@@ -14,6 +15,7 @@ namespace Cinderkeep.Gameplay
 
         private InventoryItemModel[] _inventorySlots = new InventoryItemModel[InventorySlotCount];
         private InventoryItemModel[] _quickSlots = new InventoryItemModel[QuickSlotCount];
+        private readonly Dictionary<string, int> _preparedBuildingCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
         public event Action OnInventoryChanged;
 
@@ -21,6 +23,7 @@ namespace Cinderkeep.Gameplay
         {
             InitializeSlotArray(_inventorySlots);
             InitializeSlotArray(_quickSlots);
+            _preparedBuildingCounts.Clear();
 
             // UI 연결 기준을 확인하기 위해 최소 장비 후보만 넣어둡니다.
             // 제작 루프가 붙으면 이 초기 아이템은 제작 결과로 대체할 수 있습니다.
@@ -89,6 +92,67 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        public bool TryAddPreparedBuilding(string buildingId, int amount)
+        {
+            if (string.IsNullOrEmpty(buildingId) || amount <= 0)
+            {
+                return false;
+            }
+
+            int currentAmount = GetPreparedBuildingCount(buildingId);
+            _preparedBuildingCounts[buildingId] = currentAmount + amount;
+            NotifyInventoryChanged();
+            return true;
+        }
+
+        public bool HasPreparedBuilding(string buildingId)
+        {
+            return GetPreparedBuildingCount(buildingId) > 0;
+        }
+
+        public int GetPreparedBuildingCount(string buildingId)
+        {
+            if (string.IsNullOrEmpty(buildingId))
+            {
+                return 0;
+            }
+
+            int amount;
+            if (_preparedBuildingCounts.TryGetValue(buildingId, out amount) == false)
+            {
+                return 0;
+            }
+
+            return Math.Max(0, amount);
+        }
+
+        public bool TryConsumePreparedBuilding(string buildingId, int amount)
+        {
+            if (string.IsNullOrEmpty(buildingId) || amount <= 0)
+            {
+                return false;
+            }
+
+            int currentAmount = GetPreparedBuildingCount(buildingId);
+            if (currentAmount < amount)
+            {
+                return false;
+            }
+
+            int nextAmount = currentAmount - amount;
+            if (nextAmount <= 0)
+            {
+                _preparedBuildingCounts.Remove(buildingId);
+            }
+            else
+            {
+                _preparedBuildingCounts[buildingId] = nextAmount;
+            }
+
+            NotifyInventoryChanged();
+            return true;
         }
 
         public bool HasItem(string itemId, int amount)
@@ -211,6 +275,72 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        public bool TryAddQuickSlotItem(
+            string itemId,
+            InventoryItemType itemType,
+            int amount,
+            int preferredSlotIndex,
+            int replacementSlotIndex,
+            out int slotIndex)
+        {
+            slotIndex = -1;
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            if (TryStackQuickSlotItem(itemId, itemType, amount, out slotIndex))
+            {
+                return true;
+            }
+
+            if (TrySetEmptyPreferredQuickSlot(itemId, itemType, amount, preferredSlotIndex, out slotIndex))
+            {
+                return true;
+            }
+
+            if (TrySetFirstEmptyQuickSlot(itemId, itemType, amount, out slotIndex))
+            {
+                return true;
+            }
+
+            slotIndex = ClampQuickSlotIndex(replacementSlotIndex);
+            return TrySetQuickSlotItem(slotIndex, itemId, itemType, amount);
+        }
+
+        public bool TryAssignQuickSlotShortcut(
+            string itemId,
+            InventoryItemType itemType,
+            int amount,
+            int preferredSlotIndex,
+            int replacementSlotIndex,
+            out int slotIndex)
+        {
+            slotIndex = -1;
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            if (TryFindQuickSlotItem(itemId, itemType, out slotIndex))
+            {
+                return TrySetQuickSlotItem(slotIndex, itemId, itemType, amount);
+            }
+
+            if (TrySetEmptyPreferredQuickSlot(itemId, itemType, amount, preferredSlotIndex, out slotIndex))
+            {
+                return true;
+            }
+
+            if (TrySetFirstEmptyQuickSlot(itemId, itemType, amount, out slotIndex))
+            {
+                return true;
+            }
+
+            slotIndex = ClampQuickSlotIndex(replacementSlotIndex);
+            return TrySetQuickSlotItem(slotIndex, itemId, itemType, amount);
+        }
+
         public void ClearQuickSlot(int quickSlotIndex)
         {
             if (IsQuickSlotIndexValid(quickSlotIndex) == false)
@@ -290,6 +420,110 @@ namespace Cinderkeep.Gameplay
         private bool IsQuickSlotIndexValid(int slotIndex)
         {
             return slotIndex >= 0 && slotIndex < QuickSlotCount;
+        }
+
+        private bool TryStackQuickSlotItem(string itemId, InventoryItemType itemType, int amount, out int slotIndex)
+        {
+            slotIndex = -1;
+            for (int i = 0; i < QuickSlotCount; i++)
+            {
+                InventoryItemModel slot = _quickSlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId != itemId || slot.ItemType != itemType)
+                {
+                    continue;
+                }
+
+                slot.SetItem(itemId, itemType, slot.Amount + amount);
+                slotIndex = i;
+                NotifyInventoryChanged();
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TryFindQuickSlotItem(string itemId, InventoryItemType itemType, out int slotIndex)
+        {
+            slotIndex = -1;
+            for (int i = 0; i < QuickSlotCount; i++)
+            {
+                InventoryItemModel slot = _quickSlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId != itemId || slot.ItemType != itemType)
+                {
+                    continue;
+                }
+
+                slotIndex = i;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TrySetEmptyPreferredQuickSlot(
+            string itemId,
+            InventoryItemType itemType,
+            int amount,
+            int preferredSlotIndex,
+            out int slotIndex)
+        {
+            slotIndex = -1;
+            if (IsQuickSlotIndexValid(preferredSlotIndex) == false)
+            {
+                return false;
+            }
+
+            InventoryItemModel preferredSlot = _quickSlots[preferredSlotIndex];
+            if (preferredSlot != null && preferredSlot.IsEmpty == false)
+            {
+                return false;
+            }
+
+            slotIndex = preferredSlotIndex;
+            return TrySetQuickSlotItem(slotIndex, itemId, itemType, amount);
+        }
+
+        private bool TrySetFirstEmptyQuickSlot(string itemId, InventoryItemType itemType, int amount, out int slotIndex)
+        {
+            slotIndex = -1;
+            for (int i = 0; i < QuickSlotCount; i++)
+            {
+                InventoryItemModel slot = _quickSlots[i];
+                if (slot != null && slot.IsEmpty == false)
+                {
+                    continue;
+                }
+
+                slotIndex = i;
+                return TrySetQuickSlotItem(slotIndex, itemId, itemType, amount);
+            }
+
+            return false;
+        }
+
+        private int ClampQuickSlotIndex(int slotIndex)
+        {
+            if (slotIndex < 0)
+            {
+                return 0;
+            }
+
+            if (slotIndex >= QuickSlotCount)
+            {
+                return QuickSlotCount - 1;
+            }
+
+            return slotIndex;
         }
 
         private void NotifyInventoryChanged()

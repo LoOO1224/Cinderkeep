@@ -977,19 +977,32 @@ public static class CinderkeepGameLoopSceneBuilder
         ResourceUI resourceUi = SetupResourceUi(hudRoot);
 
         bool guideTextAlreadyExists = hudRoot.Find("Text_GameGuide") != null;
+        GameObject guideIconObject = GetOrCreateChild(hudRoot, "Image_GameGuideIcon").gameObject;
+        Image guideIcon = EnsureComponent<Image>(guideIconObject);
+        if (guideTextAlreadyExists == false)
+        {
+            guideIcon.color = new Color(1f, 0.9f, 0.42f, 0.95f);
+            guideIcon.raycastTarget = false;
+            SetRect(guideIcon.rectTransform, new Vector2(0f, 1f), new Vector2(34f, 34f), new Vector2(24f, -18f));
+        }
+
         GameObject guideTextObject = GetOrCreateChild(hudRoot, "Text_GameGuide").gameObject;
         TMP_Text guideText = EnsureComponent<TextMeshProUGUI>(guideTextObject);
         if (guideTextAlreadyExists == false)
         {
             guideText.text = "|  1:도끼  2:곡괭이  3:맨손  E:채집  좌클릭:공격  |";
-            guideText.fontSize = 18f;
+            guideText.fontSize = 20f;
             guideText.alignment = TextAlignmentOptions.Left;
             ApplyTmpFont(guideText);
-            SetRect(guideText.rectTransform, new Vector2(0f, 0f), new Vector2(760f, 40f), new Vector2(24f, 24f));
+            SetRect(guideText.rectTransform, new Vector2(0f, 1f), new Vector2(760f, 34f), new Vector2(72f, -20f));
         }
+
+        HudTutorialGuide tutorialGuide = EnsureComponent<HudTutorialGuide>(guideTextObject);
+        tutorialGuide.SetReferences(guideText, guideIcon);
 
         SetObjectReference(playerHud, "_targetPlayerStatus", player.GetComponent<PlayerStatus>());
         EditorUtility.SetDirty(resourceUi);
+        EditorUtility.SetDirty(tutorialGuide);
         EditorUtility.SetDirty(cinderHeart);
         EditorUtility.SetDirty(enemy);
     }

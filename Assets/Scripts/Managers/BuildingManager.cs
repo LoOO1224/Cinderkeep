@@ -123,7 +123,7 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return inventoryModel.TryConsumeItem(buildingData.Id, 1);
+            return inventoryModel.TryConsumePreparedBuilding(buildingData.Id, 1);
         }
 
         // 기존 시그니처를 쓰는 코드가 남아 있을 때를 위한 호환용입니다.

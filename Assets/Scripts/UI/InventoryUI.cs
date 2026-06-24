@@ -142,6 +142,38 @@ namespace Cinderkeep.Gameplay
             RefreshMessage("퀵슬롯에 등록할 수 없습니다.");
         }
 
+        public void DoubleClickInventorySlot(InventorySlotView slotView)
+        {
+            if (slotView == null)
+            {
+                return;
+            }
+
+            ConnectModels();
+            if (_playerInventoryModel == null)
+            {
+                PlayUiFailSfx();
+                RefreshMessage("인벤토리 연결이 필요합니다.");
+                return;
+            }
+
+            InventoryItemModel itemModel = _playerInventoryModel.GetInventoryItem(slotView.SlotIndex);
+            if (itemModel == null || itemModel.IsEmpty)
+            {
+                return;
+            }
+
+            if (TryAutoEquipInventoryItem(slotView.SlotIndex, itemModel))
+            {
+                PlayUiSuccessSfx();
+                RefreshUI();
+                return;
+            }
+
+            PlayUiFailSfx();
+            RefreshMessage("이 아이템은 바로 장착할 수 없습니다.");
+        }
+
         public void RefreshUI()
         {
             ConnectModels();
@@ -205,6 +237,121 @@ namespace Cinderkeep.Gameplay
             }
 
             _titleText.text = "Inventory / Equipment";
+        }
+
+        private bool TryAutoEquipInventoryItem(int inventorySlotIndex, InventoryItemModel itemModel)
+        {
+            if (itemModel.ItemType == InventoryItemType.Weapon)
+            {
+                bool isEquipped = TryEquipToEquipmentSlot(inventorySlotIndex, EquipmentSlotType.Weapon);
+                int quickSlotIndex;
+                TryAssignQuickSlotShortcut(itemModel, 0, out quickSlotIndex);
+                RefreshMessage("무기를 장착하고 1번 퀵슬롯에 연결했습니다.");
+                return isEquipped;
+            }
+
+            if (itemModel.ItemType == InventoryItemType.Helmet)
+            {
+                bool isEquipped = TryEquipToEquipmentSlot(inventorySlotIndex, EquipmentSlotType.Helmet);
+                RefreshMessage("헬멧을 장착했습니다.");
+                return isEquipped;
+            }
+
+            if (itemModel.ItemType == InventoryItemType.Armor)
+            {
+                bool isEquipped = TryEquipToEquipmentSlot(inventorySlotIndex, EquipmentSlotType.Armor);
+                RefreshMessage("갑옷을 장착했습니다.");
+                return isEquipped;
+            }
+
+            if (itemModel.ItemType == InventoryItemType.Boots)
+            {
+                bool isEquipped = TryEquipToEquipmentSlot(inventorySlotIndex, EquipmentSlotType.Boots);
+                RefreshMessage("신발을 장착했습니다.");
+                return isEquipped;
+            }
+
+            if (itemModel.ItemType == InventoryItemType.Tool)
+            {
+                int preferredSlotIndex = ResolveToolPreferredQuickSlot(itemModel.ItemId);
+                int quickSlotIndex;
+                if (TryAssignQuickSlotShortcut(itemModel, preferredSlotIndex, out quickSlotIndex) == false)
+                {
+                    return false;
+                }
+
+                EquipToolNow(itemModel.ItemId);
+                RefreshMessage((quickSlotIndex + 1).ToString() + "번 퀵슬롯에 도구를 연결하고 장착했습니다.");
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TryEquipToEquipmentSlot(int inventorySlotIndex, EquipmentSlotType slotType)
+        {
+            if (_playerInventoryModel == null || _playerEquipmentModel == null)
+            {
+                return false;
+            }
+
+            return _playerInventoryModel.TryMoveInventoryToEquipmentSlot(
+                inventorySlotIndex,
+                slotType,
+                _playerEquipmentModel);
+        }
+
+        private bool TryAssignQuickSlotShortcut(InventoryItemModel itemModel, int preferredSlotIndex, out int quickSlotIndex)
+        {
+            quickSlotIndex = -1;
+            if (_playerInventoryModel == null || itemModel == null || itemModel.IsEmpty)
+            {
+                return false;
+            }
+
+            return _playerInventoryModel.TryAssignQuickSlotShortcut(
+                itemModel.ItemId,
+                itemModel.ItemType,
+                itemModel.Amount,
+                preferredSlotIndex,
+                PlayerInventoryModel.QuickSlotCount - 1,
+                out quickSlotIndex);
+        }
+
+        private int ResolveToolPreferredQuickSlot(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return 1;
+            }
+
+            if (itemId == global::PlayerToolController.HandStoneToolDataId)
+            {
+                return 0;
+            }
+
+            if (itemId.IndexOf("pickaxe", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return 2;
+            }
+
+            if (itemId.IndexOf("axe", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return 1;
+            }
+
+            return 4;
+        }
+
+        private void EquipToolNow(string toolDataId)
+        {
+            global::PlayerToolController toolController = FindFirstObjectByType<global::PlayerToolController>();
+            if (toolController == null)
+            {
+                return;
+            }
+
+            toolController.EquipToolData(toolDataId);
         }
 
         private void RefreshEquipmentSlots()

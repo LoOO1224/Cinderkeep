@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
+// 제작 비용 차감과 결과 지급을 담당합니다.
+// CinderHeart 보상은 아침 3택 보상 시스템에서만 처리하고, 제작 결과로는 지급하지 않습니다.
 namespace Cinderkeep.Gameplay
 {
-    // Crafting UI and stations ask this component to validate cost, pay cost, and grant the result.
+    // Crafting UI와 제작대가 이 컴포넌트를 통해 제작 가능 여부와 실제 제작을 요청합니다.
     public sealed class CraftingRecipeExecutor : MonoBehaviour
     {
         public static event Action<CraftingRecipeData> RecipeCraftedGlobal;
@@ -92,6 +92,11 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
+            if (IsBuildingResult(recipeData))
+            {
+                return TryGrantPreparedBuilding(recipeData);
+            }
+
             InventoryItemType itemType;
             if (TryConvertToItemType(recipeData.ResultDataType, recipeData.ResultItemId, out itemType) == false)
             {
@@ -119,8 +124,23 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
+            if (IsBuildingResult(recipeData))
+            {
+                return true;
+            }
+
+            if (IsCinderHeartUpgradeResult(recipeData))
+            {
+                return false;
+            }
+
             InventoryItemType itemType;
             return TryConvertToItemType(recipeData.ResultDataType, recipeData.ResultItemId, out itemType);
+        }
+
+        public bool IsRecipeVisibleInCraftingUI(CraftingRecipeData recipeData)
+        {
+            return recipeData != null && IsCinderHeartUpgradeResult(recipeData) == false;
         }
 
         private bool IsResourceResult(CraftingRecipeData recipeData)
@@ -131,6 +151,42 @@ namespace Cinderkeep.Gameplay
             }
 
             return string.Equals(recipeData.ResultDataType, "Resource", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsBuildingResult(CraftingRecipeData recipeData)
+        {
+            if (recipeData == null)
+            {
+                return false;
+            }
+
+            return string.Equals(recipeData.ResultDataType, "Building", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsCinderHeartUpgradeResult(CraftingRecipeData recipeData)
+        {
+            if (recipeData == null)
+            {
+                return false;
+            }
+
+            return string.Equals(recipeData.ResultDataType, "CinderHeartUpgrade", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool TryGrantPreparedBuilding(CraftingRecipeData recipeData)
+        {
+            if (GameManager.Inst == null)
+            {
+                return false;
+            }
+
+            PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+            if (inventoryModel == null)
+            {
+                return false;
+            }
+
+            return inventoryModel.TryAddPreparedBuilding(recipeData.ResultItemId, recipeData.ResultCount);
         }
 
         private bool TryConvertToItemType(string resultDataType, string resultItemId, out InventoryItemType itemType)
@@ -152,18 +208,6 @@ namespace Cinderkeep.Gameplay
             if (string.Equals(resultDataType, "Armor", StringComparison.OrdinalIgnoreCase))
             {
                 itemType = ResolveArmorItemType(resultItemId);
-                return true;
-            }
-
-            if (string.Equals(resultDataType, "Building", StringComparison.OrdinalIgnoreCase))
-            {
-                itemType = InventoryItemType.Building;
-                return true;
-            }
-
-            if (string.Equals(resultDataType, "CinderHeartUpgrade", StringComparison.OrdinalIgnoreCase))
-            {
-                itemType = InventoryItemType.CinderHeartUpgrade;
                 return true;
             }
 

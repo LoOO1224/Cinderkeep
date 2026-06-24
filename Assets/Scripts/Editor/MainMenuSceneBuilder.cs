@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
-// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 namespace Cinderkeep.UI.Editor
 {
     // Main_Lobby를 실제 게임의 첫 화면으로 다시 만드는 편집기 도구입니다.
@@ -169,14 +167,15 @@ namespace Cinderkeep.UI.Editor
             CreateText("Text_Title", menuRoot, "Cinderkeep", 88, Color.white, TextAnchor.MiddleCenter, font, new Vector2(0.16f, 0.70f), new Vector2(0.84f, 0.84f));
             CreateText("Text_Subtitle", menuRoot, "불꽃 심장을 지키는 생존 방어 게임", 28, new Color(0.88f, 0.91f, 0.94f, 1f), TextAnchor.MiddleCenter, font, new Vector2(0.16f, 0.63f), new Vector2(0.84f, 0.70f));
 
-            Button startButton = CreateButton("Button_StartGame", menuRoot, "게임 시작하기", 34, new Color(0.20f, 0.48f, 0.32f, 0.96f), font, new Vector2(0.36f, 0.49f), new Vector2(0.64f, 0.57f));
-            Button settingsButton = CreateButton("Button_Settings", menuRoot, "설정", 34, new Color(0.18f, 0.30f, 0.46f, 0.96f), font, new Vector2(0.36f, 0.38f), new Vector2(0.64f, 0.46f));
-            Button quitButton = CreateButton("Button_QuitGame", menuRoot, "게임 끝내기", 34, new Color(0.46f, 0.16f, 0.16f, 0.96f), font, new Vector2(0.36f, 0.27f), new Vector2(0.64f, 0.35f));
+            Button startButton = CreateButton("Button_StartGame", menuRoot, "게임 시작", 34, new Color(0.20f, 0.48f, 0.32f, 0.96f), font, new Vector2(0.36f, 0.53f), new Vector2(0.64f, 0.61f));
+            Button testFastButton = CreateButton("Button_TestFastMode", menuRoot, "테스트초고속 모드", 34, new Color(0.34f, 0.29f, 0.56f, 0.96f), font, new Vector2(0.36f, 0.42f), new Vector2(0.64f, 0.50f));
+            Button settingsButton = CreateButton("Button_Settings", menuRoot, "설정", 34, new Color(0.18f, 0.30f, 0.46f, 0.96f), font, new Vector2(0.36f, 0.31f), new Vector2(0.64f, 0.39f));
+            Button quitButton = CreateButton("Button_QuitGame", menuRoot, "종료", 34, new Color(0.46f, 0.16f, 0.16f, 0.96f), font, new Vector2(0.36f, 0.20f), new Vector2(0.64f, 0.28f));
 
             SettingsPanelReferences settingsPanel = CreateSettingsPanel(menuRoot, font);
 
             MainMenuController controller = menuRoot.gameObject.AddComponent<MainMenuController>();
-            controller.SetReferences(startButton, settingsButton, quitButton, settingsPanel.GameObjectSettingsPanel, settingsPanel.ButtonCloseSettings);
+            controller.SetReferences(startButton, testFastButton, settingsButton, quitButton, settingsPanel.GameObjectSettingsPanel, settingsPanel.ButtonCloseSettings);
             EditorUtility.SetDirty(controller);
 
             if (bgmBuildReferences != null && bgmBuildReferences.Controller != null)

@@ -9,7 +9,7 @@ namespace Cinderkeep.Gameplay
 {
     // 인벤토리 한 칸을 표시하는 UI 컴포넌트입니다.
     // 드래그 시작만 기록하고, 실제 이동 처리는 InventoryUI가 맡습니다.
-    public sealed class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public sealed class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
         [Header("Text UI")]
         [SerializeField] private TMP_Text _itemText;
@@ -57,6 +57,21 @@ namespace Cinderkeep.Gameplay
             }
 
             _ownerInventoryUI.EndDragInventorySlot();
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (_ownerInventoryUI == null || eventData == null)
+            {
+                return;
+            }
+
+            if (eventData.clickCount < 2)
+            {
+                return;
+            }
+
+            _ownerInventoryUI.DoubleClickInventorySlot(this);
         }
 
         private void RefreshItemText(InventoryItemModel itemModel)

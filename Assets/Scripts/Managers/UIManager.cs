@@ -67,6 +67,7 @@ namespace Cinderkeep.Gameplay
 
         public void OpenHud()
         {
+            global::HudTutorialGuide.EnsureSceneGuide();
             SetActive(_hudRoot, true);
         }
 

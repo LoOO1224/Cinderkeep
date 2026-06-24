@@ -1,12 +1,14 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
+// 바닥에 놓인 작은 손돌 픽업입니다.
+// 주우면 Stone 자원 1개와 hand_stone 도구를 퀵슬롯에 등록합니다.
 public sealed class HandStonePickup : MonoBehaviour, IInteractable
 {
     [SerializeField] private string _toolDataId = PlayerToolController.HandStoneToolDataId;
-    [SerializeField] private int _quickSlotIndex = 0;
+    [SerializeField] private int _preferredQuickSlotIndex = 0;
+    [SerializeField] private int _replacementQuickSlotIndex = PlayerInventoryModel.QuickSlotCount - 1;
+    [SerializeField] private int _stoneAmountOnPickup = 1;
     [SerializeField] private bool _equipOnPickup = true;
     [SerializeField] private bool _disableAfterPickup = true;
     [SerializeField] private bool _canInteract = true;
@@ -57,15 +59,24 @@ public sealed class HandStonePickup : MonoBehaviour, IInteractable
             return false;
         }
 
-        bool isSet = inventoryModel.TrySetQuickSlotItem(_quickSlotIndex, _toolDataId, InventoryItemType.Tool, 1);
+        bool isSet = inventoryModel.TryAddQuickSlotItem(
+            _toolDataId,
+            InventoryItemType.Tool,
+            1,
+            _preferredQuickSlotIndex,
+            _replacementQuickSlotIndex,
+            out _);
+
         if (isSet == false)
         {
             return false;
         }
 
+        GameManager.Inst.PlayerModel.AddResource(PlayerModel.ResourceStone, _stoneAmountOnPickup);
+
         if (_equipOnPickup)
         {
-            PlayerToolController toolController = gameObjectInteractor.GetComponent<PlayerToolController>();
+            PlayerToolController toolController = gameObjectInteractor.GetComponentInParent<PlayerToolController>();
             if (toolController != null)
             {
                 toolController.EquipToolData(_toolDataId);

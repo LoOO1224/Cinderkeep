@@ -176,6 +176,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void StartDay(int day)
     {
+        global::HandStonePickupSceneBootstrap.ResetDailyPickups();
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Day, day, _gameFlowSettings.DayDuration));
@@ -260,6 +261,11 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private float GetPhaseDuration(GameRunPhase phase, int day, float fallbackDuration)
     {
+        if (GameLaunchSettings.TryGetDurationOverride(phase, out float launchModeDuration))
+        {
+            return launchModeDuration;
+        }
+
         GameFlowPhaseData phaseData = GetPhaseData(phase, day);
         if (phaseData != null && phaseData.DurationSeconds > 0f)
         {

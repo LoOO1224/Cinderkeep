@@ -144,6 +144,7 @@ namespace Cinderkeep.Gameplay
         private void RefreshRecipes()
         {
             ClearRecipeSlots();
+            ConnectRecipeExecutor();
             if (_currentStation == null || _gameDataManager == null)
             {
                 return;
@@ -156,6 +157,10 @@ namespace Cinderkeep.Gameplay
 
             int currentDay = GetCurrentDay();
             _currentStation.GetAvailableRecipes(_gameDataManager, currentDay, _availableRecipes);
+            if (_recipeExecutor != null)
+            {
+                _availableRecipes.RemoveAll(recipeData => _recipeExecutor.IsRecipeVisibleInCraftingUI(recipeData) == false);
+            }
 
             for (int i = 0; i < _availableRecipes.Count; i++)
             {
