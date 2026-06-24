@@ -1,13 +1,12 @@
-﻿using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class TowerAttack : MonoBehaviour
+public sealed class TowerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
     [Tooltip("타워가 적에게 주는 피해량입니다. buildings.json의 attackDamage로 덮어씁니다.")]
     [SerializeField] private float _attackDamage = 5f;
     [Tooltip("공격 후 다음 공격까지 기다리는 시간입니다. buildings.json의 attackInterval로 덮어씁니다.")]
-    [SerializeField] private float _attackDelay = 1.4f;
+    [SerializeField] private float _attackInterval = 1.4f;
     [Header("Connected Components")]
     [Tooltip("선택 사항입니다. 연결하면 DamageDealer를 통해 피해를 전달합니다. 없으면 TakeDamage 직접 사용")]
     [SerializeField] private DamageDealer _damageDealer;
@@ -33,15 +32,15 @@ public class TowerAttack : MonoBehaviour
     }
 
     // 공격 딜레이 설정
-    public void SetAttackDelay(float attackDelay)
+    public void SetAttackInterval(float attackDelay)
     {
-        _attackDelay = Mathf.Max(0.1f, attackDelay);
+        _attackInterval = Mathf.Max(0.1f, attackDelay);
     }
 
     // 쿨타임 돌았는지 확인
     public bool CanAttack()
     {
-        return Time.time >= _lastAttackTime + _attackDelay;
+        return Time.time >= _lastAttackTime + _attackInterval;
     }
 
     // 여러 상황들 유효 검사
