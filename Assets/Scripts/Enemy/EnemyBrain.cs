@@ -256,13 +256,20 @@ public sealed class EnemyBrain : MonoBehaviour
             return false;
         }
 
-        if(CanReachTarget(attackerDamageable.transform) == false)
+        if (CanReachTarget(attackerDamageable.transform))
+        {
+            _currentBuildingAttackTarget = null;
+            _currentAttackTarget = attackerDamageable;
+            return true;
+        }
+
+        BuildingHp blockingBuildingHp = FindBlockingBuilding(attackerDamageable.transform.position);
+        if (blockingBuildingHp == null)
         {
             return false;
         }
 
-        _currentBuildingAttackTarget = null;
-        _currentAttackTarget = attackerDamageable;
+        SetBuildingAttackTarget(blockingBuildingHp);
         return true;
     }
 
