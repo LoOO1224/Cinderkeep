@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
-// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
-// 한 스폰 지점이 만든 적 목록을 추적하는 클래스입니다.
-// EnemySpawnPoint가 스폰 규칙을 판단할 때 현재 살아 있는 적 수를 확인할 수 있게 돕습니다.
+// EnemySpawnPoint가 만든 적 목록을 추적합니다.
+// 살아 있는 적 수 계산, 낮/밤 상태 전파, 웨이브 종료 시 잔여 적 정리에 사용합니다.
 public sealed class EnemySpawnRuntimeTracker
 {
     private readonly List<GameObject> _spawnedEnemies = new List<GameObject>();
@@ -55,13 +53,32 @@ public sealed class EnemySpawnRuntimeTracker
         for (int i = 0; i < _spawnedEnemies.Count; i++)
         {
             GameObject enemyObject = _spawnedEnemies[i];
-            if (enemyObject != null && enemyObject.activeInHierarchy == true)
+            if (enemyObject != null && enemyObject.activeInHierarchy)
             {
                 aliveCount++;
             }
         }
 
         return aliveCount;
+    }
+
+    public void DestroyTrackedEnemies()
+    {
+        for (int i = _spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            GameObject enemyObject = _spawnedEnemies[i];
+            if (enemyObject != null)
+            {
+                DestroyEnemyObject(enemyObject);
+            }
+        }
+
+        _spawnedEnemies.Clear();
+    }
+
+    public void Clear()
+    {
+        _spawnedEnemies.Clear();
     }
 
     private void RemoveMissingEnemies()
@@ -83,5 +100,16 @@ public sealed class EnemySpawnRuntimeTracker
         }
 
         return enemyObject.GetComponent<EnemyBrain>();
+    }
+
+    private void DestroyEnemyObject(GameObject enemyObject)
+    {
+        if (Application.isPlaying)
+        {
+            Object.Destroy(enemyObject);
+            return;
+        }
+
+        Object.DestroyImmediate(enemyObject);
     }
 }

@@ -296,6 +296,7 @@ public static class Cinderkeep526QaReportPanel
         isOk &= AppendCheck(reportBuilder, "boss: frost_colossus", gameDataManager.GetBoss("frost_colossus") != null, "frost_colossus");
         isOk &= AppendCheck(reportBuilder, "food: raw_meat satiety", FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.RawMeat) > 0f, FoodItemIds.RawMeat);
         isOk &= AppendCheck(reportBuilder, "food: cooked_meat satiety", FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.CookedMeat) > FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.RawMeat), FoodItemIds.CookedMeat);
+        isOk &= AppendArmorProgressionCheck(gameDataManager, reportBuilder);
 
         return isOk;
     }
@@ -313,6 +314,27 @@ public static class Cinderkeep526QaReportPanel
         isOk &= AppendCheck(reportBuilder, "starter harvest node: tree_wood_tier1", woodTree != null && woodTree.RequiredToolTier <= 1, "tree_wood_tier1");
         isOk &= AppendCheck(reportBuilder, "starter harvest node: rock_stone", stoneRock != null && stoneRock.RequiredToolTier <= 1, "rock_stone");
         return isOk;
+    }
+
+    private static bool AppendArmorProgressionCheck(GameDataManager gameDataManager, StringBuilder reportBuilder)
+    {
+        bool isOk = true;
+        isOk &= AppendArmorStatCheck(gameDataManager, reportBuilder, "iron_helmet");
+        isOk &= AppendArmorStatCheck(gameDataManager, reportBuilder, "iron_chest_armor");
+        isOk &= AppendArmorStatCheck(gameDataManager, reportBuilder, "iron_boots");
+        isOk &= AppendArmorStatCheck(gameDataManager, reportBuilder, "adamantium_chest_armor");
+        return isOk;
+    }
+
+    private static bool AppendArmorStatCheck(GameDataManager gameDataManager, StringBuilder reportBuilder, string armorId)
+    {
+        ArmorData armorData = gameDataManager.GetArmor(armorId);
+        bool hasUsefulStats = armorData != null
+            && armorData.Defense > 0f
+            && string.IsNullOrEmpty(armorData.PrefabKey) == false
+            && string.IsNullOrEmpty(armorData.CraftingRecipeId) == false;
+
+        return AppendCheck(reportBuilder, "armor stat: " + armorId, hasUsefulStats, armorId);
     }
 
     private static bool RunJsonShapeReport(StringBuilder reportBuilder)
@@ -410,6 +432,55 @@ public static class Cinderkeep526QaReportPanel
         {
             gameDataManager.Initialize();
             bool isOk = true;
+
+            foreach (KeyValuePair<string, ResourceData> pair in gameDataManager.ResourceDataList)
+            {
+                ResourceData resourceData = pair.Value;
+                if (resourceData == null || string.IsNullOrEmpty(resourceData.PrefabKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "resource prefab: " + pair.Key, false, "PrefabKey empty");
+                    continue;
+                }
+
+                isOk &= AppendPrefabKeyCheck(reportBuilder, "resource prefab: " + resourceData.Id, resourceData.PrefabKey);
+            }
+
+            foreach (KeyValuePair<string, ToolData> pair in gameDataManager.ToolDataList)
+            {
+                ToolData toolData = pair.Value;
+                if (toolData == null || string.IsNullOrEmpty(toolData.PrefabKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "tool prefab: " + pair.Key, false, "PrefabKey empty");
+                    continue;
+                }
+
+                isOk &= AppendPrefabKeyCheck(reportBuilder, "tool prefab: " + toolData.Id, toolData.PrefabKey);
+            }
+
+            foreach (KeyValuePair<string, WeaponData> pair in gameDataManager.WeaponDataList)
+            {
+                WeaponData weaponData = pair.Value;
+                if (weaponData == null || string.IsNullOrEmpty(weaponData.PrefabKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "weapon prefab: " + pair.Key, false, "PrefabKey empty");
+                    continue;
+                }
+
+                isOk &= AppendPrefabKeyCheck(reportBuilder, "weapon prefab: " + weaponData.Id, weaponData.PrefabKey);
+            }
+
+            foreach (KeyValuePair<string, ArmorData> pair in gameDataManager.ArmorDataList)
+            {
+                ArmorData armorData = pair.Value;
+                if (armorData == null || string.IsNullOrEmpty(armorData.PrefabKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "armor prefab: " + pair.Key, false, "PrefabKey empty");
+                    continue;
+                }
+
+                isOk &= AppendPrefabKeyCheck(reportBuilder, "armor prefab: " + armorData.Id, armorData.PrefabKey);
+            }
+
             foreach (KeyValuePair<string, BuildingData> pair in gameDataManager.BuildingDataList)
             {
                 BuildingData buildingData = pair.Value;
@@ -432,6 +503,30 @@ public static class Cinderkeep526QaReportPanel
                 }
 
                 isOk &= AppendPrefabKeyCheck(reportBuilder, "harvest node prefab: " + nodeData.Id, nodeData.PrefabKey);
+            }
+
+            foreach (KeyValuePair<string, CraftingStationData> pair in gameDataManager.CraftingStationDataList)
+            {
+                CraftingStationData stationData = pair.Value;
+                if (stationData == null || string.IsNullOrEmpty(stationData.PrefabKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "crafting station prefab: " + pair.Key, false, "PrefabKey empty");
+                    continue;
+                }
+
+                isOk &= AppendPrefabKeyCheck(reportBuilder, "crafting station prefab: " + stationData.Id, stationData.PrefabKey);
+            }
+
+            foreach (KeyValuePair<string, BossData> pair in gameDataManager.BossDataList)
+            {
+                BossData bossData = pair.Value;
+                if (bossData == null || string.IsNullOrEmpty(bossData.PrefabKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "boss prefab: " + pair.Key, false, "PrefabKey empty");
+                    continue;
+                }
+
+                isOk &= AppendPrefabKeyCheck(reportBuilder, "boss prefab: " + bossData.Id, bossData.PrefabKey);
             }
 
             reportBuilder.AppendLine();
@@ -519,8 +614,29 @@ public static class Cinderkeep526QaReportPanel
     private static bool AppendPrefabKeyCheck(StringBuilder reportBuilder, string label, string prefabKey)
     {
         string[] guids = AssetDatabase.FindAssets(prefabKey + " t:Prefab", new[] { "Assets" });
-        bool isOk = guids != null && guids.Length > 0;
-        string detail = isOk ? AssetDatabase.GUIDToAssetPath(guids[0]) : prefabKey;
+        string exactPath = "";
+        string firstSimilarPath = "";
+
+        if (guids != null)
+        {
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                if (string.IsNullOrEmpty(firstSimilarPath))
+                {
+                    firstSimilarPath = assetPath;
+                }
+
+                if (string.Equals(Path.GetFileNameWithoutExtension(assetPath), prefabKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    exactPath = assetPath;
+                    break;
+                }
+            }
+        }
+
+        bool isOk = string.IsNullOrEmpty(exactPath) == false;
+        string detail = isOk ? exactPath : string.IsNullOrEmpty(firstSimilarPath) ? prefabKey : "similar only: " + firstSimilarPath;
         return AppendCheck(reportBuilder, label, isOk, detail);
     }
 

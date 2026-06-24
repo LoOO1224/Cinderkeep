@@ -1,28 +1,31 @@
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
-// 1인칭 카메라 앞에 현재 장착한 도구를 보여주는 View 전용 컴포넌트입니다.
-// 실제 공격과 채집 판정은 PlayerAttack, PlayerToolUse가 담당하고, 이 클래스는 화면 표시와 짧은 휘두르기만 담당합니다.
+// 1인칭 카메라 앞에 현재 장착한 도구나 무기를 보여주는 표시 전용 컴포넌트입니다.
+// 실제 채집/공격 판정은 PlayerToolUse와 PlayerAttack이 담당하고, 이 클래스는 손맛 피드백만 맡습니다.
 public sealed class FirstPersonToolView : MonoBehaviour
 {
     [Header("Connected Components")]
-    [Tooltip("현재 장착 도구 정보를 제공하는 컴포넌트입니다.")]
+    [Tooltip("현재 퀵슬롯에서 선택된 도구 정보를 제공합니다.")]
     [SerializeField] private PlayerToolController _playerToolController;
 
     [Header("Tool View Objects")]
-    [Tooltip("1번 도끼 선택 시 보여줄 1인칭 도구 오브젝트입니다.")]
+    [Tooltip("도끼류 도구를 들었을 때 보여줄 1인칭 오브젝트입니다.")]
     [SerializeField] private GameObject _axeView;
-    [Tooltip("2번 곡괭이 선택 시 보여줄 1인칭 도구 오브젝트입니다.")]
+    [Tooltip("곡괭이류 도구를 들었을 때 보여줄 1인칭 오브젝트입니다.")]
     [SerializeField] private GameObject _pickaxeView;
-    [Tooltip("3번 맨손 선택 시 보여줄 1인칭 손 오브젝트입니다.")]
+    [Tooltip("손돌 또는 빈손 상태에서 보여줄 1인칭 오브젝트입니다.")]
     [SerializeField] private GameObject _handView;
+    [Tooltip("무기를 장착했을 때 보여줄 1인칭 오브젝트입니다. 비어 있으면 임시 검 형태를 런타임에 만듭니다.")]
+    [SerializeField] private GameObject _weaponView;
 
     [Header("Simple Swing")]
-    [Tooltip("도구를 휘두를 때 회전하는 최대 각도입니다.")]
+    [Tooltip("도구나 무기를 휘두를 때 적용할 최대 회전 각도입니다.")]
     [SerializeField] private float _swingAngle = 22f;
-    [Tooltip("도구 휘두르기 속도입니다.")]
+    [Tooltip("도구나 무기를 휘두르는 속도입니다.")]
     [SerializeField] private float _swingSpeed = 18f;
+    [Tooltip("무기 View가 없을 때 임시 검 오브젝트를 자동 생성합니다.")]
+    [SerializeField] private bool _createFallbackWeaponView = true;
 
     private Transform _currentToolTransform;
     private Quaternion _defaultRotation;
@@ -33,6 +36,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
     private void Start()
     {
         ConnectComponents();
+        EnsureFallbackWeaponView();
         RefreshToolView();
     }
 
@@ -97,6 +101,12 @@ public sealed class FirstPersonToolView : MonoBehaviour
             return;
         }
 
+        if (HasEquippedWeapon())
+        {
+            SetToolActive(_weaponView);
+            return;
+        }
+
         SetToolActive(_handView);
     }
 
@@ -105,6 +115,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
         SetActive(_axeView, activeToolObject == _axeView);
         SetActive(_pickaxeView, activeToolObject == _pickaxeView);
         SetActive(_handView, activeToolObject == _handView);
+        SetActive(_weaponView, activeToolObject == _weaponView);
 
         if (activeToolObject == null)
         {
@@ -136,6 +147,63 @@ public sealed class FirstPersonToolView : MonoBehaviour
         targetObject.SetActive(isActive);
     }
 
+    private bool HasEquippedWeapon()
+    {
+        if (GameManager.Inst == null)
+        {
+            return false;
+        }
+
+        PlayerEquipmentModel equipmentModel = GameManager.Inst.PlayerEquipmentModel;
+        if (equipmentModel == null)
+        {
+            return false;
+        }
+
+        return string.IsNullOrEmpty(equipmentModel.GetEquippedItemId(EquipmentSlotType.Weapon)) == false;
+    }
+
+    private void EnsureFallbackWeaponView()
+    {
+        if (_weaponView != null || _createFallbackWeaponView == false)
+        {
+            return;
+        }
+
+        GameObject weaponRoot = new GameObject("View_Weapon_Fallback");
+        weaponRoot.transform.SetParent(transform, false);
+        weaponRoot.transform.localPosition = new Vector3(0.42f, -0.35f, 0.82f);
+        weaponRoot.transform.localRotation = Quaternion.Euler(20f, -18f, 8f);
+        weaponRoot.transform.localScale = Vector3.one;
+
+        GameObject bladeObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        bladeObject.name = "Blade";
+        bladeObject.transform.SetParent(weaponRoot.transform, false);
+        bladeObject.transform.localPosition = new Vector3(0f, 0.22f, 0.18f);
+        bladeObject.transform.localRotation = Quaternion.Euler(-18f, 0f, 0f);
+        bladeObject.transform.localScale = new Vector3(0.08f, 0.62f, 0.06f);
+        RemoveCollider(bladeObject);
+
+        GameObject handleObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        handleObject.name = "Handle";
+        handleObject.transform.SetParent(weaponRoot.transform, false);
+        handleObject.transform.localPosition = new Vector3(0f, -0.18f, 0f);
+        handleObject.transform.localRotation = Quaternion.identity;
+        handleObject.transform.localScale = new Vector3(0.11f, 0.34f, 0.11f);
+        RemoveCollider(handleObject);
+
+        weaponRoot.SetActive(false);
+        _weaponView = weaponRoot;
+    }
+
+    private void RemoveCollider(GameObject targetObject)
+    {
+        Collider targetCollider = targetObject.GetComponent<Collider>();
+        if (targetCollider != null)
+        {
+            Destroy(targetCollider);
+        }
+    }
 
     private void UpdateSwing()
     {

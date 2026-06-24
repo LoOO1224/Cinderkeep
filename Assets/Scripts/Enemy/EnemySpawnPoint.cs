@@ -193,6 +193,12 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         _hasSpawnedBossForCurrentEncounter = false;
     }
 
+    public void ClearSpawnedEnemies()
+    {
+        _runtimeTracker.DestroyTrackedEnemies();
+        ResetBossEncounter();
+    }
+
     public bool HasBossSpawnCandidate()
     {
         return _allowRuntimeFallbackBoss

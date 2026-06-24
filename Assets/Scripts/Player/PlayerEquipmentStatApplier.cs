@@ -2,7 +2,7 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // PlayerEquipmentModel에 장착된 방어구 ID를 읽어 실제 플레이어 수치에 적용합니다.
-// 장착 상태 저장은 모델이 맡고, 이 컴포넌트는 JSON 수치와 플레이어 컴포넌트 연결만 담당합니다.
+// 장비 상태 저장은 모델이 맡고, 이 컴포넌트는 JSON 데이터와 플레이어 컴포넌트 연결만 담당합니다.
 public sealed class PlayerEquipmentStatApplier : MonoBehaviour
 {
     private const string PlayerTag = "Player";

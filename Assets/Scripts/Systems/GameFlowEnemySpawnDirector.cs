@@ -2,14 +2,12 @@ using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
-// GameFlowController가 알려준 현재 페이즈와 일차를 기준으로 적 스폰 지점들을 지휘합니다.
-// 실제 적 생성은 EnemySpawnPoint가 담당하고, 이 클래스는 어떤 스폰 지점을 켜고 끌지만 결정합니다.
+// GameFlowController가 알려준 현재 페이즈와 일차를 기준으로 EnemySpawnPoint들을 지휘합니다.
+// 실제 적 생성은 EnemySpawnPoint가 담당하고, 이 클래스는 어떤 스폰 지점을 켜고 끌지 결정합니다.
 public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
 {
     [Header("Enemy Spawn")]
-    [Tooltip("GameFlowController의 현재 페이즈에 맞춰 켜고 끌 적 스폰 지점 목록입니다.")]
+    [Tooltip("GameFlowController의 현재 페이즈에 맞춰 켜고 끌 EnemySpawnPoint 목록입니다.")]
     [SerializeField] private EnemySpawnPoint[] _enemySpawnPoints;
 
     private GameObjectManager _gameObjectManager;
@@ -85,7 +83,7 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
 
             spawnPoint.SetSpawnPointActive(false);
             spawnPoint.SetBossDefeatedHandler(null);
-            spawnPoint.ResetBossEncounter();
+            spawnPoint.ClearSpawnedEnemies();
         }
     }
 
