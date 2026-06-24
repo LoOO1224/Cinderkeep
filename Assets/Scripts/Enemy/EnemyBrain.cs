@@ -2,46 +2,54 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 몬스터가 어떤 대상을 향해 이동하고 공격할지 판단하는 컴포넌트입니다.
-// 실제 이동은 EnemyMovement, 플레이어 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
 public sealed class EnemyBrain : MonoBehaviour
 {
     private const string PlayerTag = "Player";
     private const string BuildTag = "Build";
     private const string CinderHeartTag = "CinderHeart";
     private const float DecisionInterval = 0.2f;
+    private const int MaxTowerOverlapCount = 20;
 
-    [Tooltip("플레이어 감지 결과를 가져오는 컴포넌트입니다.")]
+    [Tooltip("Player detection component.")]
     [SerializeField] private EnemyDetector _enemyDetector;
-    [Tooltip("실제 피해 적용과 공격 쿨타임을 담당하는 컴포넌트입니다.")]
+    [Tooltip("Enemy attack executor.")]
     [SerializeField] private EnemyAttack _enemyAttack;
-    [Tooltip("실제 이동 실행을 담당하는 컴포넌트입니다.")]
+    [Tooltip("Enemy movement executor.")]
     [SerializeField] private EnemyMovement _enemyMovement;
-    [Tooltip("플레이어를 감지하지 못했을 때 향하고 공격할 CinderHeart 피해 대상입니다.")]
+    [Tooltip("Fallback CinderHeart attack target.")]
     [SerializeField] private Damageable _cinderHeartDamageable;
-    [Tooltip("플레이어와 구조물을 공격할 수 있는 거리입니다.")]
+    [Tooltip("Attack distance for players and buildings.")]
     [SerializeField] private float _attackDistance = 2.3f;
-    [Tooltip("CinderHeart를 공격할 수 있는 거리입니다.")]
+    [Tooltip("Attack distance for CinderHeart.")]
     [SerializeField] private float _cinderHeartAttackDistance = 3f;
-    [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 거리입니다.")]
+    [Tooltip("Distance used to find a building blocking the current path.")]
     [SerializeField] private float _blockingBuildingDetectDistance = 5f;
-    [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 감지 반경입니다.")]
+    [Tooltip("Radius used to find a building blocking the current path.")]
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
-
-    [Tooltip("현재 밤 감지 범위를 사용할지 결정합니다.")]
+    [Tooltip("Night-only distance for finding nearby towers.")]
+    [SerializeField] private float _towerDetectDistance = 5f;
+    [Tooltip("Seconds to remember the most recent attacker.")]
+    [SerializeField] private float _attackerMemoryDuration = 7f;
+    [Tooltip("Whether the enemy should use night detection and target priority.")]
     [SerializeField] private bool _isNightTime;
 
-    private NavMeshPath _cinderHeartPath;
+    private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
 
+    private NavMeshPath _cinderHeartPath;
+    private NavMeshPath _attackerPath;
     private Coroutine _brainDecisionRoutine;
     private Damageable _currentAttackTarget;
     private BuildingHp _currentBuildingAttackTarget;
     private bool _canChaseCinderHeart = true;
+    private Damageable _recentPlayerAttacker;
+    private Damageable _recentTowerAttacker;
+    private float _lastPlayerAttackedTime;
+    private float _lastTowerAttackedTime;
 
     private void Awake()
     {
-        // NavMeshPath는 변수 선언부에서 생성하면 Unity 에러가 나므로 Awake에서 생성합니다.
         _cinderHeartPath = new NavMeshPath();
+        _attackerPath = new NavMeshPath();
 
         ConnectComponents();
         ApplyDetectorMode();
@@ -96,7 +104,27 @@ public sealed class EnemyBrain : MonoBehaviour
         }
     }
 
-    // 플레이어, CinderHeart처럼 Damageable을 기준으로 공격할 대상을 외부에서 지정할 때 사용합니다.
+    public void ReportAttacker(Damageable attackerDamageable)
+    {
+        if (attackerDamageable == null)
+        {
+            return;
+        }
+
+        if (attackerDamageable.CompareTag(PlayerTag))
+        {
+            _recentPlayerAttacker = attackerDamageable;
+            _lastPlayerAttackedTime = Time.time;
+            return;
+        }
+
+        if (attackerDamageable.GetComponentInParent<BuildingTower>() != null)
+        {
+            _recentTowerAttacker = attackerDamageable;
+            _lastTowerAttackedTime = Time.time;
+        }
+    }
+
     public void SetAttackTarget(Damageable targetDamageable)
     {
         _currentAttackTarget = targetDamageable;
@@ -160,8 +188,6 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private IEnumerator BrainDecisionRoutine()
     {
-        // 적 판단은 매 프레임이 아니라 짧은 주기로 갱신해 과한 연산을 피합니다.
-        // 우선순위는 플레이어 감지 -> 막고 있는 건축물 -> CinderHeart -> 낮 배회 순서입니다.
         WaitForSeconds waitInterval = new WaitForSeconds(DecisionInterval);
 
         while (true)
@@ -176,6 +202,22 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private void RefreshTargets()
     {
+        if (_isNightTime)
+        {
+            RefreshNightTargets();
+            return;
+        }
+
+        RefreshDayTargets();
+    }
+
+    private void RefreshNightTargets()
+    {
+        if (TrySetRecentAttackerTarget())
+        {
+            return;
+        }
+
         if (TrySetPlayerTargetFromDetector())
         {
             return;
@@ -186,7 +228,101 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        UpdateCinderHeartTargetIfNeeded();
+        if (TrySetTowerTarget())
+        {
+            return;
+        }
+
+        TrySetCinderHeartTarget();
+    }
+
+    private void RefreshDayTargets()
+    {
+        if (TrySetPlayerTargetFromDetector())
+        {
+            return;
+        }
+
+        ClearAllTargets();
+    }
+
+    private void ClearAllTargets()
+    {
+        ClearPlayerAttackTarget();
+        ClearCurrentBuildingAttackTarget();
+        ClearTowerAttackTarget();
+        ClearCinderHeartAttackTarget();
+    }
+
+    private bool TrySetRecentAttackerTarget()
+    {
+        Damageable attackerDamageable = GetNearestRecentAttacker();
+        if (attackerDamageable == null)
+        {
+            return false;
+        }
+
+        if (CanReachTarget(attackerDamageable.transform))
+        {
+            _currentBuildingAttackTarget = null;
+            _currentAttackTarget = attackerDamageable;
+            return true;
+        }
+
+        BuildingHp blockingBuildingHp = FindBlockingBuilding(attackerDamageable.transform.position);
+        if (blockingBuildingHp == null)
+        {
+            return false;
+        }
+
+        SetBuildingAttackTarget(blockingBuildingHp);
+        return true;
+    }
+
+    private Damageable GetNearestRecentAttacker()
+    {
+        Damageable validPlayerAttacker = GetValidRecentAttacker(_recentPlayerAttacker, _lastPlayerAttackedTime);
+        Damageable validTowerAttacker = GetValidRecentAttacker(_recentTowerAttacker, _lastTowerAttackedTime);
+
+        if (validPlayerAttacker == null)
+        {
+            return validTowerAttacker;
+        }
+
+        if (validTowerAttacker == null)
+        {
+            return validPlayerAttacker;
+        }
+
+        float playerDistanceSqr = (validPlayerAttacker.transform.position - transform.position).sqrMagnitude;
+        float towerDistanceSqr = (validTowerAttacker.transform.position - transform.position).sqrMagnitude;
+
+        if (playerDistanceSqr <= towerDistanceSqr)
+        {
+            return validPlayerAttacker;
+        }
+
+        return validTowerAttacker;
+    }
+
+    private Damageable GetValidRecentAttacker(Damageable attackerDamageable, float lastAttackedTime)
+    {
+        if (attackerDamageable == null)
+        {
+            return null;
+        }
+
+        if (Time.time > lastAttackedTime + _attackerMemoryDuration)
+        {
+            return null;
+        }
+
+        if (attackerDamageable.gameObject.activeInHierarchy == false)
+        {
+            return null;
+        }
+
+        return attackerDamageable;
     }
 
     private bool TrySetPlayerTargetFromDetector()
@@ -251,25 +387,89 @@ public sealed class EnemyBrain : MonoBehaviour
         _currentAttackTarget = null;
     }
 
-    private void UpdateCinderHeartTargetIfNeeded()
+    private bool TrySetTowerTarget()
+    {
+        Damageable towerDamageable = FindNearestTowerDamageable();
+        if (towerDamageable == null)
+        {
+            ClearTowerAttackTarget();
+            return false;
+        }
+
+        _currentBuildingAttackTarget = null;
+        _currentAttackTarget = towerDamageable;
+        return true;
+    }
+
+    private Damageable FindNearestTowerDamageable()
+    {
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            transform.position,
+            _towerDetectDistance,
+            _towerOverlapColliders,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Ignore);
+
+        Damageable nearestTowerDamageable = null;
+        float nearestDistanceSqr = float.MaxValue;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Damageable towerDamageable = GetTowerDamageableFromCollider(_towerOverlapColliders[i]);
+            if (towerDamageable == null)
+            {
+                continue;
+            }
+
+            float distanceSqr = (towerDamageable.transform.position - transform.position).sqrMagnitude;
+            if (distanceSqr >= nearestDistanceSqr)
+            {
+                continue;
+            }
+
+            nearestDistanceSqr = distanceSqr;
+            nearestTowerDamageable = towerDamageable;
+        }
+
+        return nearestTowerDamageable;
+    }
+
+    private Damageable GetTowerDamageableFromCollider(Collider hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return null;
+        }
+
+        BuildingTower buildingTower = hitCollider.GetComponentInParent<BuildingTower>();
+        if (buildingTower == null)
+        {
+            return null;
+        }
+
+        return buildingTower.GetComponent<Damageable>();
+    }
+
+    private bool TrySetCinderHeartTarget()
     {
         if (_canChaseCinderHeart == false)
         {
             ClearCinderHeartAttackTarget();
-            return;
+            return false;
         }
 
         if (_currentBuildingAttackTarget != null)
         {
-            return;
+            return false;
         }
 
         if (_cinderHeartDamageable == null)
         {
-            return;
+            return false;
         }
 
         _currentAttackTarget = _cinderHeartDamageable;
+        return true;
     }
 
     private void MoveByCurrentTarget()
@@ -353,6 +553,11 @@ public sealed class EnemyBrain : MonoBehaviour
             return false;
         }
 
+        if (_isNightTime == false && targetObject.CompareTag(PlayerTag) == false)
+        {
+            return false;
+        }
+
         if (targetObject.CompareTag(PlayerTag))
         {
             return IsInAttackDistance(targetObject.transform, _attackDistance);
@@ -375,6 +580,39 @@ public sealed class EnemyBrain : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, targetTransform.position);
         return distance <= attackDistance;
+    }
+
+    private bool CanReachTarget(Transform targetTransform)
+    {
+        if (targetTransform == null || _attackerPath == null)
+        {
+            return false;
+        }
+
+        NavMeshHit enemyPositionOnNavMesh;
+        if (NavMesh.SamplePosition(transform.position, out enemyPositionOnNavMesh, 2f, NavMesh.AllAreas) == false)
+        {
+            return false;
+        }
+
+        NavMeshHit targetPositionOnNavMesh;
+        if (NavMesh.SamplePosition(targetTransform.position, out targetPositionOnNavMesh, 4f, NavMesh.AllAreas) == false)
+        {
+            return false;
+        }
+
+        bool hasPath = NavMesh.CalculatePath(
+            enemyPositionOnNavMesh.position,
+            targetPositionOnNavMesh.position,
+            NavMesh.AllAreas,
+            _attackerPath);
+
+        if (hasPath == false)
+        {
+            return false;
+        }
+
+        return _attackerPath.status == NavMeshPathStatus.PathComplete;
     }
 
     private bool IsCinderHeartPathBlocked()
@@ -411,7 +649,6 @@ public sealed class EnemyBrain : MonoBehaviour
                _cinderHeartPath.status == NavMeshPathStatus.PathInvalid;
     }
 
-    // CinderHeart로 향하는 앞쪽 경로에서 Build 태그를 가진 건축물을 찾습니다.
     private BuildingHp FindBlockingBuilding(Vector3 targetPosition)
     {
         Vector3 direction = targetPosition - transform.position;
@@ -501,6 +738,19 @@ public sealed class EnemyBrain : MonoBehaviour
     private void ClearCurrentBuildingAttackTarget()
     {
         _currentBuildingAttackTarget = null;
+    }
+
+    private void ClearTowerAttackTarget()
+    {
+        if (_currentAttackTarget == null)
+        {
+            return;
+        }
+
+        if (_currentAttackTarget.GetComponentInParent<BuildingTower>() != null)
+        {
+            _currentAttackTarget = null;
+        }
     }
 
     private Damageable GetDamageableFromTransform(Transform targetTransform)
