@@ -3,27 +3,25 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 3일 게임 루프의 페이즈 전환을 지휘하는 컨트롤러입니다.
-// 실제 전투, UI 표시, 적 행동, 스폰 지점 제어는 각 전용 컴포넌트가 담당합니다.
-// 이 클래스는 현재 페이즈에서 다음 페이즈로 넘어가는 순서만 관리합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
+    private const int MorningRewardOptionCount = 3;
+    private const string EffectTypeAttackDamageAdd = "CinderHeartAttackDamageAdd";
+    private const string EffectTypeMaxHealthAdd = "CinderHeartMaxHealthAdd";
+    private const string EffectTypePlayerHealRate = "PlayerHealRate";
+    private const string EffectTypePlayerReviveRate = "PlayerReviveRate";
+
     [Header("Flow Settings")]
-    [Tooltip("낮, 밤, 아침 보상, 보스 접근 시간의 fallback 설정입니다.")]
     [SerializeField] private GameFlowSettings _gameFlowSettings = new GameFlowSettings();
 
     [Header("Flow Data")]
-    [Tooltip("true이면 game_flow_phases.json의 페이즈 시간을 우선 사용합니다.")]
     [SerializeField] private bool _useGameFlowPhaseData = true;
 
     [Header("Enemy Spawn Director")]
-    [Tooltip("현재 낮, 밤, 보스 페이즈에 맞춰 적 스폰 지점들을 켜고 끄는 컴포넌트입니다.")]
     [SerializeField] private GameFlowEnemySpawnDirector _enemySpawnDirector;
 
     [Header("CinderHeart Reward")]
-    [Tooltip("아침 보상 페이즈에 CinderHeart 스킬 선택창을 엽니다.")]
     [SerializeField] private bool _openCinderHeartSkillOnMorningReward = true;
-    [Tooltip("아침 보상에서 고정 노출할 CinderHeart 스킬 ID입니다. 랜덤 선택은 후속 작업에서 분리합니다.")]
     [SerializeField] private string[] _morningRewardSkillIds =
     {
         "cinderheart_attack_damage_5",
@@ -40,30 +38,18 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     public bool IsInitialized
     {
-        get
-        {
-            return _isInitialized;
-        }
+        get { return _isInitialized; }
     }
 
     public bool IsWaitingForCinderHeartSkillSelection
     {
-        get
-        {
-            return _isWaitingForCinderHeartSkillSelection;
-        }
+        get { return _isWaitingForCinderHeartSkillSelection; }
     }
 
     public void SetGameManager(GameManager gameManager)
     {
         _gameManager = gameManager;
-        if (_gameManager == null)
-        {
-            _gameRunModel = null;
-            return;
-        }
-
-        _gameRunModel = _gameManager.GameRunModel;
+        _gameRunModel = _gameManager == null ? null : _gameManager.GameRunModel;
     }
 
     public void Initialize()
@@ -145,9 +131,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return;
         }
 
-        float remainingTime = _gameRunModel.RemainingTime - Time.deltaTime;
-        _gameRunModel.SetRemainingTime(remainingTime);
-
+        _gameRunModel.SetRemainingTime(_gameRunModel.RemainingTime - Time.deltaTime);
         if (_gameRunModel.RemainingTime > 0f)
         {
             return;
@@ -158,17 +142,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private bool CanUpdateFlow()
     {
-        if (_isFlowRunning == false)
-        {
-            return false;
-        }
-
-        if (_gameRunModel == null)
-        {
-            return false;
-        }
-
-        if (_gameRunModel.IsPlaying == false)
+        if (_isFlowRunning == false || _gameRunModel == null || _gameRunModel.IsPlaying == false)
         {
             return false;
         }
@@ -178,12 +152,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return false;
         }
 
-        if (_isWaitingForCinderHeartSkillSelection == true)
-        {
-            return false;
-        }
-
-        return true;
+        return _isWaitingForCinderHeartSkillSelection == false;
     }
 
     private void AdvancePhase()
@@ -273,7 +242,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void PlayPhaseBgm(GameRunPhase phase)
     {
-        if (_gameManager == null)
+        if (_gameManager == null || _gameRunModel == null)
         {
             return;
         }
@@ -291,8 +260,6 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private float GetPhaseDuration(GameRunPhase phase, int day, float fallbackDuration)
     {
-        // 낮/밤/아침/보스 시간은 game_flow_phases.json에서 먼저 가져옵니다.
-        // JSON 값이 비어 있거나 잘못되면 Inspector의 GameFlowSettings 값을 fallback으로 사용합니다.
         GameFlowPhaseData phaseData = GetPhaseData(phase, day);
         if (phaseData != null && phaseData.DurationSeconds > 0f)
         {
@@ -320,7 +287,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         foreach (KeyValuePair<string, GameFlowPhaseData> pair in phaseDataList)
         {
             GameFlowPhaseData phaseData = pair.Value;
-            if (IsPhaseDataMatched(phaseData, day, phaseName) == true)
+            if (IsPhaseDataMatched(phaseData, day, phaseName))
             {
                 return phaseData;
             }
@@ -331,32 +298,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private bool CanUseGameFlowPhaseData()
     {
-        if (_useGameFlowPhaseData == false)
-        {
-            return false;
-        }
-
-        if (GameManager.Inst == null)
-        {
-            return false;
-        }
-
-        if (GameManager.Inst.GetGameDataManager() == null)
-        {
-            return false;
-        }
-
-        return true;
+        return _useGameFlowPhaseData
+            && GameManager.Inst != null
+            && GameManager.Inst.GetGameDataManager() != null;
     }
 
     private bool IsPhaseDataMatched(GameFlowPhaseData phaseData, int day, string phaseName)
     {
-        if (phaseData == null)
-        {
-            return false;
-        }
-
-        if (phaseData.Day != day)
+        if (phaseData == null || phaseData.Day != day)
         {
             return false;
         }
@@ -386,14 +335,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void TryOpenCinderHeartSkillSelection()
     {
-        // MorningReward 페이즈에서 cinderheart_skills.json의 스킬 ID를 읽어 선택 UI를 엽니다.
-        // 선택 후보 랜덤화는 후속 작업이며, 현재는 _morningRewardSkillIds 배열 순서를 사용합니다.
-        if (_openCinderHeartSkillOnMorningReward == false)
-        {
-            return;
-        }
-
-        if (_gameManager == null)
+        if (_openCinderHeartSkillOnMorningReward == false || _gameManager == null)
         {
             return;
         }
@@ -428,30 +370,175 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return skillOptions;
         }
 
-        if (_morningRewardSkillIds == null)
+        List<CinderHeartSkillData> candidates = GetImplementedMorningRewardCandidates(gameDataManager);
+        AddRequiredReviveRewardIfNeeded(candidates, skillOptions);
+        PickWeightedSkillOptions(candidates, skillOptions, MorningRewardOptionCount);
+
+        if (skillOptions.Count > 0)
         {
             return skillOptions;
         }
 
-        for (int i = 0; i < _morningRewardSkillIds.Length; i++)
+        AddFallbackMorningRewardSkillOptions(gameDataManager, skillOptions);
+        return skillOptions;
+    }
+
+    private List<CinderHeartSkillData> GetImplementedMorningRewardCandidates(GameDataManager gameDataManager)
+    {
+        List<CinderHeartSkillData> candidates = new List<CinderHeartSkillData>();
+        if (gameDataManager == null || gameDataManager.CinderHeartSkillDataList == null)
         {
-            CinderHeartSkillData skillData = gameDataManager.GetCinderHeartSkill(_morningRewardSkillIds[i]);
+            return candidates;
+        }
+
+        foreach (KeyValuePair<string, CinderHeartSkillData> pair in gameDataManager.CinderHeartSkillDataList)
+        {
+            CinderHeartSkillData skillData = pair.Value;
+            if (CanUseAsMorningReward(skillData))
+            {
+                candidates.Add(skillData);
+            }
+        }
+
+        return candidates;
+    }
+
+    private bool CanUseAsMorningReward(CinderHeartSkillData skillData)
+    {
+        if (skillData == null)
+        {
+            return false;
+        }
+
+        if (_gameRunModel != null && skillData.RequiredDay > _gameRunModel.Day)
+        {
+            return false;
+        }
+
+        return IsImplementedRewardEffect(skillData.EffectType);
+    }
+
+    private bool IsImplementedRewardEffect(string effectType)
+    {
+        return string.Equals(effectType, EffectTypeAttackDamageAdd, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(effectType, EffectTypeMaxHealthAdd, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(effectType, EffectTypePlayerHealRate, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(effectType, EffectTypePlayerReviveRate, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void AddRequiredReviveRewardIfNeeded(
+        List<CinderHeartSkillData> candidates,
+        List<CinderHeartSkillData> skillOptions)
+    {
+        if (IsPlayerDead() == false || candidates == null || skillOptions == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            CinderHeartSkillData skillData = candidates[i];
             if (skillData == null)
             {
                 continue;
             }
 
-            skillOptions.Add(skillData);
+            if (string.Equals(skillData.EffectType, EffectTypePlayerReviveRate, StringComparison.OrdinalIgnoreCase))
+            {
+                skillOptions.Add(skillData);
+                candidates.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    private bool IsPlayerDead()
+    {
+        PlayerStatus playerStatus = UnityEngine.Object.FindFirstObjectByType<PlayerStatus>();
+        return playerStatus != null && playerStatus.IsDead();
+    }
+
+    private void PickWeightedSkillOptions(
+        List<CinderHeartSkillData> candidates,
+        List<CinderHeartSkillData> skillOptions,
+        int optionCount)
+    {
+        if (candidates == null || skillOptions == null)
+        {
+            return;
         }
 
-        return skillOptions;
+        while (skillOptions.Count < optionCount && candidates.Count > 0)
+        {
+            CinderHeartSkillData pickedSkill = PickWeightedSkill(candidates);
+            if (pickedSkill == null)
+            {
+                return;
+            }
+
+            skillOptions.Add(pickedSkill);
+            candidates.Remove(pickedSkill);
+        }
+    }
+
+    private CinderHeartSkillData PickWeightedSkill(List<CinderHeartSkillData> candidates)
+    {
+        int totalWeight = 0;
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            if (candidates[i] != null)
+            {
+                totalWeight += Mathf.Max(1, candidates[i].Weight);
+            }
+        }
+
+        if (totalWeight <= 0)
+        {
+            return candidates.Count > 0 ? candidates[0] : null;
+        }
+
+        int randomWeight = UnityEngine.Random.Range(0, totalWeight);
+        int currentWeight = 0;
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            CinderHeartSkillData skillData = candidates[i];
+            if (skillData == null)
+            {
+                continue;
+            }
+
+            currentWeight += Mathf.Max(1, skillData.Weight);
+            if (randomWeight < currentWeight)
+            {
+                return skillData;
+            }
+        }
+
+        return candidates.Count > 0 ? candidates[candidates.Count - 1] : null;
+    }
+
+    private void AddFallbackMorningRewardSkillOptions(
+        GameDataManager gameDataManager,
+        List<CinderHeartSkillData> skillOptions)
+    {
+        if (gameDataManager == null || _morningRewardSkillIds == null || skillOptions == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _morningRewardSkillIds.Length; i++)
+        {
+            CinderHeartSkillData skillData = gameDataManager.GetCinderHeartSkill(_morningRewardSkillIds[i]);
+            if (skillData != null && IsImplementedRewardEffect(skillData.EffectType))
+            {
+                skillOptions.Add(skillData);
+            }
+        }
     }
 
     private void PauseGameForCinderHeartSkillSelection()
     {
-        // 보상 선택 중에는 전투/스폰/타이머가 흐르지 않게 Time.timeScale을 잠시 멈춥니다.
-        // UI를 닫을 때 RestoreTimeScaleIfRewardSelectionIsOpen에서 반드시 이전 값으로 복구합니다.
-        if (_isWaitingForCinderHeartSkillSelection == true)
+        if (_isWaitingForCinderHeartSkillSelection)
         {
             return;
         }
@@ -478,15 +565,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return;
         }
 
-        if (_previousTimeScale <= 0f)
-        {
-            Time.timeScale = 1f;
-        }
-        else
-        {
-            Time.timeScale = _previousTimeScale;
-        }
-
+        Time.timeScale = _previousTimeScale <= 0f ? 1f : _previousTimeScale;
         _isWaitingForCinderHeartSkillSelection = false;
     }
 

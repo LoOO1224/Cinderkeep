@@ -36,6 +36,7 @@ public sealed class PlayerStatus : MonoBehaviour
     private bool _isStarving;
     private bool _isGameOverRequested;
     private PlayerMovement _playerMovement;
+    private PlayerController _playerController;
     private DeathCinderHeartView _deathCinderHeartView;
 
     public event Action<float> PlayerDamaged;
@@ -98,6 +99,7 @@ public sealed class PlayerStatus : MonoBehaviour
     private void Start()
     {
         _playerMovement = GetComponent<PlayerMovement>();
+        _playerController = GetComponent<PlayerController>();
         _deathCinderHeartView = GetComponent<DeathCinderHeartView>();
         ClampStatusValues();
     }
@@ -197,6 +199,28 @@ public sealed class PlayerStatus : MonoBehaviour
 
         _health += amount;
         _health = Mathf.Min(_health, _maxHealth);
+    }
+
+    public void Revive(float healthRate)
+    {
+        if (IsDead() == false)
+        {
+            return;
+        }
+
+        float safeHealthRate = Mathf.Clamp01(healthRate);
+        if (safeHealthRate <= 0f)
+        {
+            safeHealthRate = 0.4f;
+        }
+
+        _health = Mathf.Max(1f, _maxHealth * safeHealthRate);
+        _isGameOverRequested = false;
+
+        if (_playerController != null)
+        {
+            _playerController.SetState(PlayerControlState.Normal);
+        }
     }
 
     public void EatFood(float amount)
@@ -303,7 +327,7 @@ public sealed class PlayerStatus : MonoBehaviour
         RefreshStarvingState();
     }
 
-    private bool IsDead()
+    public bool IsDead()
     {
         return _health <= 0f;
     }
@@ -326,15 +350,13 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         _isGameOverRequested = true;
-        Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 게임 오버를 요청합니다.");
-        ShowDeathView();
-
-        if (GameManager.Inst == null)
+        Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 CinderHeart 관전 상태로 전환합니다.");
+        if (_playerController != null)
         {
-            return;
+            _playerController.SetState(PlayerControlState.Dead);
         }
 
-        GameManager.Inst.EndGame();
+        ShowDeathView();
     }
 
     private void ShowDeathView()

@@ -2,8 +2,8 @@
   "Items": [
     {
       "_id": "cinderheart_attack_damage_5",
-      "_displayName": "잿불 심장 과열",
-      "_description": "잿불 심장의 공격력이 +5 증가합니다.",
+      "_displayName": "Cinder Spark",
+      "_description": "CinderHeart attack damage increases by 5.",
       "_effectType": "CinderHeartAttackDamageAdd",
       "_value": 5,
       "_requiredDay": 1,
@@ -11,9 +11,29 @@
       "_canRepeat": true
     },
     {
+      "_id": "cinderheart_attack_damage_8",
+      "_displayName": "Ashen Bolt",
+      "_description": "CinderHeart attack damage increases by 8.",
+      "_effectType": "CinderHeartAttackDamageAdd",
+      "_value": 8,
+      "_requiredDay": 2,
+      "_weight": 70,
+      "_canRepeat": true
+    },
+    {
+      "_id": "cinderheart_attack_damage_12",
+      "_displayName": "Heartfire Lance",
+      "_description": "CinderHeart attack damage increases by 12.",
+      "_effectType": "CinderHeartAttackDamageAdd",
+      "_value": 12,
+      "_requiredDay": 3,
+      "_weight": 45,
+      "_canRepeat": true
+    },
+    {
       "_id": "cinderheart_max_health_100",
-      "_displayName": "잿불 심장 강화",
-      "_description": "잿불 심장의 최대 HP가 +100 증가하고, 증가한 만큼 현재 HP도 회복합니다.",
+      "_displayName": "Rekindled Core",
+      "_description": "CinderHeart max HP increases by 100 and heals by the same amount.",
       "_effectType": "CinderHeartMaxHealthAdd",
       "_value": 100,
       "_requiredDay": 1,
@@ -21,9 +41,29 @@
       "_canRepeat": true
     },
     {
+      "_id": "cinderheart_max_health_160",
+      "_displayName": "Iron Ember Shell",
+      "_description": "CinderHeart max HP increases by 160 and heals by the same amount.",
+      "_effectType": "CinderHeartMaxHealthAdd",
+      "_value": 160,
+      "_requiredDay": 2,
+      "_weight": 65,
+      "_canRepeat": true
+    },
+    {
+      "_id": "cinderheart_max_health_240",
+      "_displayName": "Adamant Hearth",
+      "_description": "CinderHeart max HP increases by 240 and heals by the same amount.",
+      "_effectType": "CinderHeartMaxHealthAdd",
+      "_value": 240,
+      "_requiredDay": 3,
+      "_weight": 40,
+      "_canRepeat": true
+    },
+    {
       "_id": "cinderheart_player_heal_30",
-      "_displayName": "온기의 파동",
-      "_description": "잿불 심장이 플레이어의 체력을 최대 HP의 30%만큼 회복시킵니다.",
+      "_displayName": "Warm Pulse",
+      "_description": "The player heals for 30 percent of max HP.",
       "_effectType": "PlayerHealRate",
       "_value": 0.3,
       "_requiredDay": 1,
@@ -31,9 +71,39 @@
       "_canRepeat": true
     },
     {
+      "_id": "cinderheart_player_heal_45",
+      "_displayName": "Hearthblood",
+      "_description": "The player heals for 45 percent of max HP.",
+      "_effectType": "PlayerHealRate",
+      "_value": 0.45,
+      "_requiredDay": 2,
+      "_weight": 70,
+      "_canRepeat": true
+    },
+    {
+      "_id": "cinderheart_player_heal_60",
+      "_displayName": "Last Warmth",
+      "_description": "The player heals for 60 percent of max HP.",
+      "_effectType": "PlayerHealRate",
+      "_value": 0.6,
+      "_requiredDay": 3,
+      "_weight": 45,
+      "_canRepeat": true
+    },
+    {
+      "_id": "cinderheart_player_revive_40",
+      "_displayName": "Last Ember Revive",
+      "_description": "If the player is down, revive at 40 percent max HP.",
+      "_effectType": "PlayerReviveRate",
+      "_value": 0.4,
+      "_requiredDay": 1,
+      "_weight": 120,
+      "_canRepeat": true
+    },
+    {
       "_id": "cinderheart_fire_arrow_tower",
-      "_displayName": "불화살 축복",
-      "_description": "포탑에 불의 힘을 부여해 불화살과 도트 피해를 준비합니다. 후속 타워 시스템에서 연결합니다.",
+      "_displayName": "Fire Arrow Towers",
+      "_description": "Future tower arrows can become stronger through fire.",
       "_effectType": "TowerFireArrowUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -42,8 +112,8 @@
     },
     {
       "_id": "cinderheart_warm_player_aura",
-      "_displayName": "온기 영역",
-      "_description": "잿불 심장 주변에 플레이어가 천천히 회복되는 영역을 준비합니다. 후속 오라 시스템에서 연결합니다.",
+      "_displayName": "Warm Aura",
+      "_description": "Future aura system candidate for slow player healing near CinderHeart.",
       "_effectType": "CinderHeartWarmAuraUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -52,8 +122,8 @@
     },
     {
       "_id": "cinderheart_burning_enemy_aura",
-      "_displayName": "잿불 장막",
-      "_description": "잿불 심장 주변 몬스터가 지속 피해를 받는 영역을 준비합니다. 후속 오라 시스템에서 연결합니다.",
+      "_displayName": "Burning Ring",
+      "_description": "Future aura system candidate for damaging nearby enemies.",
       "_effectType": "CinderHeartBurnAuraUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -62,8 +132,8 @@
     },
     {
       "_id": "cinderheart_wall_heat",
-      "_displayName": "달궈진 방벽",
-      "_description": "벽이 공격받을 때 근접한 적에게 반격 피해를 주는 구조를 준비합니다.",
+      "_displayName": "Heated Walls",
+      "_description": "Future building thorns candidate for walls.",
       "_effectType": "BuildingThornsUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -72,8 +142,8 @@
     },
     {
       "_id": "cinderheart_tower_range",
-      "_displayName": "불씨 조준",
-      "_description": "포탑 사거리를 늘리는 강화 후보입니다. 후속 타워 데이터와 연결합니다.",
+      "_displayName": "Watchfire Range",
+      "_description": "Future tower range bonus candidate.",
       "_effectType": "TowerRangeAdd",
       "_value": 2,
       "_requiredDay": 2,
@@ -82,8 +152,8 @@
     },
     {
       "_id": "cinderheart_player_stamina_recover",
-      "_displayName": "불씨 호흡",
-      "_description": "플레이어의 스태미나 회복 속도를 높이는 강화 후보입니다.",
+      "_displayName": "Stoked Breath",
+      "_description": "Future player stamina recovery bonus candidate.",
       "_effectType": "PlayerStaminaRecoveryAdd",
       "_value": 5,
       "_requiredDay": 1,
@@ -92,8 +162,8 @@
     },
     {
       "_id": "cinderheart_resource_blessing",
-      "_displayName": "수확의 온기",
-      "_description": "다음 낮 동안 자원 채집량을 늘리는 강화 후보입니다.",
+      "_displayName": "Harvest Heat",
+      "_description": "Future gathering amount bonus candidate.",
       "_effectType": "HarvestAmountRateAdd",
       "_value": 0.2,
       "_requiredDay": 1,
@@ -102,8 +172,8 @@
     },
     {
       "_id": "cinderheart_enemy_slow_aura",
-      "_displayName": "서리 녹이기",
-      "_description": "잿불 심장 주변 적의 이동 속도를 늦추는 강화 후보입니다.",
+      "_displayName": "Frostbind Flame",
+      "_description": "Future enemy slow aura candidate.",
       "_effectType": "EnemySlowAuraUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -112,8 +182,8 @@
     },
     {
       "_id": "cinderheart_player_attack_buff",
-      "_displayName": "수호자의 분노",
-      "_description": "플레이어 공격력을 일시적으로 높이는 강화 후보입니다.",
+      "_displayName": "Keeper Fury",
+      "_description": "Future player attack bonus candidate.",
       "_effectType": "PlayerAttackDamageAdd",
       "_value": 2,
       "_requiredDay": 2,
@@ -122,8 +192,8 @@
     },
     {
       "_id": "cinderheart_repair_pulse",
-      "_displayName": "수리의 불꽃",
-      "_description": "아침마다 주변 건축물을 조금 수리하는 강화 후보입니다.",
+      "_displayName": "Dawn Repair Pulse",
+      "_description": "Future morning building repair candidate.",
       "_effectType": "BuildingMorningRepairUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -132,8 +202,8 @@
     },
     {
       "_id": "cinderheart_last_stand",
-      "_displayName": "마지막 불씨",
-      "_description": "잿불 심장 HP가 낮을 때 방어 효과를 얻는 강화 후보입니다.",
+      "_displayName": "Last Ember",
+      "_description": "Future emergency defense candidate when CinderHeart is low.",
       "_effectType": "CinderHeartLastStandUnlock",
       "_value": 1,
       "_requiredDay": 3,
@@ -142,8 +212,8 @@
     },
     {
       "_id": "cinderheart_boss_mark",
-      "_displayName": "거인의 낙인",
-      "_description": "보스에게 받는 피해를 줄이거나 보스에게 주는 피해를 늘리는 강화 후보입니다.",
+      "_displayName": "Giant Mark",
+      "_description": "Future boss damage bonus candidate.",
       "_effectType": "BossDamageBonusUnlock",
       "_value": 1,
       "_requiredDay": 3,
@@ -152,8 +222,8 @@
     },
     {
       "_id": "cinderheart_night_visibility",
-      "_displayName": "불빛 시야",
-      "_description": "밤에 CinderHeart 주변 시야와 가시성을 높이는 강화 후보입니다.",
+      "_displayName": "Night Sight",
+      "_description": "Future night visibility candidate.",
       "_effectType": "NightVisionAuraUnlock",
       "_value": 1,
       "_requiredDay": 1,
@@ -162,8 +232,8 @@
     },
     {
       "_id": "cinderheart_emergency_shield",
-      "_displayName": "잿불 보호막",
-      "_description": "한 번의 큰 피해를 막는 CinderHeart 보호막 후보입니다.",
+      "_displayName": "Emergency Shield",
+      "_description": "Future one-time CinderHeart shield candidate.",
       "_effectType": "CinderHeartShieldUnlock",
       "_value": 1,
       "_requiredDay": 2,
@@ -172,8 +242,8 @@
     },
     {
       "_id": "cinderheart_drop_heat",
-      "_displayName": "뜨거운 전리품",
-      "_description": "밤에 처치한 적이 추가 자원을 떨어뜨릴 확률을 준비합니다.",
+      "_displayName": "Warm Drops",
+      "_description": "Future loot drop rate candidate.",
       "_effectType": "LootDropRateAdd",
       "_value": 0.15,
       "_requiredDay": 2,
@@ -182,8 +252,8 @@
     },
     {
       "_id": "cinderheart_forge_speed",
-      "_displayName": "용광로 가속",
-      "_description": "용광로 제련 속도를 높이는 강화 후보입니다.",
+      "_displayName": "Fast Forge",
+      "_description": "Future furnace speed candidate.",
       "_effectType": "FurnaceSpeedRateAdd",
       "_value": 0.2,
       "_requiredDay": 2,
@@ -192,8 +262,8 @@
     },
     {
       "_id": "cinderheart_dawn_reward",
-      "_displayName": "새벽의 보급",
-      "_description": "아침마다 기본 자원을 조금 지급하는 강화 후보입니다.",
+      "_displayName": "Dawn Supplies",
+      "_description": "Future morning resource bonus candidate.",
       "_effectType": "MorningResourceBonusUnlock",
       "_value": 1,
       "_requiredDay": 1,
