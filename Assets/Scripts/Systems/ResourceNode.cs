@@ -192,7 +192,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
         if (toolData == null)
         {
-            return true;
+            return false;
         }
 
         return toolData.Tier >= _requiredToolTier;
@@ -420,7 +420,17 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GatherToolType dataToolType = ConvertToolType(harvestNodeData.RequiredToolType, _requiredToolType);
-        return dataToolType == _requiredToolType;
+        if (dataToolType != _requiredToolType)
+        {
+            return false;
+        }
+
+        if (_requiredToolTier > 0 && harvestNodeData.RequiredToolTier != _requiredToolTier)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private void ApplyHarvestNodeData(HarvestNodeData harvestNodeData)

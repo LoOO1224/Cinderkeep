@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
@@ -10,8 +12,10 @@ public sealed class BuildingSpot : MonoBehaviour
     [Header("Build Data")]
     [Tooltip("이 지점에 지을 건물의 기획 데이터 ID입니다. 예: wood_wall")]
     [SerializeField] private string _buildingDataId = "wood_wall";
-    [Tooltip("실제로 생성할 건축물 프리팹입니다.")]
+    [Tooltip("기본으로 생성할 건축물 프리팹입니다. 별도 매핑이 없을 때 fallback으로 사용합니다.")]
     [SerializeField] private GameObject _buildingPrefab;
+    [Tooltip("건축 데이터 ID 또는 prefabKey별로 실제 생성 프리팹을 덮어씁니다.")]
+    [SerializeField] private List<BuildingPrefabEntry> _prefabOverrides = new List<BuildingPrefabEntry>();
 
     [Header("Build Position")]
     [Tooltip("건축물이 실제로 배치될 위치입니다. 비어 있으면 이 오브젝트의 Transform을 사용합니다.")]
@@ -50,6 +54,17 @@ public sealed class BuildingSpot : MonoBehaviour
         {
             return _buildingPrefab;
         }
+    }
+
+    public GameObject GetBuildingPrefab(BuildingData buildingData)
+    {
+        GameObject overridePrefab = FindOverridePrefab(buildingData);
+        if (overridePrefab != null)
+        {
+            return overridePrefab;
+        }
+
+        return _buildingPrefab;
     }
 
     private void Awake()
@@ -137,5 +152,65 @@ public sealed class BuildingSpot : MonoBehaviour
         }
 
         _spawnAnchor = transform;
+    }
+
+    private GameObject FindOverridePrefab(BuildingData buildingData)
+    {
+        if (buildingData == null || _prefabOverrides == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < _prefabOverrides.Count; i++)
+        {
+            BuildingPrefabEntry entry = _prefabOverrides[i];
+            if (entry == null || entry.BuildingPrefab == null)
+            {
+                continue;
+            }
+
+            if (entry.Matches(buildingData))
+            {
+                return entry.BuildingPrefab;
+            }
+        }
+
+        return null;
+    }
+
+    [Serializable]
+    private sealed class BuildingPrefabEntry
+    {
+        [Tooltip("매칭할 buildings.json의 _id입니다.")]
+        [SerializeField] private string _buildingDataId;
+        [Tooltip("매칭할 buildings.json의 _prefabKey입니다. buildingDataId가 비어 있을 때도 사용할 수 있습니다.")]
+        [SerializeField] private string _prefabKey;
+        [Tooltip("해당 데이터와 매칭되면 생성할 실제 프리팹입니다.")]
+        [SerializeField] private GameObject _buildingPrefab;
+
+        public GameObject BuildingPrefab
+        {
+            get
+            {
+                return _buildingPrefab;
+            }
+        }
+
+        public bool Matches(BuildingData buildingData)
+        {
+            if (buildingData == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(_buildingDataId) == false
+                && string.Equals(_buildingDataId, buildingData.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return string.IsNullOrEmpty(_prefabKey) == false
+                && string.Equals(_prefabKey, buildingData.PrefabKey, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

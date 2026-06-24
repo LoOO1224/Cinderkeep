@@ -223,26 +223,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadEnemyData(string resourcePath)
         {
-            _enemyDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: enemy JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            EnemyDataCatalog catalog = JsonUtility.FromJson<EnemyDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: enemy JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_enemyDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<EnemyData, EnemyDataCatalog>(_enemyDataList, resourcePath, "enemy", catalog => catalog.Items);
         }
 
         public EnemyData GetEnemy(string id)
@@ -262,26 +243,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadResourceData(string resourcePath)
         {
-            _resourceDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: resource JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            ResourceDataCatalog catalog = JsonUtility.FromJson<ResourceDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: resource JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_resourceDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<ResourceData, ResourceDataCatalog>(_resourceDataList, resourcePath, "resource", catalog => catalog.Items);
         }
 
         public ResourceData GetResource(string id)
@@ -301,26 +263,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadHarvestNodeData(string resourcePath)
         {
-            _harvestNodeDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: harvest node JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            HarvestNodeDataCatalog catalog = JsonUtility.FromJson<HarvestNodeDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: harvest node JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_harvestNodeDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<HarvestNodeData, HarvestNodeDataCatalog>(_harvestNodeDataList, resourcePath, "harvest node", catalog => catalog.Items);
         }
 
         public HarvestNodeData GetHarvestNode(string id)
@@ -340,26 +283,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadToolData(string resourcePath)
         {
-            _toolDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: tool JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            ToolDataCatalog catalog = JsonUtility.FromJson<ToolDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: tool JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_toolDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<ToolData, ToolDataCatalog>(_toolDataList, resourcePath, "tool", catalog => catalog.Items);
         }
 
         public ToolData GetTool(string id)
@@ -379,26 +303,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadWeaponData(string resourcePath)
         {
-            _weaponDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: weapon JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            WeaponDataCatalog catalog = JsonUtility.FromJson<WeaponDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: weapon JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_weaponDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<WeaponData, WeaponDataCatalog>(_weaponDataList, resourcePath, "weapon", catalog => catalog.Items);
         }
 
         public WeaponData GetWeapon(string id)
@@ -418,26 +323,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadArmorData(string resourcePath)
         {
-            _armorDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: armor JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            ArmorDataCatalog catalog = JsonUtility.FromJson<ArmorDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: armor JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_armorDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<ArmorData, ArmorDataCatalog>(_armorDataList, resourcePath, "armor", catalog => catalog.Items);
         }
 
         public ArmorData GetArmor(string id)
@@ -457,26 +343,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadBuildingData(string resourcePath)
         {
-            _buildingDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: building JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            BuildingDataCatalog catalog = JsonUtility.FromJson<BuildingDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: building JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_buildingDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<BuildingData, BuildingDataCatalog>(_buildingDataList, resourcePath, "building", catalog => catalog.Items);
         }
 
         public BuildingData GetBuilding(string id)
@@ -496,26 +363,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadCraftingRecipeData(string resourcePath)
         {
-            _craftingRecipeDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: crafting recipe JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            CraftingRecipeDataCatalog catalog = JsonUtility.FromJson<CraftingRecipeDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: crafting recipe JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_craftingRecipeDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<CraftingRecipeData, CraftingRecipeDataCatalog>(_craftingRecipeDataList, resourcePath, "crafting recipe", catalog => catalog.Items);
         }
 
         public CraftingRecipeData GetCraftingRecipe(string id)
@@ -535,26 +383,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadCraftingStationData(string resourcePath)
         {
-            _craftingStationDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: crafting station JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            CraftingStationDataCatalog catalog = JsonUtility.FromJson<CraftingStationDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: crafting station JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_craftingStationDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<CraftingStationData, CraftingStationDataCatalog>(_craftingStationDataList, resourcePath, "crafting station", catalog => catalog.Items);
         }
 
         public CraftingStationData GetCraftingStation(string id)
@@ -574,26 +403,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadSmeltingRecipeData(string resourcePath)
         {
-            _smeltingRecipeDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: smelting recipe JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            SmeltingRecipeDataCatalog catalog = JsonUtility.FromJson<SmeltingRecipeDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: smelting recipe JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_smeltingRecipeDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<SmeltingRecipeData, SmeltingRecipeDataCatalog>(_smeltingRecipeDataList, resourcePath, "smelting recipe", catalog => catalog.Items);
         }
 
         public SmeltingRecipeData GetSmeltingRecipe(string id)
@@ -613,26 +423,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadEnemySpawnRuleData(string resourcePath)
         {
-            _enemySpawnRuleDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: enemy spawn rule JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            EnemySpawnRuleDataCatalog catalog = JsonUtility.FromJson<EnemySpawnRuleDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: enemy spawn rule JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_enemySpawnRuleDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<EnemySpawnRuleData, EnemySpawnRuleDataCatalog>(_enemySpawnRuleDataList, resourcePath, "enemy spawn rule", catalog => catalog.Items);
         }
 
         public EnemySpawnRuleData GetEnemySpawnRule(string id)
@@ -652,26 +443,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadGameFlowPhaseData(string resourcePath)
         {
-            _gameFlowPhaseDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: game flow phase JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            GameFlowPhaseDataCatalog catalog = JsonUtility.FromJson<GameFlowPhaseDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: game flow phase JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_gameFlowPhaseDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<GameFlowPhaseData, GameFlowPhaseDataCatalog>(_gameFlowPhaseDataList, resourcePath, "game flow phase", catalog => catalog.Items);
         }
 
         public GameFlowPhaseData GetGameFlowPhase(string id)
@@ -691,26 +463,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadLootDropData(string resourcePath)
         {
-            _lootDropDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: loot drop JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            LootDropDataCatalog catalog = JsonUtility.FromJson<LootDropDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: loot drop JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_lootDropDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<LootDropData, LootDropDataCatalog>(_lootDropDataList, resourcePath, "loot drop", catalog => catalog.Items);
         }
 
         public LootDropData GetLootDrop(string id)
@@ -730,26 +483,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadCinderHeartUpgradeData(string resourcePath)
         {
-            _cinderHeartUpgradeDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: CinderHeart upgrade JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            CinderHeartUpgradeDataCatalog catalog = JsonUtility.FromJson<CinderHeartUpgradeDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: CinderHeart upgrade JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_cinderHeartUpgradeDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<CinderHeartUpgradeData, CinderHeartUpgradeDataCatalog>(_cinderHeartUpgradeDataList, resourcePath, "CinderHeart upgrade", catalog => catalog.Items);
         }
 
         public CinderHeartUpgradeData GetCinderHeartUpgrade(string id)
@@ -771,26 +505,7 @@ namespace Cinderkeep.Gameplay
         {
             // 아침 보상 스킬 목록은 cinderheart_skills.json에서 로드합니다.
             // 새 보상은 Data 클래스보다 JSON의 _id, effectType, value를 먼저 맞추는 방식으로 추가합니다.
-            _cinderHeartSkillDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: CinderHeart skill JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            CinderHeartSkillDataCatalog catalog = JsonUtility.FromJson<CinderHeartSkillDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: CinderHeart skill JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_cinderHeartSkillDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<CinderHeartSkillData, CinderHeartSkillDataCatalog>(_cinderHeartSkillDataList, resourcePath, "CinderHeart skill", catalog => catalog.Items);
         }
 
         public CinderHeartSkillData GetCinderHeartSkill(string id)
@@ -810,26 +525,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadStatusEffectData(string resourcePath)
         {
-            _statusEffectDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: status effect JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            StatusEffectDataCatalog catalog = JsonUtility.FromJson<StatusEffectDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: status effect JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_statusEffectDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<StatusEffectData, StatusEffectDataCatalog>(_statusEffectDataList, resourcePath, "status effect", catalog => catalog.Items);
         }
 
         public StatusEffectData GetStatusEffect(string id)
@@ -849,26 +545,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadBossData(string resourcePath)
         {
-            _bossDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: boss JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            BossDataCatalog catalog = JsonUtility.FromJson<BossDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: boss JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_bossDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<BossData, BossDataCatalog>(_bossDataList, resourcePath, "boss", catalog => catalog.Items);
         }
 
         public BossData GetBoss(string id)
@@ -888,26 +565,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadBossPatternData(string resourcePath)
         {
-            _bossPatternDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: boss pattern JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            BossPatternDataCatalog catalog = JsonUtility.FromJson<BossPatternDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: boss pattern JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_bossPatternDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<BossPatternData, BossPatternDataCatalog>(_bossPatternDataList, resourcePath, "boss pattern", catalog => catalog.Items);
         }
 
         public BossPatternData GetBossPattern(string id)
@@ -927,26 +585,7 @@ namespace Cinderkeep.Gameplay
 
         public void LoadBuildingUpgradeData(string resourcePath)
         {
-            _buildingUpgradeDataList.Clear();
-
-            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
-            if (jsonAsset == null)
-            {
-                Debug.LogWarning("GameDataManager: building upgrade JSON was not found at Resources/" + resourcePath + ".json");
-                return;
-            }
-
-            BuildingUpgradeDataCatalog catalog = JsonUtility.FromJson<BuildingUpgradeDataCatalog>(jsonAsset.text);
-            if (catalog == null || catalog.Items == null)
-            {
-                Debug.LogWarning("GameDataManager: building upgrade JSON format is invalid.");
-                return;
-            }
-
-            for (int i = 0; i < catalog.Items.Count; i++)
-            {
-                AddData(_buildingUpgradeDataList, catalog.Items[i]);
-            }
+            GameDataCatalogLoader.LoadCatalog<BuildingUpgradeData, BuildingUpgradeDataCatalog>(_buildingUpgradeDataList, resourcePath, "building upgrade", catalog => catalog.Items);
         }
 
         public BuildingUpgradeData GetBuildingUpgrade(string id)
@@ -1059,26 +698,5 @@ namespace Cinderkeep.Gameplay
             return _buildingUpgradeDataResourcePath;
         }
 
-        private void AddData<TData>(Dictionary<string, TData> target, TData data)
-            where TData : GameDataBase
-        {
-            if (target == null || data == null)
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(data.Id))
-            {
-                return;
-            }
-
-            if (target.ContainsKey(data.Id))
-            {
-                target[data.Id] = data;
-                return;
-            }
-
-            target.Add(data.Id, data);
-        }
     }
 }
