@@ -264,6 +264,7 @@ namespace Cinderkeep.Gameplay
                 _gameFlowController.StopFlow();
             }
 
+            ResetRuntimeSceneObjects();
             InitializeRuntimeModels();
             ResetCinderHeartState();
             ResetPlayerSceneState();
@@ -306,18 +307,54 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            cinderHeart.InitializeHealth();
+            cinderHeart.ResetForNewRun();
         }
 
         private void ResetPlayerSceneState()
         {
             global::PlayerStatus playerStatus = Object.FindFirstObjectByType<global::PlayerStatus>();
-            if (playerStatus == null)
+            if (playerStatus != null)
             {
-                return;
+                playerStatus.ResetStatusForNewRun();
             }
 
-            playerStatus.ResetStatusForNewRun();
+            global::PlayerAttack playerAttack = Object.FindFirstObjectByType<global::PlayerAttack>();
+            if (playerAttack != null)
+            {
+                playerAttack.ResetRunBonuses();
+            }
+        }
+
+        private void ResetRuntimeSceneObjects()
+        {
+            ResetFurnaceStations();
+
+            if (_buildingManager != null)
+            {
+                _buildingManager.ResetRuntimeBuildings();
+            }
+
+            if (_gameObjectManager != null)
+            {
+                _gameObjectManager.DestroyAllRegisteredGameObjects();
+            }
+        }
+
+        private void ResetFurnaceStations()
+        {
+            FurnaceStation[] furnaceStations = Object.FindObjectsByType<FurnaceStation>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+
+            for (int i = 0; i < furnaceStations.Length; i++)
+            {
+                if (furnaceStations[i] == null)
+                {
+                    continue;
+                }
+
+                furnaceStations[i].ResetFurnaceState();
+            }
         }
 
         private GameObject FindCinderHeartObject()

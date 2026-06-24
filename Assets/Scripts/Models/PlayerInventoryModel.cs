@@ -25,15 +25,8 @@ namespace Cinderkeep.Gameplay
             InitializeSlotArray(_quickSlots);
             _preparedBuildingCounts.Clear();
 
-            // UI 연결 기준을 확인하기 위해 최소 장비 후보만 넣어둡니다.
-            // 제작 루프가 붙으면 이 초기 아이템은 제작 결과로 대체할 수 있습니다.
-            SetInventorySlot(0, "stone_sword", InventoryItemType.Weapon, 1);
-            SetInventorySlot(1, "stone_helmet", InventoryItemType.Helmet, 1);
-            SetInventorySlot(2, "stone_armor", InventoryItemType.Armor, 1);
-            SetInventorySlot(3, "stone_boots", InventoryItemType.Boots, 1);
-            SetInventorySlot(4, "stone_axe", InventoryItemType.Tool, 1);
-            SetInventorySlot(5, "stone_pickaxe", InventoryItemType.Tool, 1);
-
+            // 새 판은 빈 인벤토리로 시작합니다.
+            // 손돌과 기본 자원은 필드 픽업/튜토리얼 루프에서 직접 얻도록 유지합니다.
             NotifyInventoryChanged();
         }
 

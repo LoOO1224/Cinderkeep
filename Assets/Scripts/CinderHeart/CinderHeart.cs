@@ -23,6 +23,8 @@ public sealed class CinderHeart : MonoBehaviour
     [SerializeField] private float _testDamage = 1f;
 
     private float _currentHealth;
+    private float _baseMaxHealth;
+    private float _baseAttackDamage;
     private bool _isDestroyed;
 
     public float CurrentHealth
@@ -59,6 +61,7 @@ public sealed class CinderHeart : MonoBehaviour
 
     private void Awake()
     {
+        CacheBaseStats();
         InitializeHealth();
     }
 
@@ -77,6 +80,13 @@ public sealed class CinderHeart : MonoBehaviour
         _maxHealth = Mathf.Max(1f, _maxHealth);
         _currentHealth = _maxHealth;
         _isDestroyed = false;
+    }
+
+    public void ResetForNewRun()
+    {
+        _maxHealth = Mathf.Max(1f, _baseMaxHealth);
+        _attackDamage = Mathf.Max(0f, _baseAttackDamage);
+        InitializeHealth();
     }
 
     public void TakeDamage(float damage)
@@ -210,5 +220,12 @@ public sealed class CinderHeart : MonoBehaviour
         {
             _attackDamage = 0f;
         }
+    }
+
+    private void CacheBaseStats()
+    {
+        ClampInspectorValues();
+        _baseMaxHealth = _maxHealth;
+        _baseAttackDamage = _attackDamage;
     }
 }

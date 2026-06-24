@@ -80,6 +80,11 @@ public sealed class PlayerAttack : MonoBehaviour
         _bonusAttackDamage += amount;
     }
 
+    public void ResetRunBonuses()
+    {
+        _bonusAttackDamage = 0f;
+    }
+
     public void TryAttack()
     {
         WeaponData weaponData = GetCurrentWeaponData();

@@ -284,6 +284,7 @@ public static class Cinderkeep526QaReportPanel
         isOk &= AppendCheck(reportBuilder, "resource: Wood", gameDataManager.GetResource(PlayerModel.ResourceWood) != null, PlayerModel.ResourceWood);
         isOk &= AppendCheck(reportBuilder, "resource: Stone", gameDataManager.GetResource(PlayerModel.ResourceStone) != null, PlayerModel.ResourceStone);
         isOk &= AppendCheck(reportBuilder, "tool: hand_stone", gameDataManager.GetTool(PlayerToolController.HandStoneToolDataId) != null, PlayerToolController.HandStoneToolDataId);
+        isOk &= AppendStarterHandStoneCheck(gameDataManager, reportBuilder);
         isOk &= AppendCheck(reportBuilder, "recipe: stone_pickaxe", gameDataManager.GetCraftingRecipe("recipe_stone_pickaxe") != null, "recipe_stone_pickaxe");
         isOk &= AppendCheck(reportBuilder, "recipe: stone_axe", gameDataManager.GetCraftingRecipe("recipe_stone_axe") != null, "recipe_stone_axe");
         isOk &= AppendCheck(reportBuilder, "recipe: wood_wall", gameDataManager.GetCraftingRecipe("recipe_wood_wall") != null, "recipe_wood_wall");
@@ -296,6 +297,21 @@ public static class Cinderkeep526QaReportPanel
         isOk &= AppendCheck(reportBuilder, "food: raw_meat satiety", FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.RawMeat) > 0f, FoodItemIds.RawMeat);
         isOk &= AppendCheck(reportBuilder, "food: cooked_meat satiety", FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.CookedMeat) > FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.RawMeat), FoodItemIds.CookedMeat);
 
+        return isOk;
+    }
+
+    private static bool AppendStarterHandStoneCheck(GameDataManager gameDataManager, StringBuilder reportBuilder)
+    {
+        bool isOk = true;
+        ToolData handStone = gameDataManager.GetTool(PlayerToolController.HandStoneToolDataId);
+        HarvestNodeData woodTree = gameDataManager.GetHarvestNode("tree_wood_tier1");
+        HarvestNodeData stoneRock = gameDataManager.GetHarvestNode("rock_stone");
+
+        isOk &= AppendCheck(reportBuilder, "hand_stone gathers Wood", handStone != null && handStone.WoodGatherMultiplier > 0f, "wood multiplier");
+        isOk &= AppendCheck(reportBuilder, "hand_stone gathers Stone", handStone != null && handStone.StoneGatherMultiplier > 0f, "stone multiplier");
+        isOk &= AppendCheck(reportBuilder, "hand_stone blocks Iron+", handStone != null && handStone.IronGatherMultiplier <= 0f && handStone.GoldGatherMultiplier <= 0f && handStone.AdamantiumGatherMultiplier <= 0f, "high-tier multipliers");
+        isOk &= AppendCheck(reportBuilder, "starter harvest node: tree_wood_tier1", woodTree != null && woodTree.RequiredToolTier <= 1, "tree_wood_tier1");
+        isOk &= AppendCheck(reportBuilder, "starter harvest node: rock_stone", stoneRock != null && stoneRock.RequiredToolTier <= 1, "rock_stone");
         return isOk;
     }
 

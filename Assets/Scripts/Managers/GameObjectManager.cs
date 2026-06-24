@@ -104,5 +104,39 @@ namespace Cinderkeep.Gameplay
             _createdObjectById.Remove(instanceId);
             Destroy(targetObject);
         }
+
+        public void DestroyAllRegisteredGameObjects()
+        {
+            Initialize();
+
+            foreach (GameObjectIdentity identity in _createdObjectById.Values)
+            {
+                if (identity == null)
+                {
+                    continue;
+                }
+
+                DestroyRegisteredObject(identity.gameObject);
+            }
+
+            _createdObjectById.Clear();
+            _objectInstanceKeyGenerator = 0;
+        }
+
+        private void DestroyRegisteredObject(GameObject targetObject)
+        {
+            if (targetObject == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(targetObject);
+                return;
+            }
+
+            DestroyImmediate(targetObject);
+        }
     }
 }

@@ -219,13 +219,23 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            if (Application.isPlaying)
+            DestroyRuntimeBuildingObject(createdBuilding);
+        }
+
+        private void DestroyRuntimeBuildingObject(GameObject buildingObject)
+        {
+            if (buildingObject == null)
             {
-                Destroy(createdBuilding);
                 return;
             }
 
-            DestroyImmediate(createdBuilding);
+            if (Application.isPlaying)
+            {
+                Destroy(buildingObject);
+                return;
+            }
+
+            DestroyImmediate(buildingObject);
         }
 
         // 기존 시그니처를 쓰는 코드가 남아 있을 때를 위한 호환용입니다.
@@ -320,6 +330,35 @@ namespace Cinderkeep.Gameplay
             }
 
             return nearestBuilding;
+        }
+
+        public void ResetRuntimeBuildings()
+        {
+            for (int i = _activeBuildings.Count - 1; i >= 0; i--)
+            {
+                BuildingHp building = _activeBuildings[i];
+                if (building == null)
+                {
+                    continue;
+                }
+
+                building.OnBuildingDestroyed -= HandleBuildingDestroyed;
+            }
+
+            _activeBuildings.Clear();
+
+            for (int i = 0; i < _buildingSpots.Count; i++)
+            {
+                BuildingSpot buildingSpot = _buildingSpots[i];
+                if (buildingSpot == null)
+                {
+                    continue;
+                }
+
+                GameObject buildingObject = buildingSpot.CurrentBuildingObject;
+                buildingSpot.ClearSpot();
+                DestroyRuntimeBuildingObject(buildingObject);
+            }
         }
 
         private bool CanUseBuildingSpot(BuildingSpot buildingSpot)

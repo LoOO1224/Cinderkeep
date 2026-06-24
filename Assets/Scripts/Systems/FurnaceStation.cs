@@ -187,6 +187,20 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        public void ResetFurnaceState()
+        {
+            _currentRecipeData = null;
+            _currentInputResourceId = "";
+            _currentOutputResourceId = "";
+            _currentInputAmount = 0;
+            _queuedOutputAmount = 0;
+            _readyOutputAmount = 0;
+            _smeltTimer = 0f;
+            _smeltDuration = 0f;
+            _isSmelting = false;
+            NotifyStateChanged();
+        }
+
         private void StartSmelting(SmeltingRecipeData recipeData, int inputAmount, int batchCount)
         {
             _currentRecipeData = recipeData;
