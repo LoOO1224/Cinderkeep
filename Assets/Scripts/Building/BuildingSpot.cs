@@ -22,6 +22,7 @@ public sealed class BuildingSpot : MonoBehaviour
     [SerializeField] private Transform _spawnAnchor;
 
     private GameObject _currentBuildingObject;
+    private string _currentBuildingDataId;
     private bool _isEmpty = true;
 
     public bool IsEmpty
@@ -45,6 +46,14 @@ public sealed class BuildingSpot : MonoBehaviour
         get
         {
             return _buildingDataId;
+        }
+    }
+
+    public string CurrentBuildingDataId
+    {
+        get
+        {
+            return _currentBuildingDataId;
         }
     }
 
@@ -112,6 +121,11 @@ public sealed class BuildingSpot : MonoBehaviour
 
     public void PlaceBuilding(GameObject buildingObject)
     {
+        PlaceBuilding(buildingObject, _buildingDataId);
+    }
+
+    public void PlaceBuilding(GameObject buildingObject, string buildingDataId)
+    {
         if (buildingObject == null)
         {
             return;
@@ -124,24 +138,35 @@ public sealed class BuildingSpot : MonoBehaviour
         }
 
         _currentBuildingObject = buildingObject;
+        _currentBuildingDataId = string.IsNullOrEmpty(buildingDataId) ? _buildingDataId : buildingDataId;
+        buildingObject.transform.SetParent(transform, true);
         _isEmpty = false;
     }
 
     public void HideBuildingSpot()
     {
-        gameObject.SetActive(false);
+        SetSpotRendererVisible(false);
     }
 
     public void ShowBuildingSpot()
     {
-        gameObject.SetActive(true);
+        SetSpotRendererVisible(true);
     }
 
     public void ClearSpot()
     {
         _currentBuildingObject = null;
+        _currentBuildingDataId = null;
         _isEmpty = true;
         ShowBuildingSpot();
+    }
+
+    public void ReplaceBuilding(GameObject buildingObject, string buildingDataId)
+    {
+        _currentBuildingObject = null;
+        _isEmpty = true;
+        PlaceBuilding(buildingObject, buildingDataId);
+        HideBuildingSpot();
     }
 
     private void InitializeAnchor()
@@ -152,6 +177,15 @@ public sealed class BuildingSpot : MonoBehaviour
         }
 
         _spawnAnchor = transform;
+    }
+
+    private void SetSpotRendererVisible(bool isVisible)
+    {
+        Renderer spotRenderer = GetComponent<Renderer>();
+        if (spotRenderer != null)
+        {
+            spotRenderer.enabled = isVisible;
+        }
     }
 
     private GameObject FindOverridePrefab(BuildingData buildingData)

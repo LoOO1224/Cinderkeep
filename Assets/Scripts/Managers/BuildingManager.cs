@@ -72,9 +72,14 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            if (CanBuildAtSpot(buildingSpot) == false)
+            if (CanUseBuildingSpot(buildingSpot) == false)
             {
                 return false;
+            }
+
+            if (buildingSpot.CanBuild() == false)
+            {
+                return TryUpgradeAtSpot(buildingSpot, playerModel, gameDataManager);
             }
 
             bool isPreparedBuildingConsumed = TryConsumePreparedBuildingItem(buildingData);
@@ -104,10 +109,74 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            buildingSpot.PlaceBuilding(createdBuilding);
+            buildingSpot.PlaceBuilding(createdBuilding, buildingData.Id);
             buildingSpot.HideBuildingSpot();
             RegisterBuildingComponent(createdBuilding, buildingData);
             NotifyBuildingPlaced(buildingData);
+            return true;
+        }
+
+        private bool TryUpgradeAtSpot(
+            BuildingSpot buildingSpot,
+            PlayerModel playerModel,
+            GameDataManager gameDataManager)
+        {
+            string fromBuildingId = string.IsNullOrEmpty(buildingSpot.CurrentBuildingDataId)
+                ? buildingSpot.BuildingDataId
+                : buildingSpot.CurrentBuildingDataId;
+
+            BuildingUpgradeData upgradeData = FindAvailableUpgrade(fromBuildingId, gameDataManager);
+            if (upgradeData == null)
+            {
+                Debug.LogWarning("BuildingManager: 가능한 건축 업그레이드를 찾을 수 없습니다. from=" + fromBuildingId);
+                return false;
+            }
+
+            BuildingData fromBuildingData = gameDataManager.GetBuilding(fromBuildingId);
+            BuildingData toBuildingData = gameDataManager.GetBuilding(upgradeData.ToBuildingId);
+            if (toBuildingData == null)
+            {
+                Debug.LogWarning("BuildingManager: 업그레이드 대상 건축 데이터를 찾을 수 없습니다. id=" + upgradeData.ToBuildingId);
+                return false;
+            }
+
+            if (BuildingCostHelper.CanPayUpgradeCostDifference(fromBuildingData, toBuildingData, playerModel, gameDataManager) == false)
+            {
+                Debug.LogWarning("BuildingManager: 건축 업그레이드 차액 자원이 부족합니다. from="
+                    + fromBuildingId + ", to=" + toBuildingData.Id);
+                return false;
+            }
+
+            if (BuildingCostHelper.TryPayUpgradeCostDifference(fromBuildingData, toBuildingData, playerModel, gameDataManager) == false)
+            {
+                Debug.LogWarning("BuildingManager: 건축 업그레이드 차액 차감에 실패했습니다. to=" + toBuildingData.Id);
+                return false;
+            }
+
+            GameObject createdBuilding = CreateBuildingObject(
+                buildingSpot.GetBuildingPrefab(toBuildingData),
+                toBuildingData,
+                buildingSpot.GetBuildPosition(),
+                buildingSpot.GetBuildRotation());
+
+            if (createdBuilding == null)
+            {
+                return false;
+            }
+
+            GameObject previousBuildingObject = buildingSpot.CurrentBuildingObject;
+            BuildingHp previousBuildingHp = previousBuildingObject == null ? null : previousBuildingObject.GetComponent<BuildingHp>();
+            UnregisterBuilding(previousBuildingHp);
+
+            if (previousBuildingObject != null)
+            {
+                Destroy(previousBuildingObject);
+            }
+
+            buildingSpot.ReplaceBuilding(createdBuilding, toBuildingData.Id);
+            RegisterBuildingComponent(createdBuilding, toBuildingData);
+            NotifyBuildingPlaced(toBuildingData);
+            Debug.Log("BuildingManager: 건축 업그레이드 완료. from=" + fromBuildingId + ", to=" + toBuildingData.Id);
             return true;
         }
 
@@ -221,7 +290,7 @@ namespace Cinderkeep.Gameplay
             return nearestBuilding;
         }
 
-        private bool CanBuildAtSpot(BuildingSpot buildingSpot)
+        private bool CanUseBuildingSpot(BuildingSpot buildingSpot)
         {
             if (_gameObjectManager == null)
             {
@@ -241,6 +310,16 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
+            return true;
+        }
+
+        private bool CanBuildAtSpot(BuildingSpot buildingSpot)
+        {
+            if (CanUseBuildingSpot(buildingSpot) == false)
+            {
+                return false;
+            }
+
             if (buildingSpot.CanBuild() == false)
             {
                 Debug.LogWarning("BuildingManager: 이미 건축물이 있는 지점입니다.");
@@ -248,6 +327,40 @@ namespace Cinderkeep.Gameplay
             }
 
             return true;
+        }
+
+        private BuildingUpgradeData FindAvailableUpgrade(string fromBuildingId, GameDataManager gameDataManager)
+        {
+            if (string.IsNullOrEmpty(fromBuildingId) || gameDataManager == null)
+            {
+                return null;
+            }
+
+            int currentDay = GameManager.Inst == null || GameManager.Inst.GameRunModel == null
+                ? GameRunModel.FirstDay
+                : GameManager.Inst.GameRunModel.Day;
+
+            foreach (BuildingUpgradeData upgradeData in gameDataManager.BuildingUpgradeDataList.Values)
+            {
+                if (upgradeData == null)
+                {
+                    continue;
+                }
+
+                if (string.Equals(upgradeData.FromBuildingId, fromBuildingId, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    continue;
+                }
+
+                if (upgradeData.RequiredDay > currentDay)
+                {
+                    continue;
+                }
+
+                return upgradeData;
+            }
+
+            return null;
         }
 
         private GameObject CreateBuildingObject(
@@ -496,6 +609,17 @@ namespace Cinderkeep.Gameplay
             }
 
             _activeBuildings.Remove(building);
+        }
+
+        private void UnregisterBuilding(BuildingHp building)
+        {
+            if (building == null)
+            {
+                return;
+            }
+
+            building.OnBuildingDestroyed -= HandleBuildingDestroyed;
+            RemoveBuilding(building);
         }
 
         private void ClearSpotByBuilding(GameObject buildingObject)

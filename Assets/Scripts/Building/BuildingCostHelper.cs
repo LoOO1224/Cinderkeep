@@ -102,6 +102,113 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        public static bool CanPayUpgradeCostDifference(
+            BuildingData fromBuildingData,
+            BuildingData toBuildingData,
+            PlayerModel playerModel,
+            GameDataManager gameDataManager)
+        {
+            if (toBuildingData == null || playerModel == null || gameDataManager == null)
+            {
+                return false;
+            }
+
+            CraftingRecipeData toRecipeData = GetBuildRecipe(toBuildingData, gameDataManager);
+            if (toRecipeData == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < toRecipeData.Costs.Count; i++)
+            {
+                CraftingCostData toCost = toRecipeData.Costs[i];
+                if (toCost == null)
+                {
+                    continue;
+                }
+
+                int requiredAmount = GetUpgradeDifferenceAmount(fromBuildingData, toCost.ResourceId, toCost.Amount, gameDataManager);
+                if (requiredAmount > 0 && playerModel.HasResource(toCost.ResourceId, requiredAmount) == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool TryPayUpgradeCostDifference(
+            BuildingData fromBuildingData,
+            BuildingData toBuildingData,
+            PlayerModel playerModel,
+            GameDataManager gameDataManager)
+        {
+            if (CanPayUpgradeCostDifference(fromBuildingData, toBuildingData, playerModel, gameDataManager) == false)
+            {
+                return false;
+            }
+
+            CraftingRecipeData toRecipeData = GetBuildRecipe(toBuildingData, gameDataManager);
+            for (int i = 0; i < toRecipeData.Costs.Count; i++)
+            {
+                CraftingCostData toCost = toRecipeData.Costs[i];
+                if (toCost == null)
+                {
+                    continue;
+                }
+
+                int requiredAmount = GetUpgradeDifferenceAmount(fromBuildingData, toCost.ResourceId, toCost.Amount, gameDataManager);
+                if (requiredAmount <= 0)
+                {
+                    continue;
+                }
+
+                if (playerModel.UseResource(toCost.ResourceId, requiredAmount) == false)
+                {
+                    Debug.LogWarning("BuildingCostHelper: 건축 업그레이드 차액 차감에 실패했습니다. building=" + toBuildingData.Id);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static int GetUpgradeDifferenceAmount(
+            BuildingData fromBuildingData,
+            string resourceId,
+            int toAmount,
+            GameDataManager gameDataManager)
+        {
+            int fromAmount = GetRecipeCostAmount(fromBuildingData, resourceId, gameDataManager);
+            return Mathf.Max(0, toAmount - fromAmount);
+        }
+
+        private static int GetRecipeCostAmount(
+            BuildingData buildingData,
+            string resourceId,
+            GameDataManager gameDataManager)
+        {
+            CraftingRecipeData recipeData = GetBuildRecipe(buildingData, gameDataManager);
+            if (recipeData == null || string.IsNullOrEmpty(resourceId))
+            {
+                return 0;
+            }
+
+            int totalAmount = 0;
+            for (int i = 0; i < recipeData.Costs.Count; i++)
+            {
+                CraftingCostData costData = recipeData.Costs[i];
+                if (costData == null || string.Equals(costData.ResourceId, resourceId, System.StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    continue;
+                }
+
+                totalAmount += costData.Amount;
+            }
+
+            return totalAmount;
+        }
+
         // 부족한 재료를 사람이 읽기 쉬운 형태로 만든 뒤 반환합니다.
         public static string GetNotEnoughResourceLog(
             BuildingData buildingData,

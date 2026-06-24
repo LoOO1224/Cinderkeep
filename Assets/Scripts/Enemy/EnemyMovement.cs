@@ -2,8 +2,8 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
-// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
+// EnemyBrain이 정한 목표까지 실제 이동만 담당합니다.
+// 목표 주변 도착 지점을 분산해 CinderHeart 앞에서 여러 적이 한 점에 뭉치는 현상을 줄입니다.
 // 몬스터의 실제 이동 실행만 담당하는 컴포넌트입니다.
 // 누구를 따라갈지, 무엇을 공격할지는 EnemyBrain이 판단하고 이 클래스는 받은 위치로만 이동합니다.
 public sealed class EnemyMovement : MonoBehaviour
@@ -11,6 +11,7 @@ public sealed class EnemyMovement : MonoBehaviour
     private const float MinimumAvoidanceRadius = 0.45f;
     private const int MinimumAvoidancePriority = 25;
     private const int MaximumAvoidancePriority = 75;
+    private const float GoldenAngleDegrees = 137.50776f;
 
     [Tooltip("몬스터 이동 속도입니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _moveSpeed;
@@ -25,14 +26,18 @@ public sealed class EnemyMovement : MonoBehaviour
     [SerializeField] private float _separationRadius = 1.05f;
     [Tooltip("한 프레임에 적용하는 밀어내기 강도입니다.")]
     [SerializeField] private float _separationStrength = 0.65f;
+    [Tooltip("같은 목표를 향한 적들이 한 점에 쌓이지 않도록 도착 지점을 나누는 반경입니다.")]
+    [SerializeField] private float _arrivalSpreadRadius = 1.35f;
 
     private NavMeshAgent _navMeshAgent;
-    private static readonly Collider[] SeparationHits = new Collider[8];
+    private static readonly Collider[] SeparationHits = new Collider[16];
     private Vector3 _spawnPosition;
     private Vector3 _wanderTargetPosition;
+    private Vector3 _targetSpreadOffset;
     private float _nextWanderTime;
     private float _speedMultiplier = 1f;
     private float _slowUntilTime;
+    private Transform _lastSpreadTarget;
     private bool _isInitialized;
 
     public void Initialize(EnemyData enemyData)
@@ -103,7 +108,7 @@ public sealed class EnemyMovement : MonoBehaviour
             return;
         }
 
-        MoveToPosition(targetTransform.position);
+        MoveToPosition(GetSpreadTargetPosition(targetTransform));
     }
 
     public void MoveToPosition(Vector3 targetPosition)
@@ -177,6 +182,51 @@ public sealed class EnemyMovement : MonoBehaviour
         _wanderTargetPosition.y = transform.position.y;
     }
 
+    private Vector3 GetSpreadTargetPosition(Transform targetTransform)
+    {
+        if (targetTransform == null || _arrivalSpreadRadius <= 0f)
+        {
+            return targetTransform == null ? transform.position : targetTransform.position;
+        }
+
+        if (_lastSpreadTarget != targetTransform)
+        {
+            _lastSpreadTarget = targetTransform;
+            _targetSpreadOffset = CreateStableSpreadOffset(targetTransform);
+        }
+
+        Vector3 targetPosition = targetTransform.position + _targetSpreadOffset;
+        targetPosition.y = targetTransform.position.y;
+
+        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        {
+            NavMeshHit navMeshHit;
+            if (NavMesh.SamplePosition(targetPosition, out navMeshHit, _arrivalSpreadRadius + 0.5f, NavMesh.AllAreas))
+            {
+                return navMeshHit.position;
+            }
+        }
+
+        return targetPosition;
+    }
+
+    private Vector3 CreateStableSpreadOffset(Transform targetTransform)
+    {
+        float spreadRadius = Mathf.Min(_arrivalSpreadRadius, Mathf.Max(0f, _stopDistance * 0.85f));
+        if (spreadRadius <= 0.05f)
+        {
+            return Vector3.zero;
+        }
+
+        int rawHash = GetInstanceID() ^ targetTransform.GetInstanceID();
+        int hash = rawHash == int.MinValue ? int.MaxValue : Mathf.Abs(rawHash);
+        float angle = (hash % 360 + (hash % 7) * GoldenAngleDegrees) * Mathf.Deg2Rad;
+        float ringRatio = 0.45f + (hash % 3) * 0.25f;
+        float radius = spreadRadius * Mathf.Clamp01(ringRatio);
+
+        return new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
+    }
+
     private bool CanStopAtPosition(Vector3 targetPosition)
     {
         targetPosition.y = transform.position.y;
@@ -245,7 +295,8 @@ public sealed class EnemyMovement : MonoBehaviour
                 away.y = 0f;
             }
 
-            pushDirection += away.normalized;
+            float distance = Mathf.Max(away.magnitude, 0.1f);
+            pushDirection += away.normalized / distance;
             neighborCount++;
         }
 

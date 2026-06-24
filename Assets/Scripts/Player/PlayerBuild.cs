@@ -226,16 +226,6 @@ public sealed class PlayerBuild : MonoBehaviour
             return null;
         }
 
-        if (buildingSpot.CanBuild() == false)
-        {
-            if (shouldLogWarning)
-            {
-                Debug.LogWarning("PlayerBuild: 해당 BuildingSpot에는 이미 건축물이 있습니다.");
-            }
-
-            return null;
-        }
-
         return buildingSpot;
     }
 
@@ -252,13 +242,49 @@ public sealed class PlayerBuild : MonoBehaviour
         }
 
         GameDataManager gameDataManager = GameManager.Inst.GetGameDataManager();
-        BuildingData buildingData = gameDataManager == null ? null : gameDataManager.GetBuilding(buildingSpot.BuildingDataId);
+        BuildingData buildingData = GetDisplayBuildingData(buildingSpot, gameDataManager);
         if (buildingData != null && string.IsNullOrEmpty(buildingData.DisplayName) == false)
         {
             return buildingData.DisplayName;
         }
 
         return buildingSpot.BuildingDataId;
+    }
+
+    private BuildingData GetDisplayBuildingData(BuildingSpot buildingSpot, GameDataManager gameDataManager)
+    {
+        if (buildingSpot == null || gameDataManager == null)
+        {
+            return null;
+        }
+
+        if (buildingSpot.CanBuild())
+        {
+            return gameDataManager.GetBuilding(buildingSpot.BuildingDataId);
+        }
+
+        string fromBuildingId = string.IsNullOrEmpty(buildingSpot.CurrentBuildingDataId)
+            ? buildingSpot.BuildingDataId
+            : buildingSpot.CurrentBuildingDataId;
+
+        int currentDay = GameManager.Inst == null || GameManager.Inst.GameRunModel == null
+            ? GameRunModel.FirstDay
+            : GameManager.Inst.GameRunModel.Day;
+
+        foreach (BuildingUpgradeData upgradeData in gameDataManager.BuildingUpgradeDataList.Values)
+        {
+            if (upgradeData == null || upgradeData.RequiredDay > currentDay)
+            {
+                continue;
+            }
+
+            if (string.Equals(upgradeData.FromBuildingId, fromBuildingId, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return gameDataManager.GetBuilding(upgradeData.ToBuildingId);
+            }
+        }
+
+        return gameDataManager.GetBuilding(fromBuildingId);
     }
 
     private void ConnectCamera()

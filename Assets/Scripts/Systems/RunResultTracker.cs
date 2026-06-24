@@ -75,7 +75,6 @@ namespace Cinderkeep.Gameplay
         {
             PlayerModel.ResourceAddedGlobal += HandleResourceAdded;
             EnemyStatus.EnemyDiedGlobal += HandleEnemyDied;
-            EnemyStatus.EnemyDamagedByAmountGlobal += HandleEnemyDamaged;
             PlayerStatus.PlayerDamagedGlobal += HandlePlayerDamaged;
             PlayerStatus.PlayerDiedGlobal += HandlePlayerDied;
             CinderHeart.CinderHeartDamagedGlobal += HandleCinderHeartDamaged;
@@ -90,7 +89,6 @@ namespace Cinderkeep.Gameplay
         {
             PlayerModel.ResourceAddedGlobal -= HandleResourceAdded;
             EnemyStatus.EnemyDiedGlobal -= HandleEnemyDied;
-            EnemyStatus.EnemyDamagedByAmountGlobal -= HandleEnemyDamaged;
             PlayerStatus.PlayerDamagedGlobal -= HandlePlayerDamaged;
             PlayerStatus.PlayerDiedGlobal -= HandlePlayerDied;
             CinderHeart.CinderHeartDamagedGlobal -= HandleCinderHeartDamaged;
@@ -142,6 +140,16 @@ namespace Cinderkeep.Gameplay
             }
 
             _bossDefeated = true;
+        }
+
+        public void RecordPlayerDamageDealt(float damage)
+        {
+            if (_isTracking == false || damage <= 0f)
+            {
+                return;
+            }
+
+            _enemyDamageDealt += damage;
         }
 
         public RunResultSnapshot CreateSnapshot(bool isClear, GameRunModel gameRunModel)
@@ -227,20 +235,16 @@ namespace Cinderkeep.Gameplay
             _monsterKillCount++;
         }
 
-        private void HandleEnemyDamaged(float damage)
+        private void HandleDamageApplied(global::DamageDealer damageDealer, global::Damageable damageable, float damage, global::DamageSourceType sourceType)
         {
             if (_isTracking == false || damage <= 0f)
             {
                 return;
             }
 
-            _enemyDamageDealt += damage;
-        }
-
-        private void HandleDamageApplied(global::DamageDealer damageDealer, global::Damageable damageable, float damage, global::DamageSourceType sourceType)
-        {
-            if (_isTracking == false || damage <= 0f)
+            if (sourceType == global::DamageSourceType.Player)
             {
+                _enemyDamageDealt += damage;
                 return;
             }
 

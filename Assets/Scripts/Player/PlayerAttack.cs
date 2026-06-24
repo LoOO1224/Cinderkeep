@@ -303,6 +303,7 @@ public sealed class PlayerAttack : MonoBehaviour
         if (enemyStatus != null)
         {
             enemyStatus.TakeDamage(damage);
+            RecordDirectEnemyDamage(damage);
             return;
         }
 
@@ -332,6 +333,16 @@ public sealed class PlayerAttack : MonoBehaviour
         }
 
         damageable.TakeDamage(damage);
+    }
+
+    private void RecordDirectEnemyDamage(float damage)
+    {
+        if (RunResultTracker.Instance == null)
+        {
+            return;
+        }
+
+        RunResultTracker.Instance.RecordPlayerDamageDealt(damage);
     }
 
     private bool ShouldReadAttackInputDirectly()

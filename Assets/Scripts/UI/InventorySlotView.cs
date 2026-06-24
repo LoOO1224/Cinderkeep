@@ -17,8 +17,11 @@ namespace Cinderkeep.Gameplay
         [Header("Image UI")]
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Image _itemIconImage;
+        [SerializeField] private Image _cookProgressImage;
 
         private InventoryUI _ownerInventoryUI;
+        private InventoryItemModel _currentItemModel;
+        private CinderHeartFoodCooker _foodCooker;
         private int _slotIndex;
 
         public int SlotIndex
@@ -33,7 +36,13 @@ namespace Cinderkeep.Gameplay
         {
             _slotIndex = slotIndex;
             _ownerInventoryUI = ownerInventoryUI;
+            _currentItemModel = itemModel;
             RefreshItemText(itemModel);
+        }
+
+        private void Update()
+        {
+            RefreshCookProgress(_currentItemModel);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -87,12 +96,14 @@ namespace Cinderkeep.Gameplay
                 _itemText.text = "";
                 RefreshBackground(false);
                 RefreshItemIcon(null);
+                RefreshCookProgress(null);
                 return;
             }
 
             _itemText.text = UiItemDisplayFormatter.BuildItemStackText(itemModel, true);
             RefreshBackground(true);
             RefreshItemIcon(itemModel);
+            RefreshCookProgress(itemModel);
         }
 
         private void RefreshBackground(bool hasItem)
@@ -127,6 +138,62 @@ namespace Cinderkeep.Gameplay
             }
 
             _itemIconImage.color = GetFallbackItemColor(itemModel.ItemType);
+        }
+
+        private void RefreshCookProgress(InventoryItemModel itemModel)
+        {
+            EnsureCookProgressImage();
+            if (_cookProgressImage == null)
+            {
+                return;
+            }
+
+            float cookProgress = GetFoodCookerProgress();
+            bool shouldShow = itemModel != null
+                && itemModel.IsEmpty == false
+                && itemModel.ItemType == InventoryItemType.Food
+                && itemModel.ItemId == FoodItemIds.RawMeat
+                && cookProgress > 0f;
+
+            _cookProgressImage.enabled = shouldShow;
+            _cookProgressImage.fillAmount = shouldShow ? cookProgress : 0f;
+        }
+
+        private float GetFoodCookerProgress()
+        {
+            if (_foodCooker == null)
+            {
+                _foodCooker = Object.FindFirstObjectByType<CinderHeartFoodCooker>();
+            }
+
+            return _foodCooker == null ? 0f : _foodCooker.CookProgress01;
+        }
+
+        private void EnsureCookProgressImage()
+        {
+            if (_cookProgressImage != null)
+            {
+                return;
+            }
+
+            Transform parentTransform = _itemIconImage == null ? transform : _itemIconImage.transform;
+            GameObject progressObject = new GameObject("Image_CookProgress", typeof(RectTransform), typeof(Image));
+            progressObject.transform.SetParent(parentTransform, false);
+
+            RectTransform progressRect = progressObject.GetComponent<RectTransform>();
+            progressRect.anchorMin = new Vector2(0f, 0f);
+            progressRect.anchorMax = new Vector2(1f, 0f);
+            progressRect.pivot = new Vector2(0.5f, 0f);
+            progressRect.anchoredPosition = new Vector2(0f, -2f);
+            progressRect.sizeDelta = new Vector2(0f, 4f);
+
+            _cookProgressImage = progressObject.GetComponent<Image>();
+            _cookProgressImage.color = new Color(0.25f, 0.95f, 0.35f, 0.95f);
+            _cookProgressImage.type = Image.Type.Filled;
+            _cookProgressImage.fillMethod = Image.FillMethod.Horizontal;
+            _cookProgressImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+            _cookProgressImage.fillAmount = 0f;
+            _cookProgressImage.enabled = false;
         }
 
         private Color GetFallbackItemColor(InventoryItemType itemType)

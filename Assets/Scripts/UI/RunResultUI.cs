@@ -88,10 +88,25 @@ namespace Cinderkeep.Gameplay
             AddFallbackStat("result_status", "Result", "Status", 10);
             AddFallbackStat("reached_day", "Result", "Reached Day", 20);
             AddFallbackStat("survival_time", "Result", "Survival Time", 30);
+            AddFallbackStat("failure_reason", "Result", "Failure Reason", 40);
             AddFallbackStat("monster_kills", "Combat", "Monster Kills", 100);
             AddFallbackStat("boss_defeated", "Combat", "Boss Defeated", 110);
-            AddFallbackStat("cinderheart_damage_taken", "Defense", "CinderHeart Damage Taken", 200);
-            AddFallbackStat("selected_cinderheart_skills", "CinderHeart", "Selected Upgrades", 300);
+            AddFallbackStat("enemy_damage_dealt", "Combat", "Player Damage Dealt", 120);
+            AddFallbackStat("tower_damage_dealt", "Combat", "Tower Damage Dealt", 130);
+            AddFallbackStat("trap_damage_dealt", "Combat", "Trap Damage Dealt", 140);
+            AddFallbackStat("player_damage_taken", "Defense", "Player Damage Taken", 200);
+            AddFallbackStat("player_down_count", "Defense", "Player Downs", 210);
+            AddFallbackStat("cinderheart_damage_taken", "Defense", "CinderHeart Damage Taken", 220);
+            AddFallbackStat("wood_gained", "Resources", "Wood", 300);
+            AddFallbackStat("stone_gained", "Resources", "Stone", 310);
+            AddFallbackStat("iron_gained", "Resources", "Iron", 320);
+            AddFallbackStat("gold_gained", "Resources", "Gold", 330);
+            AddFallbackStat("mithril_gained", "Resources", "Mithril", 340);
+            AddFallbackStat("adamantium_gained", "Resources", "Adamantium", 350);
+            AddFallbackStat("crafted_item_count", "Crafting / Building", "Crafted Items", 400);
+            AddFallbackStat("placed_building_count", "Crafting / Building", "Placed Buildings", 410);
+            AddFallbackStat("trap_crowd_control_score", "Crafting / Building", "Trap CC Score", 420);
+            AddFallbackStat("selected_cinderheart_skills", "CinderHeart", "Selected Upgrades", 500);
         }
 
         private void AddFallbackStat(string statKey, string group, string label, int sortOrder)
