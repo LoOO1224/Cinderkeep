@@ -204,7 +204,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1470564491588954710}
-  - component: {fileID: 1368989035016640735}
+  - component: {fileID: -7835693724145399902}
+  - component: {fileID: -3357048556010009289}
   m_Layer: 6
   m_Name: PF_Resource_Stone01
   m_TagString: Resource
@@ -229,27 +230,40 @@ Transform:
   - {fileID: 4029979564914434110}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1368989035016640735
-SphereCollider:
+--- !u!114 &-7835693724145399902
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7360169656541325510}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 1.12
-  m_Center: {x: 0.2, y: 0.18, z: -0.07}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
+  _resourceId: Wood
+  _amount: 4
+--- !u!114 &-3357048556010009289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360169656541325510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
+  _harvestNodeDataId: rock_stone
+  _useHarvestNodeData: 1
+  _resourceId: Stone
+  _amount: 4
+  _requiredToolType: 2
+  _requiredToolTier: 1
+  _disableAfterGather: 1
+  _canInteract: 1
 --- !u!1001 &917938080921983837
 PrefabInstance:
   m_ObjectHideFlags: 0

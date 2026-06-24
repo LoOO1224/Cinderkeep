@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 9132616597155782844}
   - component: {fileID: 5775378449266821248}
   - component: {fileID: 4028695086848696117}
-  - component: {fileID: 4259090465052714279}
+  - component: {fileID: 7208433089058124958}
+  - component: {fileID: -185002143781721525}
   m_Layer: 6
   m_Name: PF_Resource_SnowTree05
   m_TagString: Resource
@@ -113,24 +114,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0126214, y: 15.274419, z: 0.8955083}
   m_Center: {x: -0.06656909, y: 7.5723453, z: -0.028754473}
---- !u!135 &4259090465052714279
-SphereCollider:
+--- !u!114 &7208433089058124958
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7111810890533166908}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 3
-  m_Center: {x: -0.05, y: 1.9, z: -0.02}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
+  _resourceId: Wood
+  _amount: 3
+--- !u!114 &-185002143781721525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7111810890533166908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
+  _harvestNodeDataId: tree_wood_tier1
+  _useHarvestNodeData: 1
+  _resourceId: Wood
+  _amount: 3
+  _requiredToolType: 1
+  _requiredToolTier: 1
+  _disableAfterGather: 1
+  _canInteract: 1
