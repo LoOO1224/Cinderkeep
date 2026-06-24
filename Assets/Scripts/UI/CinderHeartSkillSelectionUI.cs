@@ -9,6 +9,8 @@ using UnityEngine.UI;
 // UI 표시와 버튼 선택만 담당하고, 실제 효과 적용은 CinderHeartSkillApplier에 위임합니다.
 public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 {
+    public static event Action<CinderHeartSkillData> SkillSelectedGlobal;
+
     [SerializeField] private GameObject _rootObject;
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private CinderHeartSkillOptionView[] _optionViews;
@@ -79,6 +81,7 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
             _skillApplier.ApplySkill(skillData);
         }
 
+        NotifySkillSelected(skillData);
         PlayRewardSelectSfx();
         CloseAndNotify();
     }
@@ -153,6 +156,16 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
         }
 
         soundManager.PlayRewardSelect();
+    }
+
+    private void NotifySkillSelected(CinderHeartSkillData skillData)
+    {
+        if (SkillSelectedGlobal == null)
+        {
+            return;
+        }
+
+        SkillSelectedGlobal(skillData);
     }
 
     private void PlayUiBackSfx()

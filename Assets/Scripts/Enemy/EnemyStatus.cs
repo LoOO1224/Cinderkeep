@@ -10,6 +10,8 @@ using UnityEngine;
 public sealed class EnemyStatus : MonoBehaviour
 {
     public static event Action<EnemyStatus> EnemyDamaged;
+    public static event Action<float> EnemyDamagedByAmountGlobal;
+    public static event Action<EnemyStatus> EnemyDiedGlobal;
 
     public event Action<EnemyStatus> Died;
 
@@ -101,6 +103,7 @@ public sealed class EnemyStatus : MonoBehaviour
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
         RefreshHud();
         NotifyEnemyDamaged();
+        NotifyEnemyDamagedByAmount(damage);
         AlertByDamage();
 
         Debug.Log("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
@@ -168,10 +171,21 @@ public sealed class EnemyStatus : MonoBehaviour
         EnemyDamaged(this);
     }
 
+    private void NotifyEnemyDamagedByAmount(float damage)
+    {
+        if (EnemyDamagedByAmountGlobal == null)
+        {
+            return;
+        }
+
+        EnemyDamagedByAmountGlobal(damage);
+    }
+
     private void ProcessDeath()
     {
         Debug.Log("[EnemyStatus] " + gameObject.name + " 사망 처리");
         NotifyDied();
+        NotifyEnemyDiedGlobal();
 
         if (_deactivateOnDeath == false)
         {
@@ -189,5 +203,15 @@ public sealed class EnemyStatus : MonoBehaviour
         }
 
         Died(this);
+    }
+
+    private void NotifyEnemyDiedGlobal()
+    {
+        if (EnemyDiedGlobal == null)
+        {
+            return;
+        }
+
+        EnemyDiedGlobal(this);
     }
 }

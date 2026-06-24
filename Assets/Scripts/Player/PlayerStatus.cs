@@ -40,6 +40,8 @@ public sealed class PlayerStatus : MonoBehaviour
     private DeathCinderHeartView _deathCinderHeartView;
 
     public event Action<float> PlayerDamaged;
+    public static event Action<float> PlayerDamagedGlobal;
+    public static event Action PlayerDiedGlobal;
 
     public float CurrentHealth
     {
@@ -336,10 +338,22 @@ public sealed class PlayerStatus : MonoBehaviour
     {
         if (PlayerDamaged == null)
         {
+            NotifyPlayerDamagedGlobal(damage);
             return;
         }
 
         PlayerDamaged(damage);
+        NotifyPlayerDamagedGlobal(damage);
+    }
+
+    private void NotifyPlayerDamagedGlobal(float damage)
+    {
+        if (PlayerDamagedGlobal == null)
+        {
+            return;
+        }
+
+        PlayerDamagedGlobal(damage);
     }
 
     private void ProcessDeath()
@@ -350,6 +364,7 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         _isGameOverRequested = true;
+        NotifyPlayerDiedGlobal();
         Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 CinderHeart 관전 상태로 전환합니다.");
         if (_playerController != null)
         {
@@ -367,5 +382,15 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         _deathCinderHeartView.ShowCinderHeartView();
+    }
+
+    private void NotifyPlayerDiedGlobal()
+    {
+        if (PlayerDiedGlobal == null)
+        {
+            return;
+        }
+
+        PlayerDiedGlobal();
     }
 }

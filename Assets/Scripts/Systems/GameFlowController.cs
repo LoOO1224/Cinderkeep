@@ -363,6 +363,11 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _isBossClearHandled = true;
+        if (RunResultTracker.Instance != null)
+        {
+            RunResultTracker.Instance.RecordBossDefeated();
+        }
+
         ClearFlow();
     }
 

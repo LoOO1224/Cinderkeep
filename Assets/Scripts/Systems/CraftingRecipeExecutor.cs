@@ -6,6 +6,8 @@ namespace Cinderkeep.Gameplay
     // Crafting UI and stations ask this component to validate cost, pay cost, and grant the result.
     public sealed class CraftingRecipeExecutor : MonoBehaviour
     {
+        public static event Action<CraftingRecipeData> RecipeCraftedGlobal;
+
         public bool CanCraft(CraftingRecipeData recipeData, PlayerModel playerModel)
         {
             if (recipeData == null || playerModel == null)
@@ -33,7 +35,13 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return TryGrantRecipeResult(recipeData, playerModel);
+            bool isGranted = TryGrantRecipeResult(recipeData, playerModel);
+            if (isGranted)
+            {
+                NotifyRecipeCrafted(recipeData);
+            }
+
+            return isGranted;
         }
 
         private bool CanPayRecipeCost(CraftingRecipeData recipeData, PlayerModel playerModel)
@@ -178,6 +186,16 @@ namespace Cinderkeep.Gameplay
             }
 
             return InventoryItemType.Armor;
+        }
+
+        private void NotifyRecipeCrafted(CraftingRecipeData recipeData)
+        {
+            if (RecipeCraftedGlobal == null)
+            {
+                return;
+            }
+
+            RecipeCraftedGlobal(recipeData);
         }
     }
 }

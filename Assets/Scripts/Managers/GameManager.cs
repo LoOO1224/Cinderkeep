@@ -228,6 +228,7 @@ namespace Cinderkeep.Gameplay
         private void BeginNewGameFlow()
         {
             Time.timeScale = 1f;
+            RunResultTracker.EnsureSceneTracker().BeginRun(_gameRunModel);
 
             if (_gameFlowController != null)
             {

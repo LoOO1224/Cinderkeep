@@ -175,6 +175,7 @@ namespace Cinderkeep.Gameplay
         }
 
         public event Action OnResourceChanged;
+        public static event Action<string, int> ResourceAddedGlobal;
 
         public void InitializeDefault()
         {
@@ -208,6 +209,7 @@ namespace Cinderkeep.Gameplay
             if (TryAddResource(resourceType, amount))
             {
                 NotifyResourceChanged();
+                NotifyResourceAdded(resourceType, amount);
             }
         }
 
@@ -317,6 +319,16 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void NotifyResourceAdded(string resourceType, int amount)
+        {
+            if (ResourceAddedGlobal == null)
+            {
+                return;
+            }
+
+            ResourceAddedGlobal(resourceType, amount);
         }
 
         private bool TryUseResource(string resourceType, int amount)

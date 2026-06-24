@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Cinderkeep.Gameplay
@@ -7,6 +8,8 @@ namespace Cinderkeep.Gameplay
     // 건축물 생성은 GameObjectManager를 통하고, 자리 상태는 BuildingSpot이 담당합니다.
     public sealed class BuildingManager : MonoBehaviour, IGameInitializable
     {
+        public static event Action<BuildingData> BuildingPlacedGlobal;
+
         [SerializeField] private List<BuildingSpot> _buildingSpots = new List<BuildingSpot>();
         [SerializeField] private GameObjectManager _gameObjectManager;
 
@@ -101,6 +104,7 @@ namespace Cinderkeep.Gameplay
             buildingSpot.PlaceBuilding(createdBuilding);
             buildingSpot.HideBuildingSpot();
             RegisterBuildingComponent(createdBuilding);
+            NotifyBuildingPlaced(buildingData);
             return true;
         }
 
@@ -313,6 +317,16 @@ namespace Cinderkeep.Gameplay
                     return;
                 }
             }
+        }
+
+        private void NotifyBuildingPlaced(BuildingData buildingData)
+        {
+            if (BuildingPlacedGlobal == null)
+            {
+                return;
+            }
+
+            BuildingPlacedGlobal(buildingData);
         }
     }
 }
