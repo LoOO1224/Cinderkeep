@@ -78,6 +78,17 @@ public sealed class TowerAttack : MonoBehaviour
         }
 
         targetEnemyStatus.TakeDamage(_attackDamage);
+        RecordDirectTowerDamage(_attackDamage);
+    }
+
+    private void RecordDirectTowerDamage(float damage)
+    {
+        if (Cinderkeep.Gameplay.RunResultTracker.Instance == null)
+        {
+            return;
+        }
+
+        Cinderkeep.Gameplay.RunResultTracker.Instance.RecordTowerDamageDealt(damage);
     }
 
     private void RecordAttackTime()

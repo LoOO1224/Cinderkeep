@@ -1,7 +1,7 @@
 namespace Cinderkeep.Gameplay
 {
-    // 5.11 음식 MVP의 고정 ID와 포만도 회복량입니다.
-    // 음식 종류가 늘어나면 이 값을 JSON 카탈로그로 옮깁니다.
+    // 음식 MVP에서 사용하는 고정 ID와 회복량입니다.
+    // 음식 종류가 늘어나면 이 값을 JSON 카탈로그로 분리합니다.
     public static class FoodItemIds
     {
         public const string RawMeat = "raw_meat";

@@ -19,7 +19,33 @@ public static class Cinderkeep526QaReportPanel
     private const int RequiredQuickSlotCount = 7;
     private const int RequiredRewardOptionCount = 3;
     private const int TargetCinderHeartSkillCount = 50;
-    private const int MinimumRunResultStatCount = 15;
+    private const int MinimumImplementedRewardEffectTypeCount = 10;
+    private const int MinimumRunResultStatCount = 22;
+    private static readonly string[] RequiredRunResultStatKeys =
+    {
+        "result_status",
+        "reached_day",
+        "survival_time",
+        "failure_reason",
+        "monster_kills",
+        "boss_defeated",
+        "enemy_damage_dealt",
+        "tower_damage_dealt",
+        "trap_damage_dealt",
+        "player_damage_taken",
+        "player_down_count",
+        "cinderheart_damage_taken",
+        "wood_gained",
+        "stone_gained",
+        "iron_gained",
+        "gold_gained",
+        "mithril_gained",
+        "adamantium_gained",
+        "crafted_item_count",
+        "placed_building_count",
+        "trap_crowd_control_score",
+        "selected_cinderheart_skills"
+    };
 
     [MenuItem(MenuRoot + "Run Full 5.26 QA Report")]
     public static void RunFullQaReport()
@@ -59,6 +85,7 @@ public static class Cinderkeep526QaReportPanel
         isOk &= RunSceneWiringReport(scene, reportBuilder);
         isOk &= RunRequiredUiReport(scene, reportBuilder);
         isOk &= RunDataValidationReport(reportBuilder);
+        isOk &= RunBuildingUpgradeReport(reportBuilder);
         isOk &= RunJsonShapeReport(reportBuilder);
         isOk &= RunPrefabKeyReport(reportBuilder);
         isOk &= RunBossClearFlowReport(scene, reportBuilder);
@@ -169,6 +196,7 @@ public static class Cinderkeep526QaReportPanel
 
             isOk &= AppendRecipeExposureReport(gameDataManager, reportBuilder);
             isOk &= AppendCinderHeartSkillEffectReport(gameDataManager, reportBuilder);
+            isOk &= AppendStarterLoopDataReport(gameDataManager, reportBuilder);
             reportBuilder.AppendLine();
             return isOk;
         }
@@ -218,6 +246,7 @@ public static class Cinderkeep526QaReportPanel
     {
         int implementedCount = 0;
         int roadmapCount = 0;
+        HashSet<string> implementedEffectTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         bool isOk = true;
 
         foreach (KeyValuePair<string, CinderHeartSkillData> pair in gameDataManager.CinderHeartSkillDataList)
@@ -232,6 +261,7 @@ public static class Cinderkeep526QaReportPanel
             if (GameDataValidationRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
             {
                 implementedCount++;
+                implementedEffectTypes.Add(skillData.EffectType);
             }
             else
             {
@@ -239,8 +269,33 @@ public static class Cinderkeep526QaReportPanel
             }
         }
 
-        isOk &= AppendCountCheck(reportBuilder, "implemented CinderHeart reward effect count", implementedCount, 1);
+        isOk &= AppendCountCheck(reportBuilder, "implemented CinderHeart reward effect count", implementedCount, TargetCinderHeartSkillCount);
+        isOk &= AppendCountCheck(reportBuilder, "implemented CinderHeart effect type variety", implementedEffectTypes.Count, MinimumImplementedRewardEffectTypeCount);
+        isOk &= AppendCheck(reportBuilder, "roadmap CinderHeart reward effect count", roadmapCount == 0, roadmapCount.ToString());
         AppendInfo(reportBuilder, "roadmap CinderHeart reward effect count", roadmapCount.ToString());
+        return isOk;
+    }
+
+    private static bool AppendStarterLoopDataReport(GameDataManager gameDataManager, StringBuilder reportBuilder)
+    {
+        reportBuilder.AppendLine("[Starter Loop Data]");
+        bool isOk = true;
+
+        isOk &= AppendCheck(reportBuilder, "resource: Wood", gameDataManager.GetResource(PlayerModel.ResourceWood) != null, PlayerModel.ResourceWood);
+        isOk &= AppendCheck(reportBuilder, "resource: Stone", gameDataManager.GetResource(PlayerModel.ResourceStone) != null, PlayerModel.ResourceStone);
+        isOk &= AppendCheck(reportBuilder, "tool: hand_stone", gameDataManager.GetTool(PlayerToolController.HandStoneToolDataId) != null, PlayerToolController.HandStoneToolDataId);
+        isOk &= AppendCheck(reportBuilder, "recipe: stone_pickaxe", gameDataManager.GetCraftingRecipe("recipe_stone_pickaxe") != null, "recipe_stone_pickaxe");
+        isOk &= AppendCheck(reportBuilder, "recipe: stone_axe", gameDataManager.GetCraftingRecipe("recipe_stone_axe") != null, "recipe_stone_axe");
+        isOk &= AppendCheck(reportBuilder, "recipe: wood_wall", gameDataManager.GetCraftingRecipe("recipe_wood_wall") != null, "recipe_wood_wall");
+        isOk &= AppendCheck(reportBuilder, "recipe: wood_tower", gameDataManager.GetCraftingRecipe("recipe_wood_tower") != null, "recipe_wood_tower");
+        isOk &= AppendCheck(reportBuilder, "recipe: wood_slow_trap", gameDataManager.GetCraftingRecipe("recipe_wood_slow_trap") != null, "recipe_wood_slow_trap");
+        isOk &= AppendCheck(reportBuilder, "building: wood_wall", gameDataManager.GetBuilding("wood_wall") != null, "wood_wall");
+        isOk &= AppendCheck(reportBuilder, "building: wood_tower", gameDataManager.GetBuilding("wood_tower") != null, "wood_tower");
+        isOk &= AppendCheck(reportBuilder, "building: wood_slow_trap", gameDataManager.GetBuilding("wood_slow_trap") != null, "wood_slow_trap");
+        isOk &= AppendCheck(reportBuilder, "boss: frost_colossus", gameDataManager.GetBoss("frost_colossus") != null, "frost_colossus");
+        isOk &= AppendCheck(reportBuilder, "food: raw_meat satiety", FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.RawMeat) > 0f, FoodItemIds.RawMeat);
+        isOk &= AppendCheck(reportBuilder, "food: cooked_meat satiety", FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.CookedMeat) > FoodItemIds.GetSatietyRestoreAmount(FoodItemIds.RawMeat), FoodItemIds.CookedMeat);
+
         return isOk;
     }
 
@@ -277,6 +332,57 @@ public static class Cinderkeep526QaReportPanel
 
         reportBuilder.AppendLine();
         return isOk;
+    }
+
+    private static bool RunBuildingUpgradeReport(StringBuilder reportBuilder)
+    {
+        reportBuilder.AppendLine("[Building Upgrade Check]");
+        GameObject tempObject = new GameObject("Temp_5_26_BuildingUpgrade_Check");
+        GameDataManager gameDataManager = tempObject.AddComponent<GameDataManager>();
+        try
+        {
+            gameDataManager.Initialize();
+            bool isOk = true;
+            isOk &= AppendCountCheck(reportBuilder, "building_upgrades", gameDataManager.BuildingUpgradeDataList.Count, 1);
+
+            foreach (KeyValuePair<string, BuildingUpgradeData> pair in gameDataManager.BuildingUpgradeDataList)
+            {
+                BuildingUpgradeData upgradeData = pair.Value;
+                if (upgradeData == null)
+                {
+                    isOk &= AppendCheck(reportBuilder, "building upgrade: " + pair.Key, false, "null");
+                    continue;
+                }
+
+                isOk &= AppendCheck(
+                    reportBuilder,
+                    "upgrade from: " + upgradeData.Id,
+                    gameDataManager.GetBuilding(upgradeData.FromBuildingId) != null,
+                    upgradeData.FromBuildingId);
+                isOk &= AppendCheck(
+                    reportBuilder,
+                    "upgrade to: " + upgradeData.Id,
+                    gameDataManager.GetBuilding(upgradeData.ToBuildingId) != null,
+                    upgradeData.ToBuildingId);
+                isOk &= AppendCheck(
+                    reportBuilder,
+                    "upgrade recipe: " + upgradeData.Id,
+                    gameDataManager.GetCraftingRecipe(upgradeData.CraftingRecipeId) != null,
+                    upgradeData.CraftingRecipeId);
+                isOk &= AppendCheck(
+                    reportBuilder,
+                    "upgrade required day: " + upgradeData.Id,
+                    upgradeData.RequiredDay >= GameRunModel.FirstDay,
+                    upgradeData.RequiredDay.ToString());
+            }
+
+            reportBuilder.AppendLine();
+            return isOk;
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(tempObject);
+        }
     }
 
     private static bool RunPrefabKeyReport(StringBuilder reportBuilder)
@@ -354,8 +460,34 @@ public static class Cinderkeep526QaReportPanel
         int statCount = runResultCatalog == null || runResultCatalog.Items == null ? 0 : runResultCatalog.Items.Count;
 
         isOk &= AppendCountCheck(reportBuilder, "run_result_stats count", statCount, MinimumRunResultStatCount);
+        isOk &= AppendRunResultStatKeyCheck(reportBuilder, runResultCatalog);
         isOk &= AppendSceneRunResultUiCheck(scene, reportBuilder);
         reportBuilder.AppendLine();
+        return isOk;
+    }
+
+    private static bool AppendRunResultStatKeyCheck(StringBuilder reportBuilder, RunResultStatDataCatalog runResultCatalog)
+    {
+        bool isOk = true;
+        HashSet<string> statKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (runResultCatalog != null && runResultCatalog.Items != null)
+        {
+            for (int i = 0; i < runResultCatalog.Items.Count; i++)
+            {
+                RunResultStatData statData = runResultCatalog.Items[i];
+                if (statData != null && string.IsNullOrEmpty(statData.StatKey) == false)
+                {
+                    statKeys.Add(statData.StatKey);
+                }
+            }
+        }
+
+        for (int i = 0; i < RequiredRunResultStatKeys.Length; i++)
+        {
+            string statKey = RequiredRunResultStatKeys[i];
+            isOk &= AppendCheck(reportBuilder, "run result stat key: " + statKey, statKeys.Contains(statKey), statKey);
+        }
+
         return isOk;
     }
 

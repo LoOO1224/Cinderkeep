@@ -152,6 +152,16 @@ namespace Cinderkeep.Gameplay
             _enemyDamageDealt += damage;
         }
 
+        public void RecordTowerDamageDealt(float damage)
+        {
+            if (_isTracking == false || damage <= 0f)
+            {
+                return;
+            }
+
+            _towerDamageDealt += damage;
+        }
+
         public RunResultSnapshot CreateSnapshot(bool isClear, GameRunModel gameRunModel)
         {
             RefreshReachedDay(gameRunModel);
