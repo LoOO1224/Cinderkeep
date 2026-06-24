@@ -11905,6 +11905,7 @@ MonoBehaviour:
   _cinderHeartAttackDistance: 3
   _blockingBuildingDetectDistance: 5
   _blockingBuildingDetectRadius: 1
+  _isNightTime: 0
 --- !u!114 &381350379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11946,7 +11947,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c029023d3dc05854187a29fdaca82637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetector
-  _viewAngle: 90
+  _dayViewAngle: 150
+  _nightViewAngle: 90
+  _dayDetectorDistance: 6
+  _nightDetectorDistance: 12
 --- !u!114 &381350382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63687,6 +63691,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8097004521106248814, guid: c4311b267e2d1be4e84339befa553f76, type: 3}
   m_PrefabInstance: {fileID: 2136965824}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3960883863453770041
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5534030876482766731, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9157165319010500991, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
+      propertyPath: m_Name
+      value: PF_Building_Tower_Wood
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ea5380c0e6da0a048a9381d6eaef3a09, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -63701,3 +63762,4 @@ SceneRoots:
   - {fileID: 1482158122}
   - {fileID: 2134415030}
   - {fileID: 1214517737}
+  - {fileID: 3960883863453770041}
