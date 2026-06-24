@@ -1,8 +1,6 @@
 ﻿using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 플레이어의 기본 근접 공격을 담당하는 컴포넌트입니다.
 // 도끼/곡괭이 채집은 PlayerToolUse가 담당하고, 이 클래스는 적과 피해 대상 공격만 담당합니다.
 // 무기 공격력, 거리, 범위, 쿨타임은 weapons.json 값이 있으면 그 값을 우선 사용합니다.
@@ -121,6 +119,11 @@ public sealed class PlayerAttack : MonoBehaviour
         if (_damageDealer == null)
         {
             _damageDealer = GetComponent<DamageDealer>();
+        }
+
+        if (_damageDealer != null)
+        {
+            _damageDealer.SetSourceType(DamageSourceType.Player);
         }
 
         _playerController = GetComponent<PlayerController>();
@@ -303,6 +306,7 @@ public sealed class PlayerAttack : MonoBehaviour
     {
         if (_damageDealer != null)
         {
+            _damageDealer.SetSourceType(DamageSourceType.Player);
             if (weaponData != null)
             {
                 _damageDealer.SetDamageValue(weaponData);

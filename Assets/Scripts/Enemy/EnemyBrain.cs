@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
-// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
+// 적의 현재 타깃을 정하고 이동/공격 컴포넌트에 실행을 요청하는 AI 흐름 관리자입니다.
+// 감지, 이동, 공격 자체는 EnemyDetector, EnemyMovement, EnemyAttack이 담당합니다.
 public sealed class EnemyBrain : MonoBehaviour
 {
     private const string PlayerTag = "Player";
@@ -283,48 +283,13 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private Damageable GetNearestRecentAttacker()
     {
-        Damageable validPlayerAttacker = GetValidRecentAttacker(_recentPlayerAttacker, _lastPlayerAttackedTime);
-        Damageable validTowerAttacker = GetValidRecentAttacker(_recentTowerAttacker, _lastTowerAttackedTime);
-
-        if (validPlayerAttacker == null)
-        {
-            return validTowerAttacker;
-        }
-
-        if (validTowerAttacker == null)
-        {
-            return validPlayerAttacker;
-        }
-
-        float playerDistanceSqr = (validPlayerAttacker.transform.position - transform.position).sqrMagnitude;
-        float towerDistanceSqr = (validTowerAttacker.transform.position - transform.position).sqrMagnitude;
-
-        if (playerDistanceSqr <= towerDistanceSqr)
-        {
-            return validPlayerAttacker;
-        }
-
-        return validTowerAttacker;
-    }
-
-    private Damageable GetValidRecentAttacker(Damageable attackerDamageable, float lastAttackedTime)
-    {
-        if (attackerDamageable == null)
-        {
-            return null;
-        }
-
-        if (Time.time > lastAttackedTime + _attackerMemoryDuration)
-        {
-            return null;
-        }
-
-        if (attackerDamageable.gameObject.activeInHierarchy == false)
-        {
-            return null;
-        }
-
-        return attackerDamageable;
+        return EnemyTargetSelector.SelectNearestRecentAttacker(
+            transform,
+            _recentPlayerAttacker,
+            _lastPlayerAttackedTime,
+            _recentTowerAttacker,
+            _lastTowerAttackedTime,
+            _attackerMemoryDuration);
     }
 
     private bool TrySetPlayerTargetFromDetector()
@@ -412,28 +377,11 @@ public sealed class EnemyBrain : MonoBehaviour
             Physics.DefaultRaycastLayers,
             QueryTriggerInteraction.Ignore);
 
-        Damageable nearestTowerDamageable = null;
-        float nearestDistanceSqr = float.MaxValue;
-
-        for (int i = 0; i < hitCount; i++)
-        {
-            Damageable towerDamageable = GetTowerDamageableFromCollider(_towerOverlapColliders[i]);
-            if (towerDamageable == null)
-            {
-                continue;
-            }
-
-            float distanceSqr = (towerDamageable.transform.position - transform.position).sqrMagnitude;
-            if (distanceSqr >= nearestDistanceSqr)
-            {
-                continue;
-            }
-
-            nearestDistanceSqr = distanceSqr;
-            nearestTowerDamageable = towerDamageable;
-        }
-
-        return nearestTowerDamageable;
+        return EnemyTargetSelector.SelectNearestDamageable(
+            transform.position,
+            _towerOverlapColliders,
+            hitCount,
+            GetTowerDamageableFromCollider);
     }
 
     private Damageable GetTowerDamageableFromCollider(Collider hitCollider)

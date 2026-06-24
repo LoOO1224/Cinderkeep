@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
+// 낮, 밤, 아침 보상, 보스전, 클리어/게임오버로 이어지는 한 판의 흐름을 관리합니다.
+// 스폰 실행은 GameFlowEnemySpawnDirector에 맡기고, 이 클래스는 페이즈 전환과 보상 선택 타이밍을 결정합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
     private const int MorningRewardOptionCount = 3;
-    private const string EffectTypeAttackDamageAdd = "CinderHeartAttackDamageAdd";
-    private const string EffectTypeMaxHealthAdd = "CinderHeartMaxHealthAdd";
-    private const string EffectTypePlayerHealRate = "PlayerHealRate";
-    private const string EffectTypePlayerReviveRate = "PlayerReviveRate";
 
     [Header("Flow Settings")]
     [SerializeField] private GameFlowSettings _gameFlowSettings = new GameFlowSettings();
@@ -460,10 +456,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private bool IsImplementedRewardEffect(string effectType)
     {
-        return string.Equals(effectType, EffectTypeAttackDamageAdd, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(effectType, EffectTypeMaxHealthAdd, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(effectType, EffectTypePlayerHealRate, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(effectType, EffectTypePlayerReviveRate, StringComparison.OrdinalIgnoreCase);
+        return GameDataValidationRules.IsImplementedCinderHeartRewardEffect(effectType);
     }
 
     private void AddRequiredReviveRewardIfNeeded(
@@ -483,7 +476,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
                 continue;
             }
 
-            if (string.Equals(skillData.EffectType, EffectTypePlayerReviveRate, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(skillData.EffectType, GameDataValidationRules.RewardEffectPlayerReviveRate, StringComparison.OrdinalIgnoreCase))
             {
                 skillOptions.Add(skillData);
                 candidates.RemoveAt(i);
