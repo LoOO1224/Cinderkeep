@@ -41,9 +41,11 @@ namespace Cinderkeep.Gameplay
             if (isGranted)
             {
                 NotifyRecipeCrafted(recipeData);
+                return true;
             }
 
-            return isGranted;
+            RefundRecipeCost(recipeData, playerModel);
+            return false;
         }
 
         private bool CanPayRecipeCost(CraftingRecipeData recipeData, PlayerModel playerModel)
@@ -126,7 +128,7 @@ namespace Cinderkeep.Gameplay
 
             if (IsBuildingResult(recipeData))
             {
-                return true;
+                return CanGrantPreparedBuilding();
             }
 
             if (IsCinderHeartUpgradeResult(recipeData))
@@ -135,7 +137,12 @@ namespace Cinderkeep.Gameplay
             }
 
             InventoryItemType itemType;
-            return TryConvertToItemType(recipeData.ResultDataType, recipeData.ResultItemId, out itemType);
+            if (TryConvertToItemType(recipeData.ResultDataType, recipeData.ResultItemId, out itemType) == false)
+            {
+                return false;
+            }
+
+            return CanAddInventoryItem(recipeData.ResultItemId, itemType, recipeData.ResultCount);
         }
 
         public bool IsRecipeVisibleInCraftingUI(CraftingRecipeData recipeData)
@@ -197,6 +204,41 @@ namespace Cinderkeep.Gameplay
             }
 
             return inventoryModel.TryAddPreparedBuilding(recipeData.ResultItemId, recipeData.ResultCount);
+        }
+
+        private bool CanGrantPreparedBuilding()
+        {
+            return GameManager.Inst != null && GameManager.Inst.PlayerInventoryModel != null;
+        }
+
+        private bool CanAddInventoryItem(string itemId, InventoryItemType itemType, int amount)
+        {
+            if (GameManager.Inst == null)
+            {
+                return false;
+            }
+
+            PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+            return inventoryModel != null && inventoryModel.CanAddItem(itemId, itemType, amount);
+        }
+
+        private void RefundRecipeCost(CraftingRecipeData recipeData, PlayerModel playerModel)
+        {
+            if (recipeData == null || playerModel == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < recipeData.Costs.Count; i++)
+            {
+                CraftingCostData costData = recipeData.Costs[i];
+                if (costData == null)
+                {
+                    continue;
+                }
+
+                playerModel.AddResource(costData.ResourceId, costData.Amount);
+            }
         }
 
         private bool TryConvertToItemType(string resultDataType, string resultItemId, out InventoryItemType itemType)

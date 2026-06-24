@@ -94,8 +94,8 @@
       "_id": "boss_fight",
       "_day": 3,
       "_phase": "BossFight",
-      "_durationSeconds": 180,
-      "_nextPhaseId": "clear",
+      "_durationSeconds": 0,
+      "_nextPhaseId": "",
       "_bgmKey": "BGM_Boss",
       "_skyboxKey": "Skybox_Boss",
       "_lightPresetKey": "Light_Boss"

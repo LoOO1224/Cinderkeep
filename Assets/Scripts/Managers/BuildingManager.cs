@@ -82,18 +82,11 @@ namespace Cinderkeep.Gameplay
                 return TryUpgradeAtSpot(buildingSpot, playerModel, gameDataManager);
             }
 
-            bool isPreparedBuildingConsumed = TryConsumePreparedBuildingItem(buildingData);
-            if (isPreparedBuildingConsumed == false
+            bool hasPreparedBuildingItem = HasPreparedBuildingItem(buildingData);
+            if (hasPreparedBuildingItem == false
                 && BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning(BuildingCostHelper.GetNotEnoughResourceLog(buildingData, playerModel, gameDataManager));
-                return false;
-            }
-
-            if (isPreparedBuildingConsumed == false
-                && BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager) == false)
-            {
-                Debug.LogWarning("BuildingManager: 건축 비용 차감에 실패했습니다.");
                 return false;
             }
 
@@ -106,6 +99,17 @@ namespace Cinderkeep.Gameplay
 
             if (createdBuilding == null)
             {
+                return false;
+            }
+
+            bool isCostPaid = hasPreparedBuildingItem
+                ? TryConsumePreparedBuildingItem(buildingData)
+                : BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager);
+
+            if (isCostPaid == false)
+            {
+                DestroyCreatedBuilding(createdBuilding);
+                Debug.LogWarning("BuildingManager: 건축 비용 차감에 실패했습니다.");
                 return false;
             }
 
@@ -147,12 +151,6 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            if (BuildingCostHelper.TryPayUpgradeCostDifference(fromBuildingData, toBuildingData, playerModel, gameDataManager) == false)
-            {
-                Debug.LogWarning("BuildingManager: 건축 업그레이드 차액 차감에 실패했습니다. to=" + toBuildingData.Id);
-                return false;
-            }
-
             GameObject createdBuilding = CreateBuildingObject(
                 buildingSpot.GetBuildingPrefab(toBuildingData),
                 toBuildingData,
@@ -161,6 +159,13 @@ namespace Cinderkeep.Gameplay
 
             if (createdBuilding == null)
             {
+                return false;
+            }
+
+            if (BuildingCostHelper.TryPayUpgradeCostDifference(fromBuildingData, toBuildingData, playerModel, gameDataManager) == false)
+            {
+                DestroyCreatedBuilding(createdBuilding);
+                Debug.LogWarning("BuildingManager: 건축 업그레이드 차액 차감에 실패했습니다. to=" + toBuildingData.Id);
                 return false;
             }
 
@@ -180,6 +185,17 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        private bool HasPreparedBuildingItem(BuildingData buildingData)
+        {
+            if (buildingData == null || GameManager.Inst == null)
+            {
+                return false;
+            }
+
+            PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+            return inventoryModel != null && inventoryModel.HasPreparedBuilding(buildingData.Id);
+        }
+
         private bool TryConsumePreparedBuildingItem(BuildingData buildingData)
         {
             if (buildingData == null || GameManager.Inst == null)
@@ -194,6 +210,22 @@ namespace Cinderkeep.Gameplay
             }
 
             return inventoryModel.TryConsumePreparedBuilding(buildingData.Id, 1);
+        }
+
+        private void DestroyCreatedBuilding(GameObject createdBuilding)
+        {
+            if (createdBuilding == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(createdBuilding);
+                return;
+            }
+
+            DestroyImmediate(createdBuilding);
         }
 
         // 기존 시그니처를 쓰는 코드가 남아 있을 때를 위한 호환용입니다.

@@ -22,9 +22,9 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     [SerializeField] private bool _openCinderHeartSkillOnMorningReward = true;
     [SerializeField] private string[] _morningRewardSkillIds =
     {
-        "cinderheart_attack_damage_5",
-        "cinderheart_max_health_100",
-        "cinderheart_player_heal_30"
+        "cinder_spark_arrow",
+        "rekindled_core",
+        "warm_pulse"
     };
 
     private GameManager _gameManager;

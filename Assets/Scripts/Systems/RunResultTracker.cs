@@ -358,6 +358,11 @@ namespace Cinderkeep.Gameplay
                 return "Clear";
             }
 
+            if (_playerDownCount > 0)
+            {
+                return "CinderHeart destroyed after player down";
+            }
+
             return "CinderHeart destroyed";
         }
 
