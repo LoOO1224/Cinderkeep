@@ -34,6 +34,7 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private float _lastAttackTime;
     private PlayerController _playerController;
+    private string _lastEquippedWeaponItemId;
 
     public string WeaponDataId
     {
@@ -50,6 +51,8 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        RefreshEquippedWeapon();
+
         if (ShouldReadAttackInputDirectly())
         {
             ReadAttackInput();
@@ -127,6 +130,34 @@ public sealed class PlayerAttack : MonoBehaviour
         {
             TryAttack();
         }
+    }
+
+    private void RefreshEquippedWeapon()
+    {
+        if (GameManager.Inst == null)
+        {
+            return;
+        }
+
+        PlayerEquipmentModel equipmentModel = GameManager.Inst.PlayerEquipmentModel;
+        if (equipmentModel == null)
+        {
+            return;
+        }
+
+        string equippedWeaponItemId = equipmentModel.GetEquippedItemId(EquipmentSlotType.Weapon);
+        if (string.IsNullOrEmpty(equippedWeaponItemId))
+        {
+            return;
+        }
+
+        if (_lastEquippedWeaponItemId == equippedWeaponItemId)
+        {
+            return;
+        }
+
+        _lastEquippedWeaponItemId = equippedWeaponItemId;
+        SetWeaponDataId(equippedWeaponItemId);
     }
 
     public bool CanAttack(WeaponData weaponData)

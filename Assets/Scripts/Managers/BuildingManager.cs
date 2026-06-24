@@ -73,13 +73,16 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            if (BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
+            bool isPreparedBuildingConsumed = TryConsumePreparedBuildingItem(buildingData);
+            if (isPreparedBuildingConsumed == false
+                && BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning(BuildingCostHelper.GetNotEnoughResourceLog(buildingData, playerModel, gameDataManager));
                 return false;
             }
 
-            if (BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager) == false)
+            if (isPreparedBuildingConsumed == false
+                && BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning("BuildingManager: 건축 비용 차감에 실패했습니다.");
                 return false;
@@ -99,6 +102,22 @@ namespace Cinderkeep.Gameplay
             buildingSpot.HideBuildingSpot();
             RegisterBuildingComponent(createdBuilding);
             return true;
+        }
+
+        private bool TryConsumePreparedBuildingItem(BuildingData buildingData)
+        {
+            if (buildingData == null || GameManager.Inst == null)
+            {
+                return false;
+            }
+
+            PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+            if (inventoryModel == null)
+            {
+                return false;
+            }
+
+            return inventoryModel.TryConsumeItem(buildingData.Id, 1);
         }
 
         // 기존 시그니처를 쓰는 코드가 남아 있을 때를 위한 호환용입니다.

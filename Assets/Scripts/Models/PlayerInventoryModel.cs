@@ -64,6 +64,22 @@ namespace Cinderkeep.Gameplay
                 InventoryItemModel slot = _inventorySlots[i];
                 if (slot == null || slot.IsEmpty)
                 {
+                    continue;
+                }
+
+                if (slot.ItemId == itemId && slot.ItemType == itemType)
+                {
+                    SetInventorySlot(i, itemId, itemType, slot.Amount + amount);
+                    NotifyInventoryChanged();
+                    return true;
+                }
+            }
+
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
                     SetInventorySlot(i, itemId, itemType, amount);
                     NotifyInventoryChanged();
                     return true;
@@ -71,6 +87,81 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        public bool HasItem(string itemId, int amount)
+        {
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            return GetItemAmount(itemId) >= amount;
+        }
+
+        public int GetItemAmount(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return 0;
+            }
+
+            int totalAmount = 0;
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId == itemId)
+                {
+                    totalAmount += slot.Amount;
+                }
+            }
+
+            return totalAmount;
+        }
+
+        public bool TryConsumeItem(string itemId, int amount)
+        {
+            if (HasItem(itemId, amount) == false)
+            {
+                return false;
+            }
+
+            int remainAmount = amount;
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty || slot.ItemId != itemId)
+                {
+                    continue;
+                }
+
+                int consumeAmount = Math.Min(slot.Amount, remainAmount);
+                int nextAmount = slot.Amount - consumeAmount;
+                remainAmount -= consumeAmount;
+
+                if (nextAmount <= 0)
+                {
+                    slot.Clear();
+                }
+                else
+                {
+                    slot.SetItem(slot.ItemId, slot.ItemType, nextAmount);
+                }
+
+                if (remainAmount <= 0)
+                {
+                    NotifyInventoryChanged();
+                    return true;
+                }
+            }
+
+            NotifyInventoryChanged();
+            return true;
         }
 
         public bool TryMoveInventoryToQuickSlot(int inventorySlotIndex, int quickSlotIndex)

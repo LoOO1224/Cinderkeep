@@ -10,7 +10,9 @@ namespace Cinderkeep.Gameplay
         Helmet,
         Armor,
         Boots,
-        Resource
+        Resource,
+        Building,
+        CinderHeartUpgrade
     }
 
     public enum EquipmentSlotType
