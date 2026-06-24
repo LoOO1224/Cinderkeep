@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // 피해를 받을 수 있는 오브젝트에 붙이는 공통 컴포넌트입니다.
 // 실제 체력 처리는 PlayerStatus, EnemyStatus, BuildingHp, CinderHeart 같은 역할 컴포넌트로 넘깁니다.
