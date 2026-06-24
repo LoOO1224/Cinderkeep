@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 
@@ -14,11 +14,13 @@ public sealed class EnemyDetector : MonoBehaviour
     private float _viewAngle = 90f;
     private const string PlayerTag = "Player";
     private const int MaxOverlapCount = 20;
-    private const float DetectionInterval = 0.2f;
+    private const float DefaultDetectionInterval = 0.2f;
 
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];
 
     private Coroutine _detectionRoutine;
+    [Tooltip("플레이어 감지 갱신 주기입니다. EnemyData의 _detectorInterval 값으로 초기화됩니다.")]
+    [SerializeField] private float _detectionInterval = DefaultDetectionInterval;
     [Tooltip("낮에 플레이어를 감지할 수 있는 거리입니다.")]
     [SerializeField] private float _dayDetectorDistance = 6f;
     [Tooltip("밤에 플레이어를 감지할 수 있는 거리입니다.")]
@@ -57,7 +59,17 @@ public sealed class EnemyDetector : MonoBehaviour
         }
 
         _dayDetectorDistance = enemyData.DetectorDistance;
+        if (enemyData.DetectorInterval > 0f)
+        {
+            _detectionInterval = enemyData.DetectorInterval;
+        }
+
         RefreshDetectorDistance();
+
+        if (isActiveAndEnabled)
+        {
+            StartDetectionRoutine();
+        }
     }
 
     public void EnableAlertMode()
@@ -123,7 +135,7 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private IEnumerator DetectPlayerRoutine()
     {
-        WaitForSeconds waitInterval = new WaitForSeconds(DetectionInterval);
+        WaitForSeconds waitInterval = new WaitForSeconds(_detectionInterval);
 
         while (true)
         {
@@ -210,5 +222,22 @@ public sealed class EnemyDetector : MonoBehaviour
         Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, directionToTarget);
         return angle <= _viewAngle * 0.5f;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _detectorDistance);
+
+        Gizmos.color = Color.yellow;
+
+        Vector3 forwardDirection = transform.forward;
+        Vector3 leftBoundary = Quaternion.Euler(0, -_viewAngle * 0.5f, 0) * forwardDirection;
+        Vector3 rightBoundary = Quaternion.Euler(0, _viewAngle * 0.5f, 0) * forwardDirection;
+
+        Gizmos.DrawLine(transform.position, transform.position + leftBoundary * _detectorDistance);
+        Gizmos.DrawLine(transform.position, transform.position + rightBoundary * _detectorDistance);
+
+        Gizmos.DrawLine(transform.position + leftBoundary * _detectorDistance, transform.position + rightBoundary * _detectorDistance);
     }
 }

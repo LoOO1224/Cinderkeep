@@ -17,6 +17,8 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private float _stopDistance;
         [SerializeField] private int _phaseCount;
         [SerializeField] private string _prefabKey;
+        [SerializeField] private float _detectorDistance;
+        [SerializeField] private float _detectorInterval;
 
         public string DisplayName
         {
@@ -79,6 +81,22 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _prefabKey;
+            }
+        }
+
+        public float DetectorDistance
+        {
+            get
+            {
+                return _detectorDistance;
+            }
+        }
+
+        public float DetectorInterval
+        {
+            get
+            {
+                return _detectorInterval;
             }
         }
     }

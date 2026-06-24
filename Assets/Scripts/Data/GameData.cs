@@ -34,6 +34,8 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private float _attackInterval;
         [SerializeField] private float _visualScale;
         [SerializeField] private float _detectorDistance;
+        [SerializeField] private int _tier;
+        [SerializeField] private float _detectorInterval;
 
         public string DisplayName
         {
@@ -96,6 +98,22 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _detectorDistance;
+            }
+        }
+
+        public int Tier
+        {
+            get
+            {
+                return _tier;
+            }
+        }
+
+        public float DetectorInterval
+        {
+            get
+            {
+                return _detectorInterval;
             }
         }
     }

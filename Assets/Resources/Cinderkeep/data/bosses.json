@@ -8,6 +8,8 @@
       "_attackDamage": 25,
       "_attackInterval": 2.5,
       "_stopDistance": 2.5,
+      "_detectorDistance": 5,
+      "_detectorInterval": 1.0,
       "_phaseCount": 3,
       "_prefabKey": "PF_Boss_FrostColossus"
     }
