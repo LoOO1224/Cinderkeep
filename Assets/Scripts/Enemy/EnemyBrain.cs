@@ -9,7 +9,9 @@ public sealed class EnemyBrain : MonoBehaviour
     private const string PlayerTag = "Player";
     private const string BuildTag = "Build";
     private const string CinderHeartTag = "CinderHeart";
+    private const string TowerTag = "Tower";
     private const float DecisionInterval = 0.2f;
+    private const int MaxTowerOverlapCount = 20;
 
     [Tooltip("플레이어 감지 결과를 가져오는 컴포넌트입니다.")]
     [SerializeField] private EnemyDetector _enemyDetector;
@@ -27,8 +29,11 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private float _blockingBuildingDetectDistance = 5f;
     [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 감지 반경입니다.")]
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
+    [Tooltip("Tower를 공격 대상으로 찾는 거리입니다.")]
+    [SerializeField] private float _towerDetectDistance = 5f;
 
     private readonly NavMeshPath _cinderHeartPath = new NavMeshPath();
+    private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
 
     private Coroutine _brainDecisionRoutine;
     private Damageable _currentAttackTarget;
@@ -153,6 +158,11 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private void RefreshTargets()
     {
+        if (TrySetCinderHeartTarget())
+        {
+            return;
+        }
+
         if (TrySetPlayerTargetFromDetector())
         {
             return;
@@ -163,7 +173,29 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        UpdateCinderHeartTargetIfNeeded();
+        if (TrySetTowerTarget())
+        {
+            return;
+        }
+
+
+        ClearCinderHeartAttackTarget();
+        ClearPlayerAttackTarget();
+        ClearCurrentBuildingAttackTarget();
+        ClearTowerAttackTarget();
+    }
+
+    private bool TrySetCinderHeartTarget()
+    {
+        if (_canChaseCinderHeart == false || _cinderHeartDamageable == null)
+        {
+            ClearCinderHeartAttackTarget();
+            return false;
+        }
+
+        _currentBuildingAttackTarget = null;
+        _currentAttackTarget = _cinderHeartDamageable;
+        return true;
     }
 
     private bool TrySetPlayerTargetFromDetector()
@@ -228,25 +260,75 @@ public sealed class EnemyBrain : MonoBehaviour
         _currentAttackTarget = null;
     }
 
-    private void UpdateCinderHeartTargetIfNeeded()
+    private bool TrySetTowerTarget()
     {
-        if (_canChaseCinderHeart == false)
+        Damageable towerDamageable = FindNearestTowerDamageable();
+        if (towerDamageable == null)
         {
-            ClearCinderHeartAttackTarget();
-            return;
+            ClearTowerAttackTarget();
+            return false;
         }
 
-        if (_currentBuildingAttackTarget != null)
+        _currentBuildingAttackTarget = null;
+        _currentAttackTarget = towerDamageable;
+        return true;
+    }
+
+    private Damageable FindNearestTowerDamageable()
+    {
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            transform.position,
+            _towerDetectDistance,
+            _towerOverlapColliders);
+
+        Damageable nearestTowerDamageable = null;
+        float nearestDistanceSqr = float.MaxValue;
+
+        for (int i = 0; i < hitCount; i++)
         {
-            return;
+            Damageable towerDamageable = GetTowerDamageableFromCollider(_towerOverlapColliders[i]);
+            if (towerDamageable == null)
+            {
+                continue;
+            }
+
+            float distanceSqr = (towerDamageable.transform.position - transform.position).sqrMagnitude;
+            if (distanceSqr >= nearestDistanceSqr)
+            {
+                continue;
+            }
+
+            nearestDistanceSqr = distanceSqr;
+            nearestTowerDamageable = towerDamageable;
         }
 
-        if (_cinderHeartDamageable == null)
+        return nearestTowerDamageable;
+    }
+
+    private Damageable GetTowerDamageableFromCollider(Collider hitCollider)
+    {
+        if (hitCollider == null)
         {
-            return;
+            return null;
         }
 
-        _currentAttackTarget = _cinderHeartDamageable;
+        Damageable damageable = hitCollider.GetComponentInParent<Damageable>();
+        if (damageable == null)
+        {
+            return null;
+        }
+
+        if (hitCollider.CompareTag(TowerTag))
+        {
+            return damageable;
+        }
+
+        if (damageable.CompareTag(TowerTag))
+        {
+            return damageable;
+        }
+
+        return null;
     }
 
     private void MoveByCurrentTarget()
@@ -330,6 +412,11 @@ public sealed class EnemyBrain : MonoBehaviour
             return false;
         }
 
+        if (targetObject.CompareTag(CinderHeartTag))
+        {
+            return IsInAttackDistance(targetObject.transform, _cinderHeartAttackDistance);
+        }
+
         if (targetObject.CompareTag(PlayerTag))
         {
             return IsInAttackDistance(targetObject.transform, _attackDistance);
@@ -340,13 +427,14 @@ public sealed class EnemyBrain : MonoBehaviour
             return IsInAttackDistance(targetObject.transform, _attackDistance);
         }
 
-        if (targetObject.CompareTag(CinderHeartTag))
+        if (targetObject.CompareTag(TowerTag))
         {
-            return IsInAttackDistance(targetObject.transform, _cinderHeartAttackDistance);
+            return IsInAttackDistance(targetObject.transform, _attackDistance);
         }
 
         return false;
     }
+
 
     private bool IsInAttackDistance(Transform targetTransform, float attackDistance)
     {
@@ -480,7 +568,22 @@ public sealed class EnemyBrain : MonoBehaviour
         _currentBuildingAttackTarget = null;
     }
 
-    private Damageable GetDamageableFromTransform(Transform targetTransform)
+private void ClearTowerAttackTarget()
+{
+    if (_currentAttackTarget == null)
+    {
+        return;
+    }
+
+    if (_currentAttackTarget.CompareTag(TowerTag))
+    {
+        _currentAttackTarget = null;
+    }
+}
+
+
+
+private Damageable GetDamageableFromTransform(Transform targetTransform)
     {
         if (targetTransform == null)
         {
