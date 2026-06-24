@@ -5,8 +5,8 @@ using Cinderkeep.Gameplay;
 using UnityEditor;
 using UnityEngine;
 
-// 5.02 direction: Audit JSON data against implemented gameplay contracts before adding more content.
-// 5.03+ note: Keep unsupported data visible as roadmap candidates, but do not expose it as live gameplay.
+// JSON 데이터가 현재 구현된 게임 규칙과 맞는지 검사하는 에디터 도구입니다.
+// 구현되지 않은 데이터는 로드맵 후보로 보고하되, 실제 플레이 후보와 구분합니다.
 public static class Cinderkeep502DataValidationPanel
 {
     private const string MenuRoot = "Cinderkeep/5.02 Data Validation/";

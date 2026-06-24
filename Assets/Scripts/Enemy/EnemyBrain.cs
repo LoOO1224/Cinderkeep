@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
-// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
+// 적의 현재 타깃을 정하고 이동/공격 컴포넌트에 실행을 요청하는 AI 흐름 관리자입니다.
+// 감지, 이동, 공격 자체는 EnemyDetector, EnemyMovement, EnemyAttack이 담당합니다.
 public sealed class EnemyBrain : MonoBehaviour
 {
     private const string PlayerTag = "Player";

@@ -2,10 +2,8 @@ using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 
-// 5.00 direction: Routes combat hit and damage flow for player, enemy, building, and CinderHeart interactions.
-// 5.01+ note: Keep damage delivery generic so weapons, towers, traps, and bosses can reuse the same contract.
-// 공격자가 가진 데미지 값을 관리하는 컴포넌트입니다.
-// 무기, 몬스터 공격 판정, 함정 오브젝트에 붙여 재사용할 수 있습니다.
+// Damageable 대상에게 피해를 전달하는 공통 컴포넌트입니다.
+// 플레이어, 적, 타워, 함정, 보스가 같은 피해 전달 규칙과 Run Result 기록 이벤트를 공유합니다.
 public enum DamageSourceType
 {
     Unknown,
@@ -21,9 +19,9 @@ public sealed class DamageDealer : MonoBehaviour
 {
     public static event Action<DamageDealer, Damageable, float, DamageSourceType> DamageAppliedGlobal;
 
-    [Tooltip("이 공격 판정이 대상에게 전달할 피해량입니다.")]
+    [Tooltip("대상 Damageable에게 전달할 피해량입니다.")]
     [SerializeField] private float _damage = 40f;
-    [Tooltip("Run Result and combat analytics use this to separate player, tower, trap, and boss damage.")]
+    [Tooltip("Run Result에서 플레이어, 타워, 함정, 보스 피해를 구분하기 위한 출처입니다.")]
     [SerializeField] private DamageSourceType _sourceType = DamageSourceType.Unknown;
 
     public float GetDamageValue()

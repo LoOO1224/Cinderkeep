@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
+// 낮, 밤, 아침 보상, 보스전, 클리어/게임오버로 이어지는 한 판의 흐름을 관리합니다.
+// 스폰 실행은 GameFlowEnemySpawnDirector에 맡기고, 이 클래스는 페이즈 전환과 보상 선택 타이밍을 결정합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
     private const int MorningRewardOptionCount = 3;

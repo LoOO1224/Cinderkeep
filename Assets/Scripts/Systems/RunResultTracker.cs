@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
+// 한 판 동안 발생한 전투, 채집, 제작, 건축, 보상 선택 기록을 모아 Run Result에 전달합니다.
+// 각 시스템의 이벤트를 구독해 집계만 담당하고, 실제 게임 규칙은 변경하지 않습니다.
 namespace Cinderkeep.Gameplay
 {
     public sealed class RunResultTracker : MonoBehaviour

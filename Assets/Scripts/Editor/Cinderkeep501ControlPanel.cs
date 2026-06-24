@@ -8,8 +8,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// 5.01 direction: Validate and repair saved scene wiring after the 5.00 closed-loop QA pass.
-// 5.02+ note: Keep this panel focused on scene/prefab references; data and combat checks get their own panels.
+// Cinderkeep_Game 씬의 필수 참조 연결 상태를 검사하고, 안전한 누락 참조만 자동 보정하는 에디터 도구입니다.
+// 데이터/전투 검증은 다른 패널에서 처리하고, 이 패널은 씬과 프리팹 연결 확인에만 집중합니다.
 public static class Cinderkeep501ControlPanel
 {
     private const string MenuRoot = "Cinderkeep/5.01 Control Panel/";

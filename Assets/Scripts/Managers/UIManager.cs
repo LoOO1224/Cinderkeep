@@ -2,13 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
 
-// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
-// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
+// HUD, 인벤토리, 제작 UI, 보상 선택 UI, Run Result 패널을 열고 닫는 UI 허브입니다.
+// UI 계산과 게임 규칙은 각 전용 시스템에서 처리하고, 이 클래스는 화면 전환과 커서 상태를 관리합니다.
 namespace Cinderkeep.Gameplay
 {
-    // 게임 씬 전용 UI 매니저입니다.
-    // 현재는 3일 게임 루프에 필요한 HUD, 인벤토리, 게임오버 UI부터 관리합니다.
-    // UI는 코드에서 새로 만들지 않고, 씬이나 프리팹에 준비된 오브젝트를 켜고 끄는 방식으로 관리합니다.
     public sealed class UIManager : MonoBehaviour, IGameInitializable
     {
         [SerializeField] private GameObject _hudRoot;

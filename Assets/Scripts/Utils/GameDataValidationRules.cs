@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Cinderkeep.Gameplay
 {
-    // Shared data contract rules used by gameplay and editor validation.
-    // Keep these rules small and explicit until GameDataManager is split into catalogs.
+    // 게임플레이와 에디터 검증이 함께 사용하는 데이터 규칙 모음입니다.
+    // 제작 결과 타입과 구현된 CinderHeart 보상 EffectType 기준을 한 곳에서 관리합니다.
     public static class GameDataValidationRules
     {
         public const string RecipeResultTypeResource = "Resource";

@@ -1,16 +1,16 @@
 using UnityEngine;
 
-// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
-// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
+// 타워가 EnemyStatus 대상을 공격하고 피해를 전달하는 전투 컴포넌트입니다.
+// 설치/비용/체력은 다른 건축 스크립트가 담당하고, 이 클래스는 공격 쿨타임과 피해 적용만 담당합니다.
 public sealed class TowerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
-    [Tooltip("타워가 적에게 주는 피해량입니다. buildings.json의 attackDamage로 덮어씁니다.")]
+    [Tooltip("타워가 적에게 주는 피해량입니다. BuildingTower 초기화 시 buildings.json 값으로 덮어쓸 수 있습니다.")]
     [SerializeField] private float _attackDamage = 5f;
-    [Tooltip("공격 후 다음 공격까지 기다리는 시간입니다. buildings.json의 attackInterval로 덮어씁니다.")]
+    [Tooltip("한 번 공격한 뒤 다음 공격까지 기다리는 시간입니다.")]
     [SerializeField] private float _attackInterval = 1.4f;
     [Header("Connected Components")]
-    [Tooltip("선택 사항입니다. 연결하면 DamageDealer를 통해 피해를 전달합니다. 없으면 TakeDamage를 직접 사용합니다.")]
+    [Tooltip("연결하면 DamageDealer를 통해 피해와 Run Result 기록을 함께 처리합니다.")]
     [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;

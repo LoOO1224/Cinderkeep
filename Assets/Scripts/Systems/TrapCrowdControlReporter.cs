@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
-// 5.03 direction: Gives trap prefabs a small reporting hook for Run Result crowd-control scoring.
-// 5.04+ note: Keep real trap behavior in trap-specific components and report only the final score here.
+// 함정이 적을 느리게 하거나 멈춘 기여도를 Run Result에 보고하는 연결 컴포넌트입니다.
+// 실제 감속/기절 동작은 함정별 스크립트가 처리하고, 이 클래스는 점수 보고만 담당합니다.
 public sealed class TrapCrowdControlReporter : MonoBehaviour
 {
     public static event Action<float> TrapCrowdControlScoredGlobal;
 
-    [Tooltip("Score multiplier applied when a trap reports slow, stun, knockback, or path delay value.")]
+    [Tooltip("함정 방해 점수를 Run Result에 더할 때 곱하는 배율입니다.")]
     [SerializeField] private float _scoreMultiplier = 1f;
 
     public void ReportScore(float score)
