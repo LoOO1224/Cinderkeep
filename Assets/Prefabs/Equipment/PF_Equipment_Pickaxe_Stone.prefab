@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: c06da8df4ec474c4cbf3572a1e8f0324, type: 2}
     - target: {fileID: 919132149155446097, guid: 2ef19baefa0619c4a9f4ad99ab79a66a, type: 3}
       propertyPath: m_Name
-      value: SM_Equipment_StoneAxe
+      value: SM_Equipment_StonePickaxe
       objectReference: {fileID: 0}
     - target: {fileID: 3616844112969948802, guid: 2ef19baefa0619c4a9f4ad99ab79a66a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
