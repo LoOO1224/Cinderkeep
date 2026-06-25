@@ -1364,6 +1364,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &35723960
@@ -1764,8 +1766,11 @@ MonoBehaviour:
   _axeView: {fileID: 1948628595}
   _pickaxeView: {fileID: 1799215033}
   _handView: {fileID: 439919297}
+  _handStoneView: {fileID: 0}
+  _weaponView: {fileID: 0}
   _swingAngle: 22
   _swingSpeed: 18
+  _createFallbackWeaponView: 1
 --- !u!114 &78789027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1833,6 +1838,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &82415251
@@ -2172,6 +2179,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 810086668}
   _backgroundImage: {fileID: 93425165}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &93795900
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2299,6 +2308,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &103787910
@@ -2517,6 +2528,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &107471327
@@ -2747,6 +2760,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 935343650}
   _backgroundImage: {fileID: 112488512}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &112488512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2838,6 +2853,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &120682819
@@ -2928,6 +2945,8 @@ MonoBehaviour:
   _amount: 1
   _requiredToolType: 2
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &120744742
@@ -3018,6 +3037,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &123316858
@@ -3213,6 +3234,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &127247924
@@ -3657,6 +3680,8 @@ MonoBehaviour:
   _slotIndex: 4
   _slotText: {fileID: 812597033}
   _backgroundImage: {fileID: 147403487}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &152420694
 GameObject:
   m_ObjectHideFlags: 0
@@ -3911,6 +3936,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &154299662
@@ -4001,6 +4028,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &155045324
@@ -4091,6 +4120,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &162054339
@@ -4466,6 +4497,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &177153551
@@ -4914,6 +4947,7 @@ MonoBehaviour:
   _slotType: 0
   _slotText: {fileID: 1998964674}
   _backgroundImage: {fileID: 192793933}
+  _itemIconImage: {fileID: 0}
 --- !u!1 &195627682
 GameObject:
   m_ObjectHideFlags: 0
@@ -4967,6 +5001,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &195627685
@@ -5131,6 +5167,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &197658808
@@ -5569,6 +5607,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &207728964
@@ -6503,6 +6543,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &223511452
@@ -6593,6 +6635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 897146135}
   _backgroundImage: {fileID: 223916971}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &223916971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6684,6 +6728,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 581953709}
   _backgroundImage: {fileID: 232490186}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &232490186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7106,6 +7152,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &251657403
@@ -7196,6 +7244,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &253162044
@@ -7286,6 +7336,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &262113227
@@ -7414,6 +7466,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 435554909}
   _backgroundImage: {fileID: 270417594}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &271438679
 GameObject:
   m_ObjectHideFlags: 0
@@ -7467,6 +7521,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &271438682
@@ -7557,6 +7613,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &272528937
@@ -7840,6 +7898,8 @@ MonoBehaviour:
   _slotIndex: 6
   _slotText: {fileID: 276110708}
   _backgroundImage: {fileID: 277031736}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &277031736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7995,6 +8055,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &287818848
@@ -8789,6 +8851,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &299098590
@@ -8949,6 +9013,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &313615275
@@ -9039,6 +9105,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &316015742
@@ -9123,6 +9191,8 @@ MonoBehaviour:
   _hudRoot: {fileID: 140572683}
   _inventoryRoot: {fileID: 1231747372}
   _gameOverPanel: {fileID: 1524120931}
+  _runResultText: {fileID: 0}
+  _runResultUI: {fileID: 0}
   _inventoryUI: {fileID: 1231747376}
   _craftingUI: {fileID: 1806415881}
   _furnaceUI: {fileID: 0}
@@ -9180,6 +9250,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &328564010
@@ -9445,6 +9517,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 2118400789}
   _backgroundImage: {fileID: 336173407}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &338044073
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9646,6 +9720,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &345246625
@@ -9963,6 +10039,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &350541626
@@ -10053,6 +10131,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &351564266
@@ -10355,13 +10435,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5977229879c95ab4ab19ee480f442720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBuild
-  _buildKey: 98
+  _holdBuildKey: 101
+  _debugInstantBuildKey: 98
+  _buildHoldSeconds: 1.2
   _buildDetectDistance: 5
   _buildLayerMask:
     serializedVersion: 2
     m_Bits: 8
   _cameraTransform: {fileID: 0}
   _buildingManager: {fileID: 579672731}
+  _progressUI: {fileID: 0}
 --- !u!114 &356893301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10376,6 +10459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   _health: 100
   _maxHealth: 100
+  _reviveInvulnerableSeconds: 3
   _satiety: 100
   _maxSatiety: 100
   _satietyConsumeRate: 1
@@ -10476,6 +10560,7 @@ MonoBehaviour:
   _cinderHeartTarget: {fileID: 1417106094}
   _viewOffset: {x: 0, y: 5, z: -8}
   _lookHeight: 1.6
+  _orbitSpeed: 18
 --- !u!114 &356893307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10550,6 +10635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 2136343917}
   _backgroundImage: {fileID: 357615989}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &357615989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10641,6 +10728,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &359092753
@@ -11035,6 +11124,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &365248463
@@ -11262,6 +11353,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &370860439
@@ -11905,6 +11998,11 @@ MonoBehaviour:
   _cinderHeartAttackDistance: 3
   _blockingBuildingDetectDistance: 5
   _blockingBuildingDetectRadius: 1
+  _towerDetectDistance: 5
+  _attackerMemoryDuration: 7
+  _isNightTime: 0
+  _usePlayerDetectionAsPriority: 1
+  _useTowerDetectionAsPriority: 1
 --- !u!114 &381350379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11934,6 +12032,9 @@ MonoBehaviour:
   _stopDistance: 0
   _wanderRadius: 6
   _wanderInterval: 2.5
+  _separationRadius: 1.05
+  _separationStrength: 0.65
+  _arrivalSpreadRadius: 1.35
 --- !u!114 &381350381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11946,7 +12047,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c029023d3dc05854187a29fdaca82637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetector
-  _viewAngle: 90
+  _dayViewAngle: 150
+  _nightViewAngle: 90
+  _detectionInterval: 0.2
+  _dayDetectorDistance: 6
+  _nightDetectorDistance: 12
 --- !u!114 &381350382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12241,6 +12346,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &382552351
@@ -12331,6 +12438,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &387463554
@@ -12421,6 +12530,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &387582590
@@ -12648,6 +12759,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &399178369
@@ -12875,6 +12988,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &413443118
@@ -13003,6 +13118,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 584808820}
   _backgroundImage: {fileID: 415211113}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &416701843
 GameObject:
   m_ObjectHideFlags: 0
@@ -13056,6 +13173,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &416701846
@@ -13220,6 +13339,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &423423798
@@ -13643,6 +13764,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &435026633
@@ -13870,6 +13993,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &437296356
@@ -14266,6 +14391,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &441327470
@@ -14356,6 +14483,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &464171307
@@ -14522,6 +14651,8 @@ MonoBehaviour:
   _slotIndex: 3
   _slotText: {fileID: 1610516000}
   _backgroundImage: {fileID: 472153021}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &472153020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14872,6 +15003,8 @@ MonoBehaviour:
   _amount: 6
   _requiredToolType: 1
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &493188572
@@ -14962,6 +15095,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &494297504
@@ -15189,6 +15324,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &498709187
@@ -15826,6 +15963,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &532601482
@@ -16053,6 +16192,8 @@ MonoBehaviour:
   _amount: 1
   _requiredToolType: 2
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &540207435
@@ -16323,6 +16464,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &548799750
@@ -16962,6 +17105,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &563743557
@@ -17052,6 +17197,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &567873299
@@ -18504,6 +18651,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &606762997
@@ -18641,6 +18790,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &611327607
@@ -18879,6 +19030,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &623232697
@@ -19043,6 +19196,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &627187861
@@ -19133,6 +19288,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &638484774
@@ -19261,6 +19418,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 761764887}
   _backgroundImage: {fileID: 639409888}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &640976456
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19599,6 +19758,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &652442945
@@ -19689,6 +19850,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1002716377}
   _backgroundImage: {fileID: 655662948}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &655662948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19966,6 +20129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1185306103}
   _backgroundImage: {fileID: 665602153}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &673853121
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20354,6 +20519,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &682733249
@@ -20444,6 +20611,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &682935694
@@ -20534,6 +20703,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &689909870
@@ -20846,6 +21017,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &701242636
@@ -20936,6 +21109,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &704268929
@@ -21138,6 +21313,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1255902531}
   _backgroundImage: {fileID: 710605024}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &713236655
 GameObject:
   m_ObjectHideFlags: 0
@@ -21193,6 +21370,8 @@ MonoBehaviour:
   _slotIndex: 2
   _slotText: {fileID: 294947582}
   _backgroundImage: {fileID: 713236659}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &713236658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21328,6 +21507,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1154074677}
   _backgroundImage: {fileID: 718106207}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &718106207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21493,6 +21674,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &726912591
@@ -21583,6 +21766,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &726952748
@@ -21747,6 +21932,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &731513130
@@ -21837,6 +22024,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &733069535
@@ -22001,6 +22190,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &738459730
@@ -22239,6 +22430,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &748762972
@@ -22762,6 +22955,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &764797733
@@ -22852,6 +23047,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 788251603}
   _backgroundImage: {fileID: 764915451}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &764915451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22943,6 +23140,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &773323721
@@ -23087,6 +23286,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 334373358}
   _backgroundImage: {fileID: 774983402}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &774983402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23198,6 +23399,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &776845634
@@ -23893,6 +24096,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &791657470
@@ -24021,6 +24226,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 211644746}
   _backgroundImage: {fileID: 791953759}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &793649803
 GameObject:
   m_ObjectHideFlags: 0
@@ -24074,6 +24281,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &793649806
@@ -24238,6 +24447,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &797272106
@@ -24328,6 +24539,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &804093473
@@ -24629,6 +24842,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 600019571}
   _backgroundImage: {fileID: 810271781}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &810271781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25216,6 +25431,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &814686016
@@ -25418,6 +25635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 402940800}
   _backgroundImage: {fileID: 828137331}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &828779298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25710,6 +25929,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &838222426
@@ -25874,6 +26095,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &843067437
@@ -26101,6 +26324,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &846512038
@@ -26448,6 +26673,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &851304096
@@ -26686,6 +26913,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &863998939
@@ -26850,6 +27079,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &873094398
@@ -26940,6 +27171,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &876248258
@@ -27063,6 +27296,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 299097239}
   _backgroundImage: {fileID: 876831501}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &876831501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27228,6 +27463,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &885291376
@@ -27705,6 +27942,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1788631111}
   _backgroundImage: {fileID: 901289950}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &901289950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27796,6 +28035,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &902265156
@@ -28107,6 +28348,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &910998768
@@ -28197,6 +28440,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &911255165
@@ -28287,6 +28532,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &916731524
@@ -28566,6 +28813,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1220539759}
   _backgroundImage: {fileID: 927291185}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &927888016
 GameObject:
   m_ObjectHideFlags: 0
@@ -28619,6 +28868,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &927888019
@@ -28884,6 +29135,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 919165340}
   _backgroundImage: {fileID: 935581267}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &935821221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29123,6 +29376,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1016603635}
   _backgroundImage: {fileID: 938587621}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &939292664
 GameObject:
   m_ObjectHideFlags: 0
@@ -29176,6 +29431,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &939292667
@@ -29247,6 +29504,7 @@ MonoBehaviour:
   _slotType: 3
   _slotText: {fileID: 209966042}
   _backgroundImage: {fileID: 941784251}
+  _itemIconImage: {fileID: 0}
 --- !u!114 &941784251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29360,6 +29618,8 @@ MonoBehaviour:
   _slotIndex: 0
   _slotText: {fileID: 198605301}
   _backgroundImage: {fileID: 946058882}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &946058881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29569,6 +29829,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 2003484658}
   _backgroundImage: {fileID: 946508623}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &946508623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29734,6 +29996,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &952502111
@@ -29981,6 +30245,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1636367650}
   _backgroundImage: {fileID: 957567807}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &958750833
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30182,6 +30448,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &962871361
@@ -31069,6 +31337,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &994881898
@@ -31233,6 +31503,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &996687733
@@ -31534,6 +31806,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1008928664
@@ -32289,6 +32563,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1369558802}
   _backgroundImage: {fileID: 1027458718}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1027458718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32380,6 +32656,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1036806472
@@ -32470,6 +32748,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1041003727
@@ -32562,6 +32842,8 @@ MonoBehaviour:
   _slotIndex: 1
   _slotText: {fileID: 31890841}
   _backgroundImage: {fileID: 1042335653}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1042335652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32929,6 +33211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CinderHeartSkillApplier
   _cinderHeart: {fileID: 1417106097}
   _playerStatus: {fileID: 356893301}
+  _playerAttack: {fileID: 0}
 --- !u!114 &1049167858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33058,6 +33341,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 589959726}
   _backgroundImage: {fileID: 1053541707}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1055116589
 GameObject:
   m_ObjectHideFlags: 0
@@ -33239,6 +33524,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1055663116
@@ -33329,6 +33616,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1059720410
@@ -33494,6 +33783,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1061259839
@@ -33584,6 +33875,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1063537699
@@ -34085,6 +34378,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1093533243
@@ -34174,6 +34469,7 @@ MonoBehaviour:
   _soundManager: {fileID: 1733528638}
   _mapManager: {fileID: 2130000003}
   _gameFlowController: {fileID: 1268678278}
+  _mainMenuSceneName: Main_Lobby
 --- !u!1 &1097733488
 GameObject:
   m_ObjectHideFlags: 0
@@ -34227,6 +34523,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 674051133}
   _backgroundImage: {fileID: 1097733491}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1097733491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35025,6 +35323,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1132814264
@@ -35153,6 +35453,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 965963905}
   _backgroundImage: {fileID: 1148380061}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1151954464
 GameObject:
   m_ObjectHideFlags: 0
@@ -35206,6 +35508,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1151954467
@@ -35507,6 +35811,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1157018787
@@ -35674,6 +35980,8 @@ MonoBehaviour:
   _slotIndex: 5
   _slotText: {fileID: 1937590954}
   _backgroundImage: {fileID: 1159780155}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1159780154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35809,6 +36117,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1161563024
@@ -35899,6 +36209,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1161707373
@@ -36126,6 +36438,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1167777590
@@ -36216,6 +36530,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1172487597
@@ -36431,6 +36747,8 @@ MonoBehaviour:
   _slotIndex: 4
   _slotText: {fileID: 549830416}
   _backgroundImage: {fileID: 1179630713}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1179630712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36777,6 +37095,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 181768917}
   _backgroundImage: {fileID: 1189884999}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1189884999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36868,6 +37188,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1195711220
@@ -36958,6 +37280,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1196537636
@@ -37048,6 +37372,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1203275331
@@ -37897,6 +38223,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1223151763
@@ -38216,6 +38544,7 @@ MonoBehaviour:
   - {fileID: 147403489}
   - {fileID: 1483538162}
   - {fileID: 277031735}
+  _hideWhenEmbedded: []
 --- !u!1001 &1234549115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38924,6 +39253,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1258389804
@@ -39098,6 +39429,8 @@ MonoBehaviour:
   _slotIndex: 1
   _slotText: {fileID: 1789182567}
   _backgroundImage: {fileID: 1261253005}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1268678277
 GameObject:
   m_ObjectHideFlags: 0
@@ -39297,6 +39630,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1279426119
@@ -39387,6 +39722,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1280281516
@@ -39523,6 +39860,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1296484850
@@ -39644,6 +39983,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1297769511
@@ -39945,6 +40286,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1303896416
@@ -40664,6 +41007,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1318129474
@@ -40828,6 +41173,8 @@ MonoBehaviour:
   _amount: 6
   _requiredToolType: 1
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1332642380
@@ -40964,6 +41311,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1336637257
@@ -41054,6 +41403,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1349877268
@@ -41144,6 +41495,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1350644635
@@ -41472,6 +41825,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1358031477
@@ -41562,6 +41917,8 @@ MonoBehaviour:
   _amount: 1
   _requiredToolType: 2
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1363352056
@@ -42193,6 +42550,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1398186693
@@ -42440,6 +42799,8 @@ MonoBehaviour:
   _slotIndex: 2
   _slotText: {fileID: 360719432}
   _backgroundImage: {fileID: 1411296251}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1417106093
 GameObject:
   m_ObjectHideFlags: 0
@@ -42652,6 +43013,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1419304160
@@ -42972,6 +43335,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1433726155
@@ -43062,6 +43427,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1437534024
@@ -43226,6 +43593,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1455164160
@@ -43444,6 +43813,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1456135446
@@ -43567,6 +43938,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1466343290
@@ -43657,6 +44030,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1467870252
@@ -43747,6 +44122,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1472922437
@@ -43974,6 +44351,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1477656731
@@ -44064,6 +44443,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1726318649}
   _backgroundImage: {fileID: 1477857119}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1477857119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44348,6 +44729,8 @@ MonoBehaviour:
   _slotIndex: 5
   _slotText: {fileID: 2075266411}
   _backgroundImage: {fileID: 1483538160}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1492844505
 GameObject:
   m_ObjectHideFlags: 0
@@ -44401,6 +44784,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1492844508
@@ -44491,6 +44876,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1494628437
@@ -44619,6 +45006,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 473013907}
   _backgroundImage: {fileID: 1494946306}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1495869680
 GameObject:
   m_ObjectHideFlags: 0
@@ -45792,6 +46181,7 @@ MonoBehaviour:
   _slotType: 1
   _slotText: {fileID: 1317047655}
   _backgroundImage: {fileID: 1544520313}
+  _itemIconImage: {fileID: 0}
 --- !u!1 &1547358658
 GameObject:
   m_ObjectHideFlags: 0
@@ -45845,6 +46235,8 @@ MonoBehaviour:
   _amount: 6
   _requiredToolType: 1
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1547358661
@@ -46093,6 +46485,8 @@ MonoBehaviour:
   _slotIndex: 3
   _slotText: {fileID: 1669054443}
   _backgroundImage: {fileID: 1558163200}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &1559451055
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46432,6 +46826,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1571994263
@@ -46522,6 +46918,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1577474002
@@ -46612,6 +47010,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1577564529
@@ -46702,6 +47102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1847262933}
   _backgroundImage: {fileID: 1580994100}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1580994100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47638,6 +48040,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1592694428
@@ -48114,6 +48518,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 206909426}
   _backgroundImage: {fileID: 1604411102}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1605376372
 GameObject:
   m_ObjectHideFlags: 0
@@ -48167,6 +48573,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 2019118129}
   _backgroundImage: {fileID: 1605376375}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1605376375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48258,6 +48666,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1607715264
@@ -48348,6 +48758,8 @@ MonoBehaviour:
   _amount: 6
   _requiredToolType: 1
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1609671956
@@ -48649,6 +49061,8 @@ MonoBehaviour:
   _amount: 1
   _requiredToolType: 2
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1618034963
@@ -48813,6 +49227,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1624450821
@@ -49194,6 +49610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 814345575}
   _backgroundImage: {fileID: 1638251026}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1638251026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49600,6 +50018,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1646200021
@@ -50065,6 +50485,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1665657437
@@ -50541,6 +50963,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 643130250}
   _backgroundImage: {fileID: 1694360564}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1695257059
 GameObject:
   m_ObjectHideFlags: 0
@@ -50594,6 +51018,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1695257062
@@ -50813,6 +51239,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1697175017
@@ -50903,6 +51331,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1698199171
@@ -51204,6 +51634,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1713297219
@@ -51294,6 +51726,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1715486870
@@ -51458,6 +51892,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1717288234
@@ -51548,6 +51984,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1720194215
@@ -51638,6 +52076,8 @@ MonoBehaviour:
   _amount: 1
   _requiredToolType: 2
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1720505544
@@ -51728,6 +52168,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1721507425
@@ -52094,6 +52536,8 @@ MonoBehaviour:
   _slotIndex: 6
   _slotText: {fileID: 1497860351}
   _backgroundImage: {fileID: 1731214236}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1731214235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52390,6 +52834,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1026558001}
   _backgroundImage: {fileID: 1748166381}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1749841808
 GameObject:
   m_ObjectHideFlags: 0
@@ -52481,6 +52927,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1587893693}
   _backgroundImage: {fileID: 1749841810}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &1750098984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52608,6 +53056,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1753516083
@@ -53018,6 +53468,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1766785564
@@ -53108,6 +53560,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1770805460
@@ -53398,6 +53852,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1780073420
@@ -53563,6 +54019,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1782550519
@@ -53894,6 +54352,7 @@ MonoBehaviour:
   _slotType: 2
   _slotText: {fileID: 1597937643}
   _backgroundImage: {fileID: 1784862929}
+  _itemIconImage: {fileID: 0}
 --- !u!1001 &1786875998
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54432,6 +54891,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1797596302
@@ -54644,6 +55105,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1803868172
@@ -54860,6 +55323,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   _recipeExecutor: {fileID: 0}
+  _inventoryUI: {fileID: 0}
 --- !u!114 &1806415882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54975,6 +55439,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1806881439
@@ -55193,6 +55659,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1815510052
@@ -55283,6 +55751,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1817645574
@@ -55373,6 +55843,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 495379951}
   _backgroundImage: {fileID: 1819393996}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1819393996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55823,6 +56295,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1829128371
@@ -55913,6 +56387,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 2102275048}
   _backgroundImage: {fileID: 1832823516}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1832823516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56078,6 +56554,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1839449181
@@ -56759,6 +57237,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1854462882
@@ -56997,6 +57477,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1857481343
@@ -57125,6 +57607,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 214097686}
   _backgroundImage: {fileID: 1858172458}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &1868528117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57364,6 +57848,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 171866578}
   _backgroundImage: {fileID: 1873493643}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1001 &1873930171
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57783,6 +58269,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1888040529
@@ -58010,6 +58498,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1902500022
@@ -58178,6 +58668,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1908923628
@@ -58342,6 +58834,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1930213505
@@ -58432,6 +58926,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 845696036}
   _backgroundImage: {fileID: 1930849216}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1930849216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58734,6 +59230,8 @@ MonoBehaviour:
   _amount: 5
   _requiredToolType: 1
   _requiredToolTier: 3
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1940673082
@@ -59301,6 +59799,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 291181176}
   _backgroundImage: {fileID: 1970535070}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &1976089546
 GameObject:
   m_ObjectHideFlags: 0
@@ -59354,6 +59854,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1840823496}
   _backgroundImage: {fileID: 1976089549}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1976089549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59519,6 +60021,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 1048603071}
   _backgroundImage: {fileID: 1980581945}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &1980581945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59610,6 +60114,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1981133150
@@ -59700,6 +60206,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &1986115999
@@ -60497,6 +61005,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2009925634
@@ -61147,6 +61657,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2028654696
@@ -61237,6 +61749,8 @@ MonoBehaviour:
   _amount: 3
   _requiredToolType: 1
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2036010437
@@ -61538,6 +62052,8 @@ MonoBehaviour:
   _amount: 6
   _requiredToolType: 1
   _requiredToolTier: 4
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2044417052
@@ -61702,6 +62218,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2049195759
@@ -61792,6 +62310,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2057036254
@@ -62001,6 +62521,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.InventorySlotView
   _itemText: {fileID: 440985165}
   _backgroundImage: {fileID: 2066124095}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!114 &2066124095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62229,6 +62751,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2077707100
@@ -62731,6 +63255,8 @@ MonoBehaviour:
   _amount: 2
   _requiredToolType: 2
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2103174896
@@ -62821,6 +63347,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 1
   _requiredToolTier: 2
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2115425060
@@ -63191,6 +63719,8 @@ MonoBehaviour:
   _slotIndex: 0
   _slotText: {fileID: 1604034239}
   _backgroundImage: {fileID: 2130423776}
+  _itemIconImage: {fileID: 0}
+  _cookProgressImage: {fileID: 0}
 --- !u!1 &2131347805
 GameObject:
   m_ObjectHideFlags: 0
@@ -63244,6 +63774,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2131347808
@@ -63447,6 +63979,8 @@ MonoBehaviour:
   _amount: 4
   _requiredToolType: 2
   _requiredToolTier: 1
+  _maxGatherCount: 1
+  _respawnSeconds: 0
   _disableAfterGather: 1
   _canInteract: 1
 --- !u!114 &2135623522
