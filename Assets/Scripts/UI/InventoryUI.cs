@@ -175,9 +175,9 @@ namespace Cinderkeep.Gameplay
         {
             ConnectModels();
             RefreshTitle();
-            RefreshEquipmentSlots();
-            RefreshInventorySlots();
-            RefreshQuickSlots();
+            InventorySlotRefreshPresenter.RefreshEquipmentSlots(_equipmentSlotViews, _playerEquipmentModel, this);
+            InventorySlotRefreshPresenter.RefreshInventorySlots(_inventorySlotViews, _playerInventoryModel, this);
+            InventorySlotRefreshPresenter.RefreshQuickSlots(_quickSlotViews, _playerInventoryModel, this);
         }
 
         private void ConnectModels()
@@ -412,67 +412,6 @@ namespace Cinderkeep.Gameplay
             }
 
             toolController.EquipToolData(toolDataId);
-        }
-
-        private void RefreshEquipmentSlots()
-        {
-            if (_equipmentSlotViews == null || _playerEquipmentModel == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _equipmentSlotViews.Length; i++)
-            {
-                EquipmentSlotView slotView = _equipmentSlotViews[i];
-                if (slotView == null)
-                {
-                    continue;
-                }
-
-                EquipmentSlotType slotType = slotView.SlotType;
-                string equippedItemId = _playerEquipmentModel.GetEquippedItemId(slotType);
-                slotView.SetSlot(slotType, equippedItemId, this);
-            }
-        }
-
-        private void RefreshInventorySlots()
-        {
-            if (_inventorySlotViews == null || _playerInventoryModel == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _inventorySlotViews.Length; i++)
-            {
-                InventorySlotView slotView = _inventorySlotViews[i];
-                if (slotView == null)
-                {
-                    continue;
-                }
-
-                InventoryItemModel itemModel = _playerInventoryModel.GetInventoryItem(i);
-                slotView.SetSlot(i, itemModel, this);
-            }
-        }
-
-        private void RefreshQuickSlots()
-        {
-            if (_quickSlotViews == null || _playerInventoryModel == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _quickSlotViews.Length; i++)
-            {
-                QuickSlotView slotView = _quickSlotViews[i];
-                if (slotView == null)
-                {
-                    continue;
-                }
-
-                InventoryItemModel itemModel = _playerInventoryModel.GetQuickSlotItem(i);
-                slotView.SetSlot(i, itemModel, this);
-            }
         }
 
         private void RefreshMessage(string message)
