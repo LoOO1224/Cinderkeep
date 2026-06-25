@@ -120,7 +120,7 @@ public sealed class EnemyMovement : MonoBehaviour
             return;
         }
 
-        MoveWithNavMeshOrTransform(GetSpreadTargetPosition(targetTransform));
+        MoveWithNavMeshOrTransform(GetMoveTargetPosition(targetTransform));
         ApplyCrowdSeparation();
     }
 
@@ -221,6 +221,31 @@ public sealed class EnemyMovement : MonoBehaviour
         }
 
         return targetPosition;
+    }
+
+    private Vector3 GetMoveTargetPosition(Transform targetTransform)
+    {
+        if (IsCinderHeartTarget(targetTransform))
+        {
+            return targetTransform.position;
+        }
+
+        return GetSpreadTargetPosition(targetTransform);
+    }
+
+    private bool IsCinderHeartTarget(Transform targetTransform)
+    {
+        if (targetTransform == null)
+        {
+            return false;
+        }
+
+        if (targetTransform.GetComponent<CinderHeart>() != null)
+        {
+            return true;
+        }
+
+        return targetTransform.GetComponentInParent<CinderHeart>() != null;
     }
 
     private Vector3 CreateStableSpreadOffset(Transform targetTransform)

@@ -34,6 +34,10 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private float _attackerMemoryDuration = 7f;
     [Tooltip("true이면 밤 우선순위: 공격자 -> 플레이어 -> 길막 건축물 -> CinderHeart 순서를 사용합니다.")]
     [SerializeField] private bool _isNightTime;
+    [Tooltip("true이면 감지된 플레이어를 CinderHeart보다 우선 추적합니다. 보스는 피격 어그로만 쓰기 위해 false로 둡니다.")]
+    [SerializeField] private bool _usePlayerDetectionAsPriority = true;
+    [Tooltip("true이면 근처 타워를 CinderHeart보다 우선 추적합니다. 보스는 기본 목표를 유지하기 위해 false로 둡니다.")]
+    [SerializeField] private bool _useTowerDetectionAsPriority = true;
 
     private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
 
@@ -212,6 +216,30 @@ public sealed class EnemyBrain : MonoBehaviour
         }
     }
 
+    public void SetPlayerDetectionPriorityEnabled(bool isEnabled)
+    {
+        _usePlayerDetectionAsPriority = isEnabled;
+
+        if (isEnabled)
+        {
+            return;
+        }
+
+        ClearPlayerAttackTarget();
+    }
+
+    public void SetTowerDetectionPriorityEnabled(bool isEnabled)
+    {
+        _useTowerDetectionAsPriority = isEnabled;
+
+        if (isEnabled)
+        {
+            return;
+        }
+
+        ClearTowerAttackTarget();
+    }
+
     private void RefreshBrainTargets()
     {
         RefreshTargets();
@@ -236,9 +264,14 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        if (TrySetPlayerTargetFromDetector())
+        if (_usePlayerDetectionAsPriority && TrySetPlayerTargetFromDetector())
         {
             return;
+        }
+
+        if (_usePlayerDetectionAsPriority == false)
+        {
+            ClearPlayerAttackTarget();
         }
 
         if (TrySetBuildingTargetFromBlockedPath())
@@ -246,9 +279,14 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        if (TrySetTowerTarget())
+        if (_useTowerDetectionAsPriority && TrySetTowerTarget())
         {
             return;
+        }
+
+        if (_useTowerDetectionAsPriority == false)
+        {
+            ClearTowerAttackTarget();
         }
 
         TrySetCinderHeartTarget();

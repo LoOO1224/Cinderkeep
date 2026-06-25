@@ -600,6 +600,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
         enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
         enemyBrain.SetNightTime(UsesNightDetectionInCurrentMode());
+        enemyBrain.SetPlayerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+        enemyBrain.SetTowerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
     }
 
     private bool CanChaseCinderHeartInCurrentMode()
