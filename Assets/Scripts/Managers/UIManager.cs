@@ -97,12 +97,10 @@ namespace Cinderkeep.Gameplay
                 _furnaceUI.SetInventoryUI(_inventoryUI);
             }
 
-
-
-
-
-
-
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.transform.SetAsLastSibling();
+            }
 
 
         }

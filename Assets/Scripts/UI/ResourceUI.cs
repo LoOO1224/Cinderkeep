@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using TMPro;
 using UnityEngine;
 
@@ -15,6 +15,8 @@ public sealed class ResourceUI : MonoBehaviour
     [SerializeField] private TMP_Text _goldText;
     [SerializeField] private TMP_Text _mithrilText;
     [SerializeField] private TMP_Text _adamantiumText;
+    [SerializeField] private TMP_Text _ironIngotText;
+
 
     private PlayerModel _playerModel;
 
@@ -86,6 +88,8 @@ public sealed class ResourceUI : MonoBehaviour
         RefreshText(_goldText, _playerModel.Gold);
         RefreshText(_mithrilText, _playerModel.Mithril);
         RefreshText(_adamantiumText, _playerModel.Adamantium);
+        RefreshText(_ironIngotText, _playerModel.IronIngot);
+
     }
 
     private void RefreshText(TMP_Text textResource, int amount)

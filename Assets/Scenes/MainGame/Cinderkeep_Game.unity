@@ -694,6 +694,7 @@ MonoBehaviour:
   _goldText: {fileID: 1825594858}
   _mithrilText: {fileID: 577058407}
   _adamantiumText: {fileID: 389035421}
+  _ironIngotText: {fileID: 2023088896}
 --- !u!224 &32302954
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5806,6 +5807,7 @@ MonoBehaviour:
   _cinderHeartSkillSelectionUI: {fileID: 1049167856}
   _inventoryUIPrefab: {fileID: 6033830131174867818, guid: 115439f5a8fc0b646b8a6f4e044526a1, type: 3}
   _craftingUIPrefab: {fileID: 7279399005018231478, guid: 67a09530f864f0149925e7a696b1e768, type: 3}
+  _furnaceUIPrefab: {fileID: -1244180499602153187, guid: 9821abd1dcfb70c42815b7b34c5cd763, type: 3}
 --- !u!1 &328564007
 GameObject:
   m_ObjectHideFlags: 0
