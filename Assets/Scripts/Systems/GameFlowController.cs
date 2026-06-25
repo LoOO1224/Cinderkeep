@@ -357,6 +357,18 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void HandleBossDefeated(EnemyStatus enemyStatus)
     {
+
+        RequestClearByBossDefeated();
+
+    }
+
+    public void RequestClearByBossDefeated(BossStatus bossStatus)
+    {
+        RequestClearByBossDefeated();
+    }
+
+    private void RequestClearByBossDefeated()
+    {
         if (_isBossClearHandled)
         {
             return;
@@ -373,6 +385,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _isBossClearHandled = true;
+
         if (RunResultTracker.Instance != null)
         {
             RunResultTracker.Instance.RecordBossDefeated();

@@ -10,6 +10,7 @@ public sealed class Damageable : MonoBehaviour
 
     private PlayerStatus _playerStatus;
     private EnemyStatus _enemyStatus;
+    private BossStatus _bossStatus;
     private BuildingHp _buildingHp;
     private CinderHeart _cinderHeart;
     private float _currentHealth;
@@ -70,6 +71,7 @@ public sealed class Damageable : MonoBehaviour
     {
         _playerStatus = GetComponent<PlayerStatus>();
         _enemyStatus = GetComponent<EnemyStatus>();
+        _bossStatus = GetComponent<BossStatus>();
         _buildingHp = GetComponent<BuildingHp>();
         _cinderHeart = GetComponent<CinderHeart>();
     }
@@ -85,6 +87,12 @@ public sealed class Damageable : MonoBehaviour
         if (_playerStatus != null)
         {
             _playerStatus.TakeDamage(damage);
+            return true;
+        }
+
+        if (_bossStatus != null)
+        {
+            _bossStatus.TakeDamage(damage);
             return true;
         }
 
