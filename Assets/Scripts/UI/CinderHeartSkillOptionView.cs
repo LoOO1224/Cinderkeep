@@ -3,8 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// CinderHeart 스킬 선택창의 선택지 한 칸을 표시합니다.
-// 클릭 처리만 부모 UI로 넘기고, 효과 적용은 직접 하지 않습니다.
+// CinderHeart 보상 선택창의 단일 선택지를 표시하는 View입니다.
+// JSON의 표시명/설명을 그대로 보여주고, 클릭 이벤트는 부모 UI에만 전달합니다.
 public sealed class CinderHeartSkillOptionView : MonoBehaviour
 {
     [SerializeField] private Button _button;
@@ -32,8 +32,6 @@ public sealed class CinderHeartSkillOptionView : MonoBehaviour
 
     public void SetSkill(CinderHeartSkillData skillData, CinderHeartSkillSelectionUI owner)
     {
-        // cinderheart_skills.json에서 온 이름/설명을 그대로 표시합니다.
-        // 텍스트를 바꾸고 싶으면 스크립트가 아니라 JSON의 displayName, description을 수정합니다.
         Initialize();
         _skillData = skillData;
         _owner = owner;

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 namespace Cinderkeep.Gameplay
 {
     // 제작대 UI를 갱신하는 컴포넌트입니다.
@@ -20,11 +22,22 @@ namespace Cinderkeep.Gameplay
 
         [Header("Connected Components")]
         [SerializeField] private CraftingRecipeExecutor _recipeExecutor;
+        [SerializeField] private InventoryUI _inventoryUI;
 
         private readonly List<CraftingRecipeData> _availableRecipes = new List<CraftingRecipeData>();
         private CraftingStation _currentStation;
         private GameDataManager _gameDataManager;
         private PlayerModel _playerModel;
+
+        private bool _isOpen;
+
+        public bool IsOpen
+        {
+            get
+            {
+                return _isOpen;
+            }
+        }
 
         private void Start()
         {
@@ -44,12 +57,22 @@ namespace Cinderkeep.Gameplay
             ConnectRecipeExecutor();
             SetVisible(true);
             RefreshUI();
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.OpenEmbedded();
+            }
         }
 
         public void Close()
         {
             ClearRecipeSlots();
             SetVisible(false);
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.Close();
+            }
         }
 
         public void TryCraftRecipe(string recipeId)
@@ -59,6 +82,7 @@ namespace Cinderkeep.Gameplay
 
             if (_gameDataManager == null || _playerModel == null || _recipeExecutor == null)
             {
+                PlayCraftFailSfx();
                 RefreshMessage("제작 연결이 아직 준비되지 않았습니다.");
                 return;
             }
@@ -66,18 +90,25 @@ namespace Cinderkeep.Gameplay
             CraftingRecipeData recipeData = _gameDataManager.GetCraftingRecipe(recipeId);
             if (recipeData == null)
             {
+                PlayCraftFailSfx();
                 RefreshMessage("제작법을 찾을 수 없습니다.");
                 return;
             }
 
             if (_recipeExecutor.TryCraft(recipeData, _playerModel))
             {
+                PlayCraftSuccessSfx();
                 RefreshMessage(recipeData.DisplayName + " 제작 완료");
                 RefreshUI();
+                if (_inventoryUI != null)
+                {
+                    _inventoryUI.RefreshUI();
+                }
                 return;
             }
 
-            RefreshMessage("자원이 부족하거나 아직 제작할 수 없습니다.");
+            PlayCraftFailSfx();
+            RefreshMessage(GetCraftStateText(recipeData));
             RefreshUI();
         }
 
@@ -113,6 +144,7 @@ namespace Cinderkeep.Gameplay
         private void RefreshRecipes()
         {
             ClearRecipeSlots();
+            ConnectRecipeExecutor();
             if (_currentStation == null || _gameDataManager == null)
             {
                 return;
@@ -120,12 +152,15 @@ namespace Cinderkeep.Gameplay
 
             if (_recipeSlots == null)
             {
-                RefreshMessage("제작 슬롯 연결이 비어 있습니다.");
                 return;
             }
 
             int currentDay = GetCurrentDay();
             _currentStation.GetAvailableRecipes(_gameDataManager, currentDay, _availableRecipes);
+            if (_recipeExecutor != null)
+            {
+                _availableRecipes.RemoveAll(recipeData => _recipeExecutor.IsRecipeVisibleInCraftingUI(recipeData) == false);
+            }
 
             for (int i = 0; i < _availableRecipes.Count; i++)
             {
@@ -135,9 +170,14 @@ namespace Cinderkeep.Gameplay
                     return;
                 }
 
+                if (_recipeSlots[i] == null)
+                {
+                    continue;
+                }
+
                 CraftingRecipeData recipeData = _availableRecipes[i];
                 bool canCraft = CanCraftRecipe(recipeData);
-                _recipeSlots[i].SetRecipe(recipeData, canCraft, this);
+                _recipeSlots[i].SetRecipe(recipeData, canCraft, GetCraftStateText(recipeData), this);
             }
         }
 
@@ -147,8 +187,17 @@ namespace Cinderkeep.Gameplay
             {
                 return false;
             }
-
             return _recipeExecutor.CanCraft(recipeData, _playerModel);
+        }
+
+        private string GetCraftStateText(CraftingRecipeData recipeData)
+        {
+            if (_recipeExecutor == null || _playerModel == null)
+            {
+                return "제작 연결 필요";
+            }
+
+            return _recipeExecutor.GetCraftStateText(recipeData, _playerModel);
         }
 
         private int GetCurrentDay()
@@ -217,6 +266,8 @@ namespace Cinderkeep.Gameplay
 
         private void SetVisible(bool isVisible)
         {
+            _isOpen = isVisible;
+
             if (_rootObject == null)
             {
                 gameObject.SetActive(isVisible);
@@ -224,6 +275,50 @@ namespace Cinderkeep.Gameplay
             }
 
             _rootObject.SetActive(isVisible);
+        }
+
+        private void PlayCraftSuccessSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayCraftSuccess();
+        }
+
+        private void PlayCraftFailSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayCraftFail();
+        }
+
+        private SoundManager GetSoundManager()
+        {
+            if (GameManager.Inst == null)
+            {
+                return null;
+            }
+
+            return GameManager.Inst.GetSoundManager();
+        }
+
+        // 제작대 상호작용 키를 다시 눌렀을 때 같은 제작 UI를 닫기 위해 사용합니다.
+        public void Toggle(CraftingStation craftingStation, GameObject interactor)
+        {
+            if (_isOpen)
+            {
+                Close();
+                return;
+            }
+
+            OpenStation(craftingStation, interactor);
         }
     }
 }

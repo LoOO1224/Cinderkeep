@@ -8,6 +8,8 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// 에디터에서 씬 세팅, Check 리포트, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
+// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 Check 작업을 줄이는 데 사용합니다.
 // Cinderkeep_Game 씬에 인벤토리/장비 UI 기준 오브젝트를 배치하는 에디터 도구입니다.
 // 런타임에는 UI를 새로 만들지 않고, 이 도구로 미리 만든 오브젝트를 켜고 끄는 방식으로 사용합니다.
 public static class CinderkeepInventoryUiSceneBuilder

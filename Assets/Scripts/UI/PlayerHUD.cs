@@ -1,9 +1,11 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-// 플레이어의 체력과 스태미나를 화면에 표시하는 HUD 컴포넌트입니다.
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
+// 플레이어의 체력, 스태미나, 포만도를 화면에 표시하는 HUD 컴포넌트입니다.
 // 실제 수치 계산은 PlayerStatus가 담당하고, 이 클래스는 UI 갱신만 담당합니다.
 public sealed class PlayerHUD : MonoBehaviour
 {
@@ -20,6 +22,11 @@ public sealed class PlayerHUD : MonoBehaviour
     [SerializeField] private Slider _staminaSlider;
     [SerializeField] private TMP_Text _staminaCurrentText;
     [SerializeField] private TMP_Text _staminaMaxText;
+
+    [Header("Satiety UI")]
+    [SerializeField] private Slider _satietySlider;
+    [SerializeField] private TMP_Text _satietyCurrentText;
+    [SerializeField] private TMP_Text _satietyMaxText;
 
     private void Start()
     {
@@ -46,6 +53,8 @@ public sealed class PlayerHUD : MonoBehaviour
 
         InitializeSlider(_healthSlider, _targetPlayerStatus.GetMaxHealth(), _targetPlayerStatus.GetCurrentHealth());
         InitializeSlider(_staminaSlider, _targetPlayerStatus.GetMaxStamina(), _targetPlayerStatus.GetCurrentStamina());
+        InitializeSlider(_satietySlider, _targetPlayerStatus.GetMaxSatiety(), _targetPlayerStatus.GetCurrentSatiety());
+
         RefreshHUD();
     }
 
@@ -58,11 +67,16 @@ public sealed class PlayerHUD : MonoBehaviour
 
         RefreshSlider(_healthSlider, _targetPlayerStatus.GetCurrentHealth());
         RefreshSlider(_staminaSlider, _targetPlayerStatus.GetCurrentStamina());
+        RefreshSlider(_satietySlider, _targetPlayerStatus.GetCurrentSatiety());
 
         RefreshText(_healthCurrentText, _targetPlayerStatus.GetCurrentHealth());
         RefreshText(_healthMaxText, _targetPlayerStatus.GetMaxHealth());
+
         RefreshText(_staminaCurrentText, _targetPlayerStatus.GetCurrentStamina());
         RefreshText(_staminaMaxText, _targetPlayerStatus.GetMaxStamina());
+
+        RefreshText(_satietyCurrentText, _targetPlayerStatus.GetCurrentSatiety());
+        RefreshText(_satietyMaxText, _targetPlayerStatus.GetMaxSatiety());
     }
 
     private void InitializeSlider(Slider slider, float maxValue, float currentValue)

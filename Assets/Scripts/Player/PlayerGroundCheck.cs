@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 public sealed class PlayerGroundCheck : MonoBehaviour
 {
     private Collider _playerCollider;

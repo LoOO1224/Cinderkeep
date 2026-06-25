@@ -5,15 +5,17 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
+// 에디터에서 씬 세팅, Check 리포트, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
+// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 Check 작업을 줄이는 데 사용합니다.
 public static class CinderkeepEnemySpawnSceneBuilder
 {
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
     private const string EnemyPrefabFolderPath = "Assets/Prefabs/Enemy";
     private const string MaterialFolderPath = "Assets/Materials/Generated";
 
-    private const string MageRedPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageRed.prefab";
-    private const string MagePurplePath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MagePurple.prefab";
-    private const string PlantPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous Plant-Green.prefab";
+    private const string MageRedPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MageRed.prefab";
+    private const string MagePurplePath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MagePurple.prefab";
+    private const string PlantPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous Plant-Green.prefab";
 
     [MenuItem("Cinderkeep/Setup Enemy Spawn Scene")]
     public static void SetupEnemySpawnScene()

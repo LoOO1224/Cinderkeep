@@ -1,0 +1,32 @@
+{
+  "Items": [
+    { "_id": "result_status", "_group": "Result", "_label": "Status", "_statKey": "result_status", "_sortOrder": 10 },
+    { "_id": "reached_day", "_group": "Result", "_label": "Reached Day", "_statKey": "reached_day", "_sortOrder": 20 },
+    { "_id": "survival_time", "_group": "Result", "_label": "Survival Time", "_statKey": "survival_time", "_sortOrder": 30 },
+    { "_id": "failure_reason", "_group": "Result", "_label": "Failure Reason", "_statKey": "failure_reason", "_sortOrder": 40 },
+    { "_id": "monster_kills", "_group": "Combat", "_label": "Monster Kills", "_statKey": "monster_kills", "_sortOrder": 100 },
+    { "_id": "boss_defeated", "_group": "Combat", "_label": "Boss Defeated", "_statKey": "boss_defeated", "_sortOrder": 110 },
+    { "_id": "enemy_damage_dealt", "_group": "Combat", "_label": "Player Damage Dealt", "_statKey": "enemy_damage_dealt", "_sortOrder": 120 },
+    { "_id": "tower_damage_dealt", "_group": "Combat", "_label": "Tower Damage Dealt", "_statKey": "tower_damage_dealt", "_sortOrder": 130 },
+    { "_id": "trap_damage_dealt", "_group": "Combat", "_label": "Trap Damage Dealt", "_statKey": "trap_damage_dealt", "_sortOrder": 140 },
+    { "_id": "player_damage_taken", "_group": "Defense", "_label": "Player Damage Taken", "_statKey": "player_damage_taken", "_sortOrder": 200 },
+    { "_id": "player_down_count", "_group": "Defense", "_label": "Player Downs", "_statKey": "player_down_count", "_sortOrder": 210 },
+    { "_id": "cinderheart_damage_taken", "_group": "Defense", "_label": "CinderHeart Damage Taken", "_statKey": "cinderheart_damage_taken", "_sortOrder": 220 },
+    { "_id": "wood_gained", "_group": "Resources", "_label": "Wood", "_statKey": "wood_gained", "_sortOrder": 300 },
+    { "_id": "stone_gained", "_group": "Resources", "_label": "Stone", "_statKey": "stone_gained", "_sortOrder": 310 },
+    { "_id": "iron_gained", "_group": "Resources", "_label": "Iron", "_statKey": "iron_gained", "_sortOrder": 320 },
+    { "_id": "gold_gained", "_group": "Resources", "_label": "Gold", "_statKey": "gold_gained", "_sortOrder": 330 },
+    { "_id": "mithril_gained", "_group": "Resources", "_label": "Mithril", "_statKey": "mithril_gained", "_sortOrder": 340 },
+    { "_id": "adamantium_gained", "_group": "Resources", "_label": "Adamantium", "_statKey": "adamantium_gained", "_sortOrder": 350 },
+    { "_id": "crafted_item_count", "_group": "Crafting / Building", "_label": "Crafted Items", "_statKey": "crafted_item_count", "_sortOrder": 400 },
+    { "_id": "placed_building_count", "_group": "Crafting / Building", "_label": "Placed Buildings", "_statKey": "placed_building_count", "_sortOrder": 410 },
+    { "_id": "destroyed_building_count", "_group": "Crafting / Building", "_label": "Destroyed Buildings", "_statKey": "destroyed_building_count", "_sortOrder": 420 },
+    { "_id": "upgraded_building_count", "_group": "Crafting / Building", "_label": "Upgraded Buildings", "_statKey": "upgraded_building_count", "_sortOrder": 430 },
+    { "_id": "trap_crowd_control_score", "_group": "Crafting / Building", "_label": "Trap CC Score", "_statKey": "trap_crowd_control_score", "_sortOrder": 440 },
+    { "_id": "raw_meat_picked_up", "_group": "Food", "_label": "Raw Meat Picked Up", "_statKey": "raw_meat_picked_up", "_sortOrder": 500 },
+    { "_id": "cooked_meat_created", "_group": "Food", "_label": "Cooked Meat Created", "_statKey": "cooked_meat_created", "_sortOrder": 510 },
+    { "_id": "food_eaten_count", "_group": "Food", "_label": "Food Eaten", "_statKey": "food_eaten_count", "_sortOrder": 520 },
+    { "_id": "satiety_restored", "_group": "Food", "_label": "Satiety Restored", "_statKey": "satiety_restored", "_sortOrder": 530 },
+    { "_id": "selected_cinderheart_skills", "_group": "CinderHeart", "_label": "Selected Upgrades", "_statKey": "selected_cinderheart_skills", "_sortOrder": 600 }
+  ]
+}

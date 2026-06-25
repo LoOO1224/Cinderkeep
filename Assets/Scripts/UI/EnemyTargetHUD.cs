@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 // 최근 공격한 적의 체력을 화면 상단에 표시하는 HUD 컴포넌트입니다.
 // EnemyStatus가 피격 사실을 알려주면 일정 시간 동안 체력바를 보여줍니다.
 public sealed class EnemyTargetHUD : MonoBehaviour

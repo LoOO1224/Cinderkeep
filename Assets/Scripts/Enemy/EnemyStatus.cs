@@ -1,15 +1,16 @@
-﻿using Cinderkeep.Gameplay;
+using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 
 // 몬스터의 체력을 관리하는 컴포넌트입니다.
-// 데미지 계산과 사망 처리를 담당하고, 이동/감지/공격 판단은 다른 컴포넌트가 담당합니다.
-// 기준: 적 체력 원본은 EnemyStatus입니다.
-// 적 체력 감소, HUD 갱신, 피격 알림, 사망 처리는 이 클래스에서만 관리합니다.
-// EnemyHp는 예전 작업과 연결하기 위한 호환용 전달자이며, 새 체력 기능은 이 클래스에 추가합니다.
+// 체력 감소, HUD 갱신, 피격 이벤트, 사망 이벤트를 한 곳에서 관리합니다.
 public sealed class EnemyStatus : MonoBehaviour
 {
     public static event Action<EnemyStatus> EnemyDamaged;
+    public static event Action<float> EnemyDamagedByAmountGlobal;
+    public static event Action<EnemyStatus> EnemyDiedGlobal;
+
+    public event Action<EnemyStatus> Died;
 
     [Header("Health")]
     [Tooltip("몬스터 최대 체력입니다. EnemyData로 초기화되며, 데이터가 없을 때 fallback 값으로 사용됩니다.")]
@@ -64,6 +65,16 @@ public sealed class EnemyStatus : MonoBehaviour
         InitializeHealth(enemyData.Health);
     }
 
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        InitializeHealth(bossData.Health);
+    }
+
     public void ResetHealth(float maxHealth)
     {
         InitializeHealth(maxHealth);
@@ -89,9 +100,10 @@ public sealed class EnemyStatus : MonoBehaviour
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
         RefreshHud();
         NotifyEnemyDamaged();
+        NotifyEnemyDamagedByAmount(damage);
         AlertByDamage();
 
-        Debug.Log("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
 
         if (IsDead)
         {
@@ -156,9 +168,21 @@ public sealed class EnemyStatus : MonoBehaviour
         EnemyDamaged(this);
     }
 
+    private void NotifyEnemyDamagedByAmount(float damage)
+    {
+        if (EnemyDamagedByAmountGlobal == null)
+        {
+            return;
+        }
+
+        EnemyDamagedByAmountGlobal(damage);
+    }
+
     private void ProcessDeath()
     {
-        Debug.Log("[EnemyStatus] " + gameObject.name + " 사망 처리");
+        global::CinderkeepLog.Verbose("[EnemyStatus] " + gameObject.name + " 사망 처리");
+        NotifyDied();
+        NotifyEnemyDiedGlobal();
 
         if (_deactivateOnDeath == false)
         {
@@ -166,5 +190,25 @@ public sealed class EnemyStatus : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+
+    private void NotifyDied()
+    {
+        if (Died == null)
+        {
+            return;
+        }
+
+        Died(this);
+    }
+
+    private void NotifyEnemyDiedGlobal()
+    {
+        if (EnemyDiedGlobal == null)
+        {
+            return;
+        }
+
+        EnemyDiedGlobal(this);
     }
 }

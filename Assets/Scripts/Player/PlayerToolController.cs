@@ -1,11 +1,25 @@
-﻿using Cinderkeep.Gameplay;
+using Cinderkeep.Gameplay;
 using UnityEngine;
+using System;
 
-// 플레이어가 현재 들고 있는 도구를 관리하는 컴포넌트입니다.
-// 현재 단계에서는 1번 도끼, 2번 곡괭이, 3번 맨손으로 연결합니다.
-// 도구의 세부 수치는 tools.json에서 가져오고, 데이터가 없으면 기존 타입만 사용합니다.
+// 1인칭 플레이어의 1~7 퀵슬롯 입력과 현재 장착 도구/음식 사용을 처리합니다.
+// 도구 수치는 tools.json에서 읽고, 비도구 아이템은 장비/음식 흐름으로 넘깁니다.
 public sealed class PlayerToolController : MonoBehaviour
 {
+    public const string HandStoneToolDataId = "hand_stone";
+    public static event Action<string, float> FoodEatenGlobal;
+
+    private static readonly KeyCode[] QuickSlotKeys =
+    {
+        KeyCode.Alpha1,
+        KeyCode.Alpha2,
+        KeyCode.Alpha3,
+        KeyCode.Alpha4,
+        KeyCode.Alpha5,
+        KeyCode.Alpha6,
+        KeyCode.Alpha7
+    };
+
     [Header("Tool Keys")]
     [Tooltip("도끼를 장착하는 입력 키입니다.")]
     [SerializeField] private KeyCode _axeKey = KeyCode.Alpha1;
@@ -62,7 +76,7 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void Start()
     {
-        SetCurrentToolDataIdByType(_currentToolType);
+        EquipQuickSlot(0);
     }
 
     private void Update()
@@ -74,6 +88,19 @@ public sealed class PlayerToolController : MonoBehaviour
     {
         _currentToolType = toolType;
         SetCurrentToolDataIdByType(toolType);
+    }
+
+    public void EquipToolData(string toolDataId)
+    {
+        if (string.IsNullOrEmpty(toolDataId))
+        {
+            EquipTool(GatherToolType.None);
+            return;
+        }
+
+        _currentToolDataId = toolDataId;
+        ToolData toolData = GetCurrentToolData();
+        _currentToolType = ResolveToolType(toolData, toolDataId);
     }
 
     public bool HasRequiredTool(GatherToolType requiredToolType)
@@ -109,6 +136,154 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void ReadToolInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
+        if (TryReadQuickSlotInput())
+        {
+            return;
+        }
+
+        ReadLegacyToolInputIfInventoryIsMissing();
+    }
+
+    private bool TryReadQuickSlotInput()
+    {
+        for (int i = 0; i < QuickSlotKeys.Length; i++)
+        {
+            if (CinderkeepInput.WasKeyPressedThisFrame(QuickSlotKeys[i]) == false)
+            {
+                continue;
+            }
+
+            EquipQuickSlot(i);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void EquipQuickSlot(int slotIndex)
+    {
+        PlayerInventoryModel inventoryModel = GetInventoryModel();
+        if (inventoryModel == null)
+        {
+            EquipLegacySlotFallback(slotIndex);
+            return;
+        }
+
+        InventoryItemModel itemModel = inventoryModel.GetQuickSlotItem(slotIndex);
+        if (itemModel == null || itemModel.IsEmpty)
+        {
+            EquipTool(GatherToolType.None);
+            return;
+        }
+
+        if (itemModel.ItemType != InventoryItemType.Tool)
+        {
+            TryUseNonToolQuickSlot(itemModel, slotIndex, inventoryModel);
+            EquipTool(GatherToolType.None);
+            return;
+        }
+
+        EquipToolData(itemModel.ItemId);
+    }
+
+    private bool TryUseNonToolQuickSlot(InventoryItemModel itemModel, int slotIndex, PlayerInventoryModel inventoryModel)
+    {
+        if (itemModel == null || itemModel.IsEmpty || GameManager.Inst == null)
+        {
+            return false;
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Food)
+        {
+            return TryEatFoodQuickSlot(itemModel, slotIndex, inventoryModel);
+        }
+
+        PlayerEquipmentModel equipmentModel = GameManager.Inst.PlayerEquipmentModel;
+        if (equipmentModel == null)
+        {
+            return false;
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Weapon)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Weapon);
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Helmet)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Helmet);
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Armor)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Armor);
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Boots)
+        {
+            return equipmentModel.TryEquipItem(itemModel, EquipmentSlotType.Boots);
+        }
+
+        return false;
+    }
+
+    private bool TryEatFoodQuickSlot(InventoryItemModel itemModel, int slotIndex, PlayerInventoryModel inventoryModel)
+    {
+        if (inventoryModel == null || FoodItemIds.IsFoodItem(itemModel.ItemId) == false)
+        {
+            return false;
+        }
+
+        PlayerStatus playerStatus = FindFirstObjectByType<PlayerStatus>();
+        if (playerStatus == null)
+        {
+            return false;
+        }
+
+        float restoreAmount = FoodItemIds.GetSatietyRestoreAmount(itemModel.ItemId);
+        if (restoreAmount <= 0f)
+        {
+            return false;
+        }
+
+        playerStatus.EatFood(restoreAmount);
+        inventoryModel.TryConsumeQuickSlotItem(slotIndex, 1);
+        NotifyFoodEaten(itemModel.ItemId, restoreAmount);
+        return true;
+    }
+
+    private void NotifyFoodEaten(string itemId, float restoreAmount)
+    {
+        if (FoodEatenGlobal == null || restoreAmount <= 0f)
+        {
+            return;
+        }
+
+        FoodEatenGlobal(itemId, restoreAmount);
+    }
+
+    private PlayerInventoryModel GetInventoryModel()
+    {
+        if (GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        return GameManager.Inst.PlayerInventoryModel;
+    }
+
+    private void ReadLegacyToolInputIfInventoryIsMissing()
+    {
+        if (GetInventoryModel() != null)
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasKeyPressedThisFrame(_axeKey))
         {
             EquipTool(GatherToolType.Axe);
@@ -125,6 +300,23 @@ public sealed class PlayerToolController : MonoBehaviour
         {
             EquipTool(GatherToolType.None);
         }
+    }
+
+    private void EquipLegacySlotFallback(int slotIndex)
+    {
+        if (slotIndex == 0)
+        {
+            EquipTool(GatherToolType.Axe);
+            return;
+        }
+
+        if (slotIndex == 1)
+        {
+            EquipTool(GatherToolType.Pickaxe);
+            return;
+        }
+
+        EquipTool(GatherToolType.None);
     }
 
     private void SetCurrentToolDataIdByType(GatherToolType toolType)
@@ -152,5 +344,34 @@ public sealed class PlayerToolController : MonoBehaviour
         }
 
         return 1;
+    }
+
+    private GatherToolType ResolveToolType(ToolData toolData, string toolDataId)
+    {
+        if (toolData != null)
+        {
+            GatherToolType parsedToolType;
+            if (System.Enum.TryParse(toolData.ToolType, true, out parsedToolType))
+            {
+                return parsedToolType;
+            }
+        }
+
+        if (toolDataId == HandStoneToolDataId)
+        {
+            return GatherToolType.Axe;
+        }
+
+        if (toolDataId.Contains("pickaxe"))
+        {
+            return GatherToolType.Pickaxe;
+        }
+
+        if (toolDataId.Contains("axe"))
+        {
+            return GatherToolType.Axe;
+        }
+
+        return GatherToolType.None;
     }
 }

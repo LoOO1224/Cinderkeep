@@ -5,10 +5,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 밤을 넘긴 뒤 CinderHeart 보상 스킬 3개를 보여주는 UI입니다.
-// UI 표시와 버튼 선택만 담당하고, 실제 효과 적용은 CinderHeartSkillApplier에 위임합니다.
+// CinderHeart 아침 보상 3택을 보여주고 선택 이벤트만 전달하는 UI입니다.
+// 실제 효과 적용은 CinderHeartSkillApplier가 담당하므로 이 클래스는 표시와 버튼 흐름만 관리합니다.
 public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 {
+    public static event Action<CinderHeartSkillData> SkillSelectedGlobal;
+
     [SerializeField] private GameObject _rootObject;
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private CinderHeartSkillOptionView[] _optionViews;
@@ -18,6 +20,7 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
     private Action _onClosed;
     private bool _isInitialized;
     private bool _isOpen;
+    private bool _canSkipCurrentSelection;
 
     public void Initialize()
     {
@@ -54,9 +57,12 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 
         if (_titleText != null)
         {
-            _titleText.text = "셋 중에 하나를 고르시오";
+            _titleText.text = "불씨 보상 하나를 선택하세요";
         }
 
+        bool hasSelectableOptions = HasSelectableOptions(skillOptions);
+        _canSkipCurrentSelection = hasSelectableOptions == false;
+        SetSkipButtonVisible(_canSkipCurrentSelection);
         ApplySkillOptions(skillOptions);
         SetRootActive(true);
     }
@@ -64,12 +70,13 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
     public void Close()
     {
         _isOpen = false;
+        _canSkipCurrentSelection = false;
         SetRootActive(false);
     }
 
     public void SelectSkill(CinderHeartSkillData skillData)
     {
-        if (_isOpen == false)
+        if (_isOpen == false || skillData == null)
         {
             return;
         }
@@ -79,13 +86,31 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
             _skillApplier.ApplySkill(skillData);
         }
 
+        NotifySkillSelected(skillData);
+        PlayRewardSelectSfx();
         CloseAndNotify();
+    }
+
+    private bool HasSelectableOptions(IReadOnlyList<CinderHeartSkillData> skillOptions)
+    {
+        if (skillOptions == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < skillOptions.Count; i++)
+        {
+            if (skillOptions[i] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void ApplySkillOptions(IReadOnlyList<CinderHeartSkillData> skillOptions)
     {
-        // GameFlowController가 넘긴 CinderHeartSkillData를 3개의 선택지 UI에만 표시합니다.
-        // 실제 수치 적용은 CinderHeartSkillApplier가 맡으므로 이 UI는 표시와 선택 전달만 담당합니다.
         if (_optionViews == null)
         {
             return;
@@ -111,11 +136,12 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 
     private void HandleSkipButtonClicked()
     {
-        if (_isOpen == false)
+        if (_isOpen == false || _canSkipCurrentSelection == false)
         {
             return;
         }
 
+        PlayUiBackSfx();
         CloseAndNotify();
     }
 
@@ -140,5 +166,57 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
         }
 
         gameObject.SetActive(isActive);
+    }
+
+    private void SetSkipButtonVisible(bool isVisible)
+    {
+        if (_skipButton == null)
+        {
+            return;
+        }
+
+        _skipButton.gameObject.SetActive(isVisible);
+    }
+
+    private void PlayRewardSelectSfx()
+    {
+        SoundManager soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            return;
+        }
+
+        soundManager.PlayRewardSelect();
+    }
+
+    private void NotifySkillSelected(CinderHeartSkillData skillData)
+    {
+        if (SkillSelectedGlobal == null)
+        {
+            return;
+        }
+
+        SkillSelectedGlobal(skillData);
+    }
+
+    private void PlayUiBackSfx()
+    {
+        SoundManager soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            return;
+        }
+
+        soundManager.PlayUiBack();
+    }
+
+    private SoundManager GetSoundManager()
+    {
+        if (GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        return GameManager.Inst.GetSoundManager();
     }
 }

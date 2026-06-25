@@ -3,32 +3,28 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 3일 게임 루프의 페이즈 전환을 지휘하는 컨트롤러입니다.
-// 실제 전투, UI 표시, 적 행동, 스폰 지점 제어는 각 전용 컴포넌트가 담당합니다.
-// 이 클래스는 현재 페이즈에서 다음 페이즈로 넘어가는 순서만 관리합니다.
+// 낮, 밤, 아침 보상, 보스전, 클리어/게임오버로 이어지는 한 판의 흐름을 관리합니다.
+// 스폰 실행은 GameFlowEnemySpawnDirector에 맡기고, 이 클래스는 페이즈 전환과 보상 선택 타이밍을 결정합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
+    private const int MorningRewardOptionCount = 3;
+
     [Header("Flow Settings")]
-    [Tooltip("낮, 밤, 아침 보상, 보스 접근 시간의 fallback 설정입니다.")]
     [SerializeField] private GameFlowSettings _gameFlowSettings = new GameFlowSettings();
 
     [Header("Flow Data")]
-    [Tooltip("true이면 game_flow_phases.json의 페이즈 시간을 우선 사용합니다.")]
     [SerializeField] private bool _useGameFlowPhaseData = true;
 
     [Header("Enemy Spawn Director")]
-    [Tooltip("현재 낮, 밤, 보스 페이즈에 맞춰 적 스폰 지점들을 켜고 끄는 컴포넌트입니다.")]
     [SerializeField] private GameFlowEnemySpawnDirector _enemySpawnDirector;
 
     [Header("CinderHeart Reward")]
-    [Tooltip("아침 보상 페이즈에 CinderHeart 스킬 선택창을 엽니다.")]
     [SerializeField] private bool _openCinderHeartSkillOnMorningReward = true;
-    [Tooltip("아침 보상에서 고정 노출할 CinderHeart 스킬 ID입니다. 랜덤 선택은 후속 작업에서 분리합니다.")]
     [SerializeField] private string[] _morningRewardSkillIds =
     {
-        "cinderheart_attack_damage_5",
-        "cinderheart_max_health_100",
-        "cinderheart_player_heal_30"
+        "cinder_spark_arrow",
+        "rekindled_core",
+        "warm_pulse"
     };
 
     private GameManager _gameManager;
@@ -36,26 +32,23 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private bool _isInitialized;
     private bool _isFlowRunning;
     private bool _isWaitingForCinderHeartSkillSelection;
+    private bool _isBossClearHandled;
     private float _previousTimeScale = 1f;
 
     public bool IsInitialized
     {
-        get
-        {
-            return _isInitialized;
-        }
+        get { return _isInitialized; }
+    }
+
+    public bool IsWaitingForCinderHeartSkillSelection
+    {
+        get { return _isWaitingForCinderHeartSkillSelection; }
     }
 
     public void SetGameManager(GameManager gameManager)
     {
         _gameManager = gameManager;
-        if (_gameManager == null)
-        {
-            _gameRunModel = null;
-            return;
-        }
-
-        _gameRunModel = _gameManager.GameRunModel;
+        _gameRunModel = _gameManager == null ? null : _gameManager.GameRunModel;
     }
 
     public void Initialize()
@@ -95,10 +88,16 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
         _gameRunModel.StartRun();
         _isFlowRunning = true;
+        _isBossClearHandled = false;
         StartDay(GameRunModel.FirstDay);
     }
 
     public void StopFlowAsGameOver()
+    {
+        StopFlow();
+    }
+
+    public void StopFlow()
     {
         _isFlowRunning = false;
         RestoreTimeScaleIfRewardSelectionIsOpen();
@@ -116,6 +115,13 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         RestoreTimeScaleIfRewardSelectionIsOpen();
         StopEnemySpawn();
         _gameRunModel.ClearRun();
+
+        if (_gameManager == null || _gameManager.GetUIManager() == null)
+        {
+            return;
+        }
+
+        _gameManager.GetUIManager().OpenClearPanel();
     }
 
     private void UpdateFlowTime()
@@ -125,9 +131,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return;
         }
 
-        float remainingTime = _gameRunModel.RemainingTime - Time.deltaTime;
-        _gameRunModel.SetRemainingTime(remainingTime);
-
+        _gameRunModel.SetRemainingTime(_gameRunModel.RemainingTime - Time.deltaTime);
         if (_gameRunModel.RemainingTime > 0f)
         {
             return;
@@ -138,17 +142,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private bool CanUpdateFlow()
     {
-        if (_isFlowRunning == false)
-        {
-            return false;
-        }
-
-        if (_gameRunModel == null)
-        {
-            return false;
-        }
-
-        if (_gameRunModel.IsPlaying == false)
+        if (_isFlowRunning == false || _gameRunModel == null || _gameRunModel.IsPlaying == false)
         {
             return false;
         }
@@ -158,12 +152,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return false;
         }
 
-        if (_isWaitingForCinderHeartSkillSelection == true)
-        {
-            return false;
-        }
-
-        return true;
+        return _isWaitingForCinderHeartSkillSelection == false;
     }
 
     private void AdvancePhase()
@@ -187,10 +176,13 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void StartDay(int day)
     {
+        global::HandStonePickupSceneBootstrap.ResetDailyPickups();
+        global::FoodPickupSceneBootstrap.ResetDailyFoodPickups();
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Day, day, _gameFlowSettings.DayDuration));
         StartEnemySpawn(EnemySpawnMode.Day);
+        PlayPhaseBgm(GameRunPhase.Day);
     }
 
     private void StartNight()
@@ -198,6 +190,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.Night);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Night, _gameRunModel.Day, _gameFlowSettings.NightDuration));
         StartEnemySpawn(EnemySpawnMode.Night);
+        PlayPhaseBgm(GameRunPhase.Night);
     }
 
     private void FinishNight()
@@ -220,6 +213,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             GameRunPhase.MorningReward,
             _gameRunModel.Day,
             _gameFlowSettings.MorningRewardDuration));
+        PlayPhaseBgm(GameRunPhase.MorningReward);
         TryOpenCinderHeartSkillSelection();
     }
 
@@ -231,25 +225,48 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void StartBossApproach()
     {
+        _isBossClearHandled = false;
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(
             GameRunPhase.BossApproach,
             _gameRunModel.Day,
             _gameFlowSettings.BossApproachDuration));
-        StartEnemySpawn(EnemySpawnMode.Boss);
+        StartBossSpawn();
+        PlayPhaseBgm(GameRunPhase.BossApproach);
     }
 
     private void StartBossFight()
     {
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
         _gameRunModel.SetPhaseTime(0f);
-        StartEnemySpawn(EnemySpawnMode.Boss);
+        PlayPhaseBgm(GameRunPhase.BossFight);
+    }
+
+    private void PlayPhaseBgm(GameRunPhase phase)
+    {
+        if (_gameManager == null || _gameRunModel == null)
+        {
+            return;
+        }
+
+        SoundManager soundManager = _gameManager.GetSoundManager();
+        if (soundManager == null)
+        {
+            return;
+        }
+
+        GameFlowPhaseData phaseData = GetPhaseData(phase, _gameRunModel.Day);
+        string bgmKey = phaseData == null ? null : phaseData.BgmKey;
+        soundManager.PlayBgmForPhase(phase, bgmKey);
     }
 
     private float GetPhaseDuration(GameRunPhase phase, int day, float fallbackDuration)
     {
-        // 낮/밤/아침/보스 시간은 game_flow_phases.json에서 먼저 가져옵니다.
-        // JSON 값이 비어 있거나 잘못되면 Inspector의 GameFlowSettings 값을 fallback으로 사용합니다.
+        if (GameLaunchSettings.TryGetDurationOverride(phase, out float launchModeDuration))
+        {
+            return launchModeDuration;
+        }
+
         GameFlowPhaseData phaseData = GetPhaseData(phase, day);
         if (phaseData != null && phaseData.DurationSeconds > 0f)
         {
@@ -277,7 +294,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         foreach (KeyValuePair<string, GameFlowPhaseData> pair in phaseDataList)
         {
             GameFlowPhaseData phaseData = pair.Value;
-            if (IsPhaseDataMatched(phaseData, day, phaseName) == true)
+            if (IsPhaseDataMatched(phaseData, day, phaseName))
             {
                 return phaseData;
             }
@@ -288,32 +305,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private bool CanUseGameFlowPhaseData()
     {
-        if (_useGameFlowPhaseData == false)
-        {
-            return false;
-        }
-
-        if (GameManager.Inst == null)
-        {
-            return false;
-        }
-
-        if (GameManager.Inst.GetGameDataManager() == null)
-        {
-            return false;
-        }
-
-        return true;
+        return _useGameFlowPhaseData
+            && GameManager.Inst != null
+            && GameManager.Inst.GetGameDataManager() != null;
     }
 
     private bool IsPhaseDataMatched(GameFlowPhaseData phaseData, int day, string phaseName)
     {
-        if (phaseData == null)
-        {
-            return false;
-        }
-
-        if (phaseData.Day != day)
+        if (phaseData == null || phaseData.Day != day)
         {
             return false;
         }
@@ -331,6 +330,21 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _enemySpawnDirector.StartSpawn(spawnMode, _gameRunModel.Day);
     }
 
+    private void StartBossSpawn()
+    {
+        if (_enemySpawnDirector == null)
+        {
+            Debug.LogWarning("GameFlowController: 보스 스폰 디렉터가 없어 3일차 보스를 시작할 수 없습니다.");
+            return;
+        }
+
+        bool isBossSpawnStarted = _enemySpawnDirector.StartSpawn(EnemySpawnMode.Boss, _gameRunModel.Day, HandleBossDefeated);
+        if (isBossSpawnStarted == false)
+        {
+            Debug.LogWarning("GameFlowController: 활성화 가능한 보스 스폰 지점이 없습니다.");
+        }
+    }
+
     private void StopEnemySpawn()
     {
         if (_enemySpawnDirector == null)
@@ -341,16 +355,35 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _enemySpawnDirector.StopSpawn();
     }
 
-    private void TryOpenCinderHeartSkillSelection()
+    private void HandleBossDefeated(EnemyStatus enemyStatus)
     {
-        // MorningReward 페이즈에서 cinderheart_skills.json의 스킬 ID를 읽어 선택 UI를 엽니다.
-        // 선택 후보 랜덤화는 후속 작업이며, 현재는 _morningRewardSkillIds 배열 순서를 사용합니다.
-        if (_openCinderHeartSkillOnMorningReward == false)
+        if (_isBossClearHandled)
         {
             return;
         }
 
-        if (_gameManager == null)
+        if (_gameRunModel == null)
+        {
+            return;
+        }
+
+        if (_gameRunModel.Phase != GameRunPhase.BossApproach && _gameRunModel.Phase != GameRunPhase.BossFight)
+        {
+            return;
+        }
+
+        _isBossClearHandled = true;
+        if (RunResultTracker.Instance != null)
+        {
+            RunResultTracker.Instance.RecordBossDefeated();
+        }
+
+        ClearFlow();
+    }
+
+    private void TryOpenCinderHeartSkillSelection()
+    {
+        if (_openCinderHeartSkillOnMorningReward == false || _gameManager == null)
         {
             return;
         }
@@ -385,30 +418,22 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return skillOptions;
         }
 
-        if (_morningRewardSkillIds == null)
-        {
-            return skillOptions;
-        }
+        CinderHeartRewardOptionSelector selector = new CinderHeartRewardOptionSelector(
+            _morningRewardSkillIds,
+            MorningRewardOptionCount);
+        int currentDay = _gameRunModel == null ? GameRunModel.FirstDay : _gameRunModel.Day;
+        return selector.SelectOptions(gameDataManager, currentDay, IsPlayerDead());
+    }
 
-        for (int i = 0; i < _morningRewardSkillIds.Length; i++)
-        {
-            CinderHeartSkillData skillData = gameDataManager.GetCinderHeartSkill(_morningRewardSkillIds[i]);
-            if (skillData == null)
-            {
-                continue;
-            }
-
-            skillOptions.Add(skillData);
-        }
-
-        return skillOptions;
+    private bool IsPlayerDead()
+    {
+        PlayerStatus playerStatus = UnityEngine.Object.FindFirstObjectByType<PlayerStatus>();
+        return playerStatus != null && playerStatus.IsDead();
     }
 
     private void PauseGameForCinderHeartSkillSelection()
     {
-        // 보상 선택 중에는 전투/스폰/타이머가 흐르지 않게 Time.timeScale을 잠시 멈춥니다.
-        // UI를 닫을 때 RestoreTimeScaleIfRewardSelectionIsOpen에서 반드시 이전 값으로 복구합니다.
-        if (_isWaitingForCinderHeartSkillSelection == true)
+        if (_isWaitingForCinderHeartSkillSelection)
         {
             return;
         }
@@ -435,15 +460,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return;
         }
 
-        if (_previousTimeScale <= 0f)
-        {
-            Time.timeScale = 1f;
-        }
-        else
-        {
-            Time.timeScale = _previousTimeScale;
-        }
-
+        Time.timeScale = _previousTimeScale <= 0f ? 1f : _previousTimeScale;
         _isWaitingForCinderHeartSkillSelection = false;
     }
 

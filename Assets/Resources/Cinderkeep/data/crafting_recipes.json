@@ -597,6 +597,86 @@
       ]
     },
     {
+      "_id": "recipe_wood_slow_trap",
+      "_displayName": "Craft Wood Slow Trap",
+      "_resultDataType": "Building",
+      "_resultItemId": "wood_slow_trap",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 10
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 10
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_slow_trap",
+      "_displayName": "Craft Iron Slow Trap",
+      "_resultDataType": "Building",
+      "_resultItemId": "iron_slow_trap",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 15
+        },
+        {
+          "_resourceId": "IronIngot",
+          "_amount": 8
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_slow_trap",
+      "_displayName": "Craft Gold Slow Trap",
+      "_resultDataType": "Building",
+      "_resultItemId": "gold_slow_trap",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 20
+        },
+        {
+          "_resourceId": "GoldIngot",
+          "_amount": 8
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_slow_trap",
+      "_displayName": "Craft Adamantium Slow Trap",
+      "_resultDataType": "Building",
+      "_resultItemId": "adamantium_slow_trap",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 25
+        },
+        {
+          "_resourceId": "AdamantiumIngot",
+          "_amount": 5
+        }
+      ]
+    },
+    {
       "_id": "recipe_workbench",
       "_displayName": "Build Workbench",
       "_resultDataType": "Building",

@@ -1,16 +1,18 @@
 using Cinderkeep.Gameplay;
+using System;
 using UnityEngine;
 
-// GameFlowController가 알려준 현재 페이즈와 일차를 기준으로 적 스폰 지점들을 지휘합니다.
-// 실제 적 생성은 EnemySpawnPoint가 담당하고, 이 클래스는 어떤 스폰 지점을 켜고 끌지만 결정합니다.
+// GameFlowController가 알려준 현재 페이즈와 일차를 기준으로 EnemySpawnPoint들을 지휘합니다.
+// 실제 적 생성은 EnemySpawnPoint가 담당하고, 이 클래스는 어떤 스폰 지점을 켜고 끌지 결정합니다.
 public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
 {
     [Header("Enemy Spawn")]
-    [Tooltip("GameFlowController의 현재 페이즈에 맞춰 켜고 끌 적 스폰 지점 목록입니다.")]
+    [Tooltip("GameFlowController의 현재 페이즈에 맞춰 켜고 끌 EnemySpawnPoint 목록입니다.")]
     [SerializeField] private EnemySpawnPoint[] _enemySpawnPoints;
 
     private GameObjectManager _gameObjectManager;
     private EnemyLoopConnector _enemyLoopConnector;
+    private Action<EnemyStatus> _bossDefeatedHandler;
 
     public void Initialize(GameObjectManager gameObjectManager, EnemyLoopConnector enemyLoopConnector)
     {
@@ -19,14 +21,22 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
         InitializeEnemySpawnPoints();
     }
 
-    public void StartSpawn(EnemySpawnMode spawnMode, int day)
+    public bool StartSpawn(EnemySpawnMode spawnMode, int day)
+    {
+        return StartSpawn(spawnMode, day, null);
+    }
+
+    public bool StartSpawn(EnemySpawnMode spawnMode, int day, Action<EnemyStatus> bossDefeatedHandler)
     {
         if (_enemySpawnPoints == null)
         {
-            return;
+            return false;
         }
 
+        _bossDefeatedHandler = bossDefeatedHandler;
         EnemySpawnStep spawnStep = GetSpawnStep(spawnMode, day);
+        bool bossSpawnPointAssigned = false;
+        bool anySpawnPointActivated = false;
         for (int i = 0; i < _enemySpawnPoints.Length; i++)
         {
             EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
@@ -35,10 +45,33 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
                 continue;
             }
 
+            bool shouldActivate = true;
+            if (spawnMode == EnemySpawnMode.Boss)
+            {
+                shouldActivate = bossSpawnPointAssigned == false && spawnPoint.HasBossSpawnCandidate();
+                if (shouldActivate)
+                {
+                    bossSpawnPointAssigned = true;
+                }
+
+                spawnPoint.SetBossDefeatedHandler(_bossDefeatedHandler);
+            }
+            else
+            {
+                spawnPoint.SetBossDefeatedHandler(null);
+            }
+
             spawnPoint.SetSpawnStep(spawnStep);
-            spawnPoint.SetSpawnPointActive(true);
+            spawnPoint.SetSpawnPointActive(shouldActivate);
             spawnPoint.SetSpawnMode(spawnMode, day);
+
+            if (shouldActivate)
+            {
+                anySpawnPointActivated = true;
+            }
         }
+
+        return anySpawnPointActivated;
     }
 
     public void StopSpawn()
@@ -57,6 +90,8 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
             }
 
             spawnPoint.SetSpawnPointActive(false);
+            spawnPoint.SetBossDefeatedHandler(null);
+            spawnPoint.ClearSpawnedEnemies();
         }
     }
 

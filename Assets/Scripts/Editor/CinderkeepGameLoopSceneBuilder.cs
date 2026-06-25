@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+// 에디터에서 씬 세팅, Check 리포트, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
+// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 Check 작업을 줄이는 데 사용합니다.
 // Cinderkeep_Game 씬의 메인 게임 루프 연결을 갱신하는 에디터 도구입니다.
 // 팀원이 반복해서 수동 배치해야 하는 작업을 줄이기 위한 준비용 코드입니다.
 public static class CinderkeepGameLoopSceneBuilder
@@ -22,17 +24,17 @@ public static class CinderkeepGameLoopSceneBuilder
     private const string EnemyTag = "Enemy";
     private const string BuildTag = "Build";
 
-    private const string HeartModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Heart_01.fbx";
-    private const string FlameModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX.fbx";
-    private const string CrystalModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_01.fbx";
-    private const string RockModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_01.fbx";
-    private const string OreRockModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_04.fbx";
+    private const string HeartModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/FX_Heart_01.fbx";
+    private const string FlameModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX.fbx";
+    private const string CrystalModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_01.fbx";
+    private const string RockModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_01.fbx";
+    private const string OreRockModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_04.fbx";
     private const string TreeModelPath = "Assets/Arts/3DModels/Harvestables/SM_Resource_Tree.fbx";
     private const string StoneModelPath = "Assets/Arts/3DModels/Harvestables/SM_Resource_Stone.fbx";
     private const string AxePrefabPath = "Assets/Prefabs/Equipment/PF_Equipment_Axe.prefab";
-    private const string MageBlackPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageBlack.prefab";
-    private const string TowerModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_A.fbx";
-    private const string FireBowlPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
+    private const string MageBlackPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MageBlack.prefab";
+    private const string TowerModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_A.fbx";
+    private const string FireBowlPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
     private const string FontPath = "Assets/Fonts/NotoSansKR-Medium SDF3.asset";
 
     // 자원 테스트 필드에서 쓰는 재질 묶음입니다.
@@ -975,19 +977,32 @@ public static class CinderkeepGameLoopSceneBuilder
         ResourceUI resourceUi = SetupResourceUi(hudRoot);
 
         bool guideTextAlreadyExists = hudRoot.Find("Text_GameGuide") != null;
+        GameObject guideIconObject = GetOrCreateChild(hudRoot, "Image_GameGuideIcon").gameObject;
+        Image guideIcon = EnsureComponent<Image>(guideIconObject);
+        if (guideTextAlreadyExists == false)
+        {
+            guideIcon.color = new Color(1f, 0.9f, 0.42f, 0.95f);
+            guideIcon.raycastTarget = false;
+            SetRect(guideIcon.rectTransform, new Vector2(0f, 1f), new Vector2(34f, 34f), new Vector2(24f, -18f));
+        }
+
         GameObject guideTextObject = GetOrCreateChild(hudRoot, "Text_GameGuide").gameObject;
         TMP_Text guideText = EnsureComponent<TextMeshProUGUI>(guideTextObject);
         if (guideTextAlreadyExists == false)
         {
             guideText.text = "|  1:도끼  2:곡괭이  3:맨손  E:채집  좌클릭:공격  |";
-            guideText.fontSize = 18f;
+            guideText.fontSize = 20f;
             guideText.alignment = TextAlignmentOptions.Left;
             ApplyTmpFont(guideText);
-            SetRect(guideText.rectTransform, new Vector2(0f, 0f), new Vector2(760f, 40f), new Vector2(24f, 24f));
+            SetRect(guideText.rectTransform, new Vector2(0f, 1f), new Vector2(760f, 34f), new Vector2(72f, -20f));
         }
+
+        HudTutorialGuide tutorialGuide = EnsureComponent<HudTutorialGuide>(guideTextObject);
+        tutorialGuide.SetReferences(guideText, guideIcon);
 
         SetObjectReference(playerHud, "_targetPlayerStatus", player.GetComponent<PlayerStatus>());
         EditorUtility.SetDirty(resourceUi);
+        EditorUtility.SetDirty(tutorialGuide);
         EditorUtility.SetDirty(cinderHeart);
         EditorUtility.SetDirty(enemy);
     }

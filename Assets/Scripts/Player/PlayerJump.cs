@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // 플레이어 점프 입력을 담당하는 컴포넌트입니다.
 // 실제 이동 계산은 PlayerMovement가 가진 CharacterController 흐름을 사용합니다.
 public sealed class PlayerJump : MonoBehaviour
@@ -21,6 +23,11 @@ public sealed class PlayerJump : MonoBehaviour
 
     private void Update()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Space))
         {
             Jump();

@@ -3,6 +3,8 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// 에디터에서 씬 세팅, Check 리포트, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
+// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 Check 작업을 줄이는 데 사용합니다.
 public static class CinderkeepCinderHeartVisualSceneBuilder
 {
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";

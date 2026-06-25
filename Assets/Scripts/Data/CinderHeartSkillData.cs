@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// JSON에서 읽어오는 정적 데이터 구조입니다.
+// 이 파일에는 규칙 로직을 넣지 않고, 실제 처리는 Systems/Managers/Catalog 쪽에서 담당합니다.
 namespace Cinderkeep.Gameplay
 {
-    // CinderHeart 아침 보상 선택지 한 줄을 담는 Static Data입니다.
-    // 실제 적용은 CinderHeartSkillApplier가 담당하고, 이 클래스는 기획 데이터만 보관합니다.
+    // CinderHeart 아침 보상 선택지 한 줄을 담는 정적 데이터입니다.
+    // 실제 효과 적용은 CinderHeartSkillApplier가 담당하고, 이 클래스는 기획 수치만 보관합니다.
     [Serializable]
     public sealed class CinderHeartSkillData : GameDataBase
     {
@@ -74,7 +76,7 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // JsonUtility가 읽기 쉬운 Items 감싸기 구조입니다.
+    // JsonUtility가 읽을 수 있도록 Items 배열을 감싸는 카탈로그입니다.
     [Serializable]
     public sealed class CinderHeartSkillDataCatalog
     {

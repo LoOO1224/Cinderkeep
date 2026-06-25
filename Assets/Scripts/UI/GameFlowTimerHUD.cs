@@ -2,7 +2,7 @@ using Cinderkeep.Gameplay;
 using TMPro;
 using UnityEngine;
 
-// 현재 낮/밤 페이즈와 시간을 화면에 표시하는 HUD 컴포넌트입니다.
+// 현재 낮/밤/아침/보스 페이즈의 시간과 실행 모드를 표시하는 HUD 컴포넌트입니다.
 // 시간 계산은 GameRunModel을 읽고, 실제 페이즈 전환은 GameFlowController가 담당합니다.
 public sealed class GameFlowTimerHUD : MonoBehaviour
 {
@@ -13,7 +13,7 @@ public sealed class GameFlowTimerHUD : MonoBehaviour
     [Header("Text UI")]
     [Tooltip("현재 페이즈의 경과 시간과 총 시간을 표시하는 TMP 텍스트입니다.")]
     [SerializeField] private TMP_Text _timerText;
-    [Tooltip("현재 페이즈 이름과 목표 시간을 표시하는 TMP 텍스트입니다.")]
+    [Tooltip("현재 페이즈 이름과 실행 모드를 표시하는 TMP 텍스트입니다.")]
     [SerializeField] private TMP_Text _phaseText;
 
     private GameRunModel _gameRunModel;
@@ -84,7 +84,7 @@ public sealed class GameFlowTimerHUD : MonoBehaviour
             return;
         }
 
-        _phaseText.text = GetPhaseDisplayText(_gameRunModel.Phase);
+        _phaseText.text = GetPhaseDisplayText(_gameRunModel.Phase) + " / " + GameLaunchSettings.ModeDisplayName;
     }
 
     private string FormatTime(float time)
@@ -100,9 +100,9 @@ public sealed class GameFlowTimerHUD : MonoBehaviour
         switch (phase)
         {
             case GameRunPhase.Day:
-                return "낮 (3분)";
+                return "낮";
             case GameRunPhase.Night:
-                return "밤 (2분)";
+                return "밤";
             case GameRunPhase.MorningReward:
                 return "아침 정비";
             case GameRunPhase.BossApproach:

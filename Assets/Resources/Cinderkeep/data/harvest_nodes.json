@@ -58,7 +58,7 @@
       "_maxGatherCount": 1,
       "_respawnSeconds": 30,
       "_prefabKey": "PF_Resource_StonePickup",
-      "_materialKey": "MAT_Resource_Stone"
+      "_materialKey": "MAT_4_0_Stone"
     },
     {
       "_id": "rock_stone",

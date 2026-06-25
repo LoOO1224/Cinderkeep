@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
+// 적의 감지, 타깃 판단, 이동, 공격, 보스 클리어 연결 중 한 역할을 담당합니다.
+// AI 판단과 실제 행동 컴포넌트를 분리해 적 패턴이 늘어도 유지보수 가능하게 합니다.
 // 몬스터 머리 위 체력 UI를 표시하는 컴포넌트입니다.
 // 체력 계산과 사망 처리는 EnemyStatus가 담당하고, 이 스크립트는 화면 표시만 담당합니다.
 public sealed class EnemyHud : MonoBehaviour

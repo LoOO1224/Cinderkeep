@@ -169,6 +169,12 @@ Assets/ThirdParty/AssetStore/Free/DW_Terrain Texures/
 Assets/ThirdParty/AssetStore/Free/DW_Terrain Texures.meta
 Assets/ThirdParty/Free/MicroVerse-Extras/
 Assets/ThirdParty/Free/MicroVerse-Extras.meta
+Assets/ThirdParty/Free/AllSkyFree/
+Assets/ThirdParty/Free/AllSkyFree.meta
+Assets/ThirdParty/Free/Blink/
+Assets/ThirdParty/Free/Blink.meta
+Assets/ThirdParty/Free/FeonY/
+Assets/ThirdParty/Free/FeonY.meta
 Assets/ThirdParty/Free/DW_TerrainTextures/
 Assets/ThirdParty/Free/DW_TerrainTextures.meta
 Assets/ThirdParty/Free/DW_Terrain_Textures/
@@ -211,3 +217,4 @@ Assets/ThirdParty/PlayModeComponentSaver.meta
 /Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.PSD
 /Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.psd.meta
 /Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.PSD.meta
+ProjectSettings/Packages/com.unity.probuilder

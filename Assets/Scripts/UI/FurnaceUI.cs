@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 namespace Cinderkeep.Gameplay
 {
     // 용광로 UI를 갱신하는 컴포넌트입니다.
@@ -34,6 +36,15 @@ namespace Cinderkeep.Gameplay
 
         private FurnaceStation _currentFurnaceStation;
         private PlayerModel _playerModel;
+
+        private bool _isOpen;
+        public bool IsOpen
+        {
+            get
+            {
+                return _isOpen;
+            }
+        }
 
         private void OnEnable()
         {
@@ -88,17 +99,20 @@ namespace Cinderkeep.Gameplay
 
             if (_currentFurnaceStation == null || _playerModel == null)
             {
+                PlayFailSfx();
                 RefreshMessage("용광로 연결이 아직 준비되지 않았습니다.");
                 return;
             }
 
             if (_currentFurnaceStation.TryStartSmeltingByInputResource(_selectedInputResourceId, _selectedInputAmount, _playerModel))
             {
+                PlaySuccessSfx();
                 RefreshMessage("제련을 시작했습니다.");
                 RefreshUI();
                 return;
             }
 
+            PlayFailSfx();
             RefreshMessage("제련할 광석이 부족하거나 사용할 수 없는 재료입니다.");
             RefreshUI();
         }
@@ -109,17 +123,20 @@ namespace Cinderkeep.Gameplay
 
             if (_currentFurnaceStation == null || _playerModel == null)
             {
+                PlayFailSfx();
                 RefreshMessage("용광로 연결이 아직 준비되지 않았습니다.");
                 return;
             }
 
             if (_currentFurnaceStation.TryCollectOutput(_playerModel))
             {
+                PlaySuccessSfx();
                 RefreshMessage("주괴를 회수했습니다.");
                 RefreshUI();
                 return;
             }
 
+            PlayFailSfx();
             RefreshMessage("회수할 결과물이 없습니다.");
             RefreshUI();
         }
@@ -274,6 +291,8 @@ namespace Cinderkeep.Gameplay
 
         private void SetVisible(bool isVisible)
         {
+            _isOpen = isVisible;
+
             if (_rootObject == null)
             {
                 gameObject.SetActive(isVisible);
@@ -281,6 +300,38 @@ namespace Cinderkeep.Gameplay
             }
 
             _rootObject.SetActive(isVisible);
+        }
+
+        private void PlaySuccessSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiSuccess();
+        }
+
+        private void PlayFailSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiFail();
+        }
+
+        private SoundManager GetSoundManager()
+        {
+            if (GameManager.Inst == null)
+            {
+                return null;
+            }
+
+            return GameManager.Inst.GetSoundManager();
         }
     }
 }

@@ -21,6 +21,26 @@
       "_craftingRecipeId": ""
     },
     {
+      "_id": "hand_stone",
+      "_displayName": "Hand Stone",
+      "_toolType": "Axe",
+      "_tier": 1,
+      "_description": "A small loose stone used as the first weak gathering tool before crafted tools.",
+      "_damage": 2,
+      "_attackDistance": 1.75,
+      "_attackRadius": 0.28,
+      "_attackInterval": 1.05,
+      "_gatherPower": 1,
+      "_woodGatherMultiplier": 0.35,
+      "_stoneGatherMultiplier": 0.35,
+      "_ironGatherMultiplier": 0,
+      "_goldGatherMultiplier": 0,
+      "_adamantiumGatherMultiplier": 0,
+      "_targetResourceType": "Basic",
+      "_prefabKey": "PF_Equipment_HandStone",
+      "_craftingRecipeId": ""
+    },
+    {
       "_id": "stone_axe",
       "_displayName": "Stone Axe",
       "_toolType": "Axe",

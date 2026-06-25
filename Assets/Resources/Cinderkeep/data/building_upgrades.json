@@ -47,6 +47,30 @@
       "_craftingRecipeId": "recipe_adamantium_tower",
       "_requiredDay": 4,
       "_description": "Upgrade a gold tower into an adamantium tower."
+    },
+    {
+      "_id": "upgrade_trap_wood_to_iron",
+      "_fromBuildingId": "wood_slow_trap",
+      "_toBuildingId": "iron_slow_trap",
+      "_craftingRecipeId": "recipe_iron_slow_trap",
+      "_requiredDay": 2,
+      "_description": "Upgrade a wood slow trap into an iron slow trap."
+    },
+    {
+      "_id": "upgrade_trap_iron_to_gold",
+      "_fromBuildingId": "iron_slow_trap",
+      "_toBuildingId": "gold_slow_trap",
+      "_craftingRecipeId": "recipe_gold_slow_trap",
+      "_requiredDay": 3,
+      "_description": "Upgrade an iron slow trap into a gold slow trap."
+    },
+    {
+      "_id": "upgrade_trap_gold_to_adamantium",
+      "_fromBuildingId": "gold_slow_trap",
+      "_toBuildingId": "adamantium_slow_trap",
+      "_craftingRecipeId": "recipe_adamantium_slow_trap",
+      "_requiredDay": 4,
+      "_description": "Upgrade a gold slow trap into an adamantium slow trap."
     }
   ]
 }

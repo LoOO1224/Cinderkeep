@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cinderkeep.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -17,9 +18,8 @@ namespace Cinderkeep.UI.Editor
         private const string MainBackgroundPath = "Assets/Arts/MainMenu/MainMenu_Background.png";
         private const string SettingBackgroundPath = "Assets/Arts/MainMenu/Setting_Background.png";
         private const string KoreanFontPath = "Assets/Fonts/ChosunCentennial.ttf";
-        private const string BgmFirstPath = "Assets/Audio/BGM/Cinderkeep_BGM_V1.mp3";
-        private const string BgmSecondPath = "Assets/Audio/BGM/Cinderkeep_BGM_V1_2.mp3";
-        private const float BgmVolume = 0.3f;
+        private const string BgmFolderPath = "Assets/Resources/Cinderkeep/audio/bgm";
+        private const float BgmVolume = 0.7f;
 
         [MenuItem("Cinderkeep/Main Menu/Rebuild Main Menu")]
         public static void RebuildMainMenuScene()
@@ -110,10 +110,34 @@ namespace Cinderkeep.UI.Editor
 
         private static AudioClip[] LoadBgmClips()
         {
-            AudioClip[] bgmClips = new AudioClip[2];
-            bgmClips[0] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFirstPath);
-            bgmClips[1] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmSecondPath);
-            return bgmClips;
+            string[] bgmAssetGuids = AssetDatabase.FindAssets("t:AudioClip", new[] { BgmFolderPath });
+            List<string> bgmAssetPaths = new List<string>();
+            for (int i = 0; i < bgmAssetGuids.Length; i++)
+            {
+                string bgmAssetPath = AssetDatabase.GUIDToAssetPath(bgmAssetGuids[i]);
+                if (string.IsNullOrEmpty(bgmAssetPath))
+                {
+                    continue;
+                }
+
+                bgmAssetPaths.Add(bgmAssetPath);
+            }
+
+            bgmAssetPaths.Sort();
+
+            List<AudioClip> bgmClips = new List<AudioClip>();
+            for (int i = 0; i < bgmAssetPaths.Count; i++)
+            {
+                AudioClip bgmClip = AssetDatabase.LoadAssetAtPath<AudioClip>(bgmAssetPaths[i]);
+                if (bgmClip == null)
+                {
+                    continue;
+                }
+
+                bgmClips.Add(bgmClip);
+            }
+
+            return bgmClips.ToArray();
         }
 
         private static void CreateMainMenuCanvas(BgmBuildReferences bgmBuildReferences)
@@ -143,14 +167,15 @@ namespace Cinderkeep.UI.Editor
             CreateText("Text_Title", menuRoot, "Cinderkeep", 88, Color.white, TextAnchor.MiddleCenter, font, new Vector2(0.16f, 0.70f), new Vector2(0.84f, 0.84f));
             CreateText("Text_Subtitle", menuRoot, "불꽃 심장을 지키는 생존 방어 게임", 28, new Color(0.88f, 0.91f, 0.94f, 1f), TextAnchor.MiddleCenter, font, new Vector2(0.16f, 0.63f), new Vector2(0.84f, 0.70f));
 
-            Button startButton = CreateButton("Button_StartGame", menuRoot, "게임 시작하기", 34, new Color(0.20f, 0.48f, 0.32f, 0.96f), font, new Vector2(0.36f, 0.49f), new Vector2(0.64f, 0.57f));
-            Button settingsButton = CreateButton("Button_Settings", menuRoot, "설정", 34, new Color(0.18f, 0.30f, 0.46f, 0.96f), font, new Vector2(0.36f, 0.38f), new Vector2(0.64f, 0.46f));
-            Button quitButton = CreateButton("Button_QuitGame", menuRoot, "게임 끝내기", 34, new Color(0.46f, 0.16f, 0.16f, 0.96f), font, new Vector2(0.36f, 0.27f), new Vector2(0.64f, 0.35f));
+            Button startButton = CreateButton("Button_StartGame", menuRoot, "게임 시작", 34, new Color(0.20f, 0.48f, 0.32f, 0.96f), font, new Vector2(0.36f, 0.53f), new Vector2(0.64f, 0.61f));
+            Button testFastButton = CreateButton("Button_TestFastMode", menuRoot, "테스트초고속 모드", 34, new Color(0.34f, 0.29f, 0.56f, 0.96f), font, new Vector2(0.36f, 0.42f), new Vector2(0.64f, 0.50f));
+            Button settingsButton = CreateButton("Button_Settings", menuRoot, "설정", 34, new Color(0.18f, 0.30f, 0.46f, 0.96f), font, new Vector2(0.36f, 0.31f), new Vector2(0.64f, 0.39f));
+            Button quitButton = CreateButton("Button_QuitGame", menuRoot, "종료", 34, new Color(0.46f, 0.16f, 0.16f, 0.96f), font, new Vector2(0.36f, 0.20f), new Vector2(0.64f, 0.28f));
 
             SettingsPanelReferences settingsPanel = CreateSettingsPanel(menuRoot, font);
 
             MainMenuController controller = menuRoot.gameObject.AddComponent<MainMenuController>();
-            controller.SetReferences(startButton, settingsButton, quitButton, settingsPanel.GameObjectSettingsPanel, settingsPanel.ButtonCloseSettings);
+            controller.SetReferences(startButton, testFastButton, settingsButton, quitButton, settingsPanel.GameObjectSettingsPanel, settingsPanel.ButtonCloseSettings);
             EditorUtility.SetDirty(controller);
 
             if (bgmBuildReferences != null && bgmBuildReferences.Controller != null)

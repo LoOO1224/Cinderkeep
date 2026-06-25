@@ -1,6 +1,8 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 닫힌 플레이 루프 안에서 하나의 구체적인 게임플레이 기능을 실행합니다.
+// 클래스 책임은 좁게 유지하고, 다른 시스템과는 명확한 메서드나 이벤트로만 연결합니다.
 // 플레이어가 E키로 제작 시설을 열 수 있게 하는 상호작용 컴포넌트입니다.
 // 실제 제작법 필터링은 CraftingStation이 담당하고, 이 클래스는 입력 전달만 담당합니다.
 public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable
@@ -74,6 +76,6 @@ public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable
             return;
         }
 
-        uiManager.OpenCraftingUI(_craftingStation, gameObjectInteractor);
+        uiManager.ToggleCraftingUI(_craftingStation, gameObjectInteractor);
     }
 }

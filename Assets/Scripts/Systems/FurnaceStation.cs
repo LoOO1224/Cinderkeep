@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 닫힌 플레이 루프 안에서 하나의 구체적인 게임플레이 기능을 실행합니다.
+// 클래스 책임은 좁게 유지하고, 다른 시스템과는 명확한 메서드나 이벤트로만 연결합니다.
 namespace Cinderkeep.Gameplay
 {
     // 용광로 전용 컴포넌트입니다.
@@ -183,6 +185,20 @@ namespace Cinderkeep.Gameplay
             _readyOutputAmount = 0;
             NotifyStateChanged();
             return true;
+        }
+
+        public void ResetFurnaceState()
+        {
+            _currentRecipeData = null;
+            _currentInputResourceId = "";
+            _currentOutputResourceId = "";
+            _currentInputAmount = 0;
+            _queuedOutputAmount = 0;
+            _readyOutputAmount = 0;
+            _smeltTimer = 0f;
+            _smeltDuration = 0f;
+            _isSmelting = false;
+            NotifyStateChanged();
         }
 
         private void StartSmelting(SmeltingRecipeData recipeData, int inputAmount, int batchCount)

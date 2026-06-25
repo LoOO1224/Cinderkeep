@@ -12,7 +12,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Wall_Wood",
-      "_materialKey": "MAT_Building_Wood",
+      "_materialKey": "MAT_4_0_Wood",
       "_craftingRecipeId": "recipe_wood_wall"
     },
     {
@@ -27,7 +27,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Wall_Iron",
-      "_materialKey": "MAT_Building_Iron",
+      "_materialKey": "MAT_4_0_Tool_Metal",
       "_craftingRecipeId": "recipe_iron_wall"
     },
     {
@@ -42,7 +42,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Wall_Gold",
-      "_materialKey": "MAT_Building_Gold",
+      "_materialKey": "MAT_4_0_GoldOre",
       "_craftingRecipeId": "recipe_gold_wall"
     },
     {
@@ -57,7 +57,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Wall_Adamantium",
-      "_materialKey": "MAT_Building_Adamantium",
+      "_materialKey": "MAT_4_0_Rock_AdamantiumOre",
       "_craftingRecipeId": "recipe_adamantium_wall"
     },
     {
@@ -72,7 +72,7 @@
       "_attackRange": 8,
       "_attackInterval": 1.4,
       "_prefabKey": "PF_Building_Tower_Wood",
-      "_materialKey": "MAT_Building_Wood",
+      "_materialKey": "MAT_4_0_Wood",
       "_craftingRecipeId": "recipe_wood_tower"
     },
     {
@@ -87,7 +87,7 @@
       "_attackRange": 9,
       "_attackInterval": 1.2,
       "_prefabKey": "PF_Building_Tower_Iron",
-      "_materialKey": "MAT_Building_Iron",
+      "_materialKey": "MAT_4_0_Tool_Metal",
       "_craftingRecipeId": "recipe_iron_tower"
     },
     {
@@ -102,7 +102,7 @@
       "_attackRange": 10,
       "_attackInterval": 0.8,
       "_prefabKey": "PF_Building_Tower_Gold",
-      "_materialKey": "MAT_Building_Gold",
+      "_materialKey": "MAT_4_0_GoldOre",
       "_craftingRecipeId": "recipe_gold_tower"
     },
     {
@@ -117,8 +117,68 @@
       "_attackRange": 12,
       "_attackInterval": 0.9,
       "_prefabKey": "PF_Building_Tower_Adamantium",
-      "_materialKey": "MAT_Building_Adamantium",
+      "_materialKey": "MAT_4_0_Rock_AdamantiumOre",
       "_craftingRecipeId": "recipe_adamantium_tower"
+    },
+    {
+      "_id": "wood_slow_trap",
+      "_displayName": "Wood Slow Trap",
+      "_buildingType": "Trap",
+      "_tier": 1,
+      "_description": "Basic CinderHeart defense trap that slows enemies.",
+      "_maxHealth": 999,
+      "_defense": 0,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 1.4,
+      "_prefabKey": "PF_Building_Trap_Wood",
+      "_materialKey": "MAT_4_0_Wood",
+      "_craftingRecipeId": "recipe_wood_slow_trap"
+    },
+    {
+      "_id": "iron_slow_trap",
+      "_displayName": "Iron Slow Trap",
+      "_buildingType": "Trap",
+      "_tier": 2,
+      "_description": "Second trap tier with stronger slow uptime.",
+      "_maxHealth": 999,
+      "_defense": 0,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 1.2,
+      "_prefabKey": "PF_Building_Trap_Iron",
+      "_materialKey": "MAT_4_0_Tool_Metal",
+      "_craftingRecipeId": "recipe_iron_slow_trap"
+    },
+    {
+      "_id": "gold_slow_trap",
+      "_displayName": "Gold Slow Trap",
+      "_buildingType": "Trap",
+      "_tier": 3,
+      "_description": "Fast-response trap tier for dense night waves.",
+      "_maxHealth": 999,
+      "_defense": 0,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 1.0,
+      "_prefabKey": "PF_Building_Trap_Gold",
+      "_materialKey": "MAT_4_0_GoldOre",
+      "_craftingRecipeId": "recipe_gold_slow_trap"
+    },
+    {
+      "_id": "adamantium_slow_trap",
+      "_displayName": "Adamantium Slow Trap",
+      "_buildingType": "Trap",
+      "_tier": 4,
+      "_description": "High tier trap for boss and final-night control.",
+      "_maxHealth": 999,
+      "_defense": 0,
+      "_attackDamage": 0,
+      "_attackRange": 0,
+      "_attackInterval": 0.8,
+      "_prefabKey": "PF_Building_Trap_Adamantium",
+      "_materialKey": "MAT_4_0_Rock_AdamantiumOre",
+      "_craftingRecipeId": "recipe_adamantium_slow_trap"
     },
     {
       "_id": "workbench",
@@ -132,7 +192,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Workbench",
-      "_materialKey": "MAT_Building_Wood",
+      "_materialKey": "MAT_4_0_Wood",
       "_craftingRecipeId": "recipe_workbench"
     },
     {
@@ -147,7 +207,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Furnace",
-      "_materialKey": "MAT_Building_Stone",
+      "_materialKey": "MAT_4_0_Stone",
       "_craftingRecipeId": "recipe_furnace"
     },
     {
@@ -162,7 +222,7 @@
       "_attackRange": 0,
       "_attackInterval": 0,
       "_prefabKey": "PF_Building_Anvil",
-      "_materialKey": "MAT_Building_Iron",
+      "_materialKey": "MAT_4_0_Tool_Metal",
       "_craftingRecipeId": "recipe_anvil"
     }
   ]

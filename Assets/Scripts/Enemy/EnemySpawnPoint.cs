@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
+using UnityEngine.AI;
 
+// 씬의 EnemySpawnPoint 한 곳을 담당합니다.
+// 일반 웨이브는 단계별 적 프리팹을 쓰고, 3일차 보스는 전용 보스 프리팹을 우선 사용합니다.
 public enum EnemySpawnStep
 {
     Step1 = 1, // 1단계: 기본 몬스터 후보
@@ -15,6 +18,8 @@ public enum EnemySpawnStep
 // 살아 있는 적 추적은 EnemySpawnRuntimeTracker가 맡고, 위치 계산은 EnemySpawnPositionSelector가 맡습니다.
 public sealed class EnemySpawnPoint : MonoBehaviour
 {
+    private const string DefaultBossDataId = "frost_colossus";
+
     [Header("Managers")]
     [Tooltip("적 프리팹을 생성하고 InstanceId를 부여할 관리자입니다.")]
     [SerializeField] private GameObjectManager _gameObjectManager;
@@ -22,7 +27,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private EnemyLoopConnector _enemyLoopConnector;
 
     [Header("Spawn Point")]
-    [Tooltip("스폰 지점을 구분하기 위한 번호입니다. 디버그와 QA 기록용입니다.")]
+    [Tooltip("스폰 지점을 구분하기 위한 번호입니다. 로그와 Check 리포트에서 사용합니다.")]
     [SerializeField] private int _spawnPointId;
     [Tooltip("현재 이 스폰 지점이 적을 생성할 수 있는지 결정합니다.")]
     [SerializeField] private bool _isActive = true;
@@ -36,6 +41,16 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private string _step2EnemyDataId = "ice_zombie";
     [Tooltip("3단계 적에게 적용할 EnemyData ID입니다. enemies.json의 _id와 같아야 합니다.")]
     [SerializeField] private string _step3EnemyDataId = "ice_zombie";
+
+    [Header("Boss")]
+    [Tooltip("bosses.json에서 읽을 보스 데이터 ID입니다.")]
+    [SerializeField] private string _bossDataId = DefaultBossDataId;
+    [Tooltip("3일차 보스 모드에서 우선 생성할 전용 보스 프리팹입니다.")]
+    [SerializeField] private GameObject _bossEnemyPrefab;
+    [Tooltip("보스 생성 직후 적용할 체감 크기 배율입니다.")]
+    [SerializeField] private float _bossVisualScale = 2.4f;
+    [Tooltip("보스 프리팹 연결이 비어 있을 때 임시 캡슐 보스로 루프를 유지할지 결정합니다.")]
+    [SerializeField] private bool _allowRuntimeFallbackBoss = true;
 
     [Header("Enemy Prefabs")]
     [Tooltip("1단계에서 무작위로 뽑을 적 프리팹 목록입니다.")]
@@ -89,6 +104,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     private EnemySpawnMode _spawnMode = EnemySpawnMode.Day;
     private int _currentDay = 1;
     private float _lastSpawnTime;
+    private bool _hasSpawnedBossForCurrentEncounter;
+    private Action<EnemyStatus> _bossDefeatedHandler;
 
     public int SpawnPointId
     {
@@ -139,12 +156,25 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     public void SetSpawnMode(EnemySpawnMode spawnMode, int day)
     {
+        bool wasBossMode = _spawnMode == EnemySpawnMode.Boss;
+        int previousDay = _currentDay;
         _spawnMode = spawnMode;
         _currentDay = Mathf.Max(1, day);
+        if (_spawnMode == EnemySpawnMode.Boss && (wasBossMode == false || previousDay != _currentDay))
+        {
+            ResetBossEncounter();
+        }
+
         SelectCurrentSpawnRuleData();
         ResetSpawnTime();
 
         _runtimeTracker.SetCinderHeartChaseEnabledForAliveEnemies(CanChaseCinderHeartInCurrentMode());
+        _runtimeTracker.SetNightTimeForAliveEnemies(UsesNightDetectionInCurrentMode());
+
+        if (_isActive == false)
+        {
+            return;
+        }
 
         EnemySpawnRule spawnRule = GetCurrentSpawnRule();
         if (spawnRule.SpawnOnModeStart == true)
@@ -156,6 +186,31 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     public void SetSpawnPointActive(bool isActive)
     {
         _isActive = isActive;
+    }
+
+    public void SetBossDefeatedHandler(Action<EnemyStatus> bossDefeatedHandler)
+    {
+        _bossDefeatedHandler = bossDefeatedHandler;
+    }
+
+    public void ResetBossEncounter()
+    {
+        _hasSpawnedBossForCurrentEncounter = false;
+    }
+
+    public void ClearSpawnedEnemies()
+    {
+        _runtimeTracker.DestroyTrackedEnemies(_gameObjectManager);
+        ResetBossEncounter();
+    }
+
+    public bool HasBossSpawnCandidate()
+    {
+        return _bossEnemyPrefab != null
+            || _allowRuntimeFallbackBoss
+            || HasAnyPrefab(_step3EnemyPrefabs)
+            || HasAnyPrefab(_step2EnemyPrefabs)
+            || HasAnyPrefab(_step1EnemyPrefabs);
     }
 
     public void ResetSpawnTime()
@@ -216,6 +271,12 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private void SpawnEnemiesByCurrentStep()
     {
+        if (_spawnMode == EnemySpawnMode.Boss)
+        {
+            SpawnBossEnemy();
+            return;
+        }
+
         GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
         if (enemyPrefabs == null || enemyPrefabs.Length == 0)
         {
@@ -260,11 +321,11 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         return enemyPrefabs[randomIndex];
     }
 
-    private void SpawnEnemy(GameObject enemyPrefab, int index, int totalCount, string enemyDataId)
+    private GameObject SpawnEnemy(GameObject enemyPrefab, int index, int totalCount, string enemyDataId)
     {
         if (enemyPrefab == null)
         {
-            return;
+            return null;
         }
 
         Vector3 spawnPosition = _positionSelector.GetSpawnPosition(
@@ -278,6 +339,250 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         _runtimeTracker.RegisterEnemy(createdEnemy);
         InitializeCreatedEnemy(createdEnemy, enemyDataId);
         ApplySpawnModeToEnemy(createdEnemy);
+        return createdEnemy;
+    }
+
+    private void SpawnBossEnemy()
+    {
+        if (_hasSpawnedBossForCurrentEncounter)
+        {
+            return;
+        }
+
+        GameObject[] enemyPrefabs = GetBossEnemyPrefabs();
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+        {
+            SpawnRuntimeFallbackBoss();
+            return;
+        }
+
+        GameObject enemyPrefab = GetRandomEnemyPrefab(enemyPrefabs);
+        GameObject createdEnemy = SpawnEnemy(enemyPrefab, 0, 1, GetEnemyDataIdByStep());
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        ApplyBossDataToEnemy(createdEnemy);
+        RenameBossObject(createdEnemy);
+        RegisterBossDefeat(createdEnemy);
+        _hasSpawnedBossForCurrentEncounter = true;
+    }
+
+    private void SpawnRuntimeFallbackBoss()
+    {
+        if (_allowRuntimeFallbackBoss == false)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = _positionSelector.GetSpawnPosition(
+            _centerTransform,
+            _spawnCandidatePoints,
+            _spawnSpacing,
+            0,
+            1);
+        Quaternion spawnRotation = _positionSelector.GetSpawnRotation(_centerTransform);
+        GameObject createdEnemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        createdEnemy.SetActive(false);
+        createdEnemy.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
+
+        EnsureRuntimeBossComponents(createdEnemy);
+        RegisterRuntimeBoss(createdEnemy);
+        InitializeCreatedEnemy(createdEnemy, GetEnemyDataIdByStep());
+        ApplySpawnModeToEnemy(createdEnemy);
+        ApplyBossDataToEnemy(createdEnemy);
+        RenameBossObject(createdEnemy);
+        RegisterBossDefeat(createdEnemy);
+
+        createdEnemy.SetActive(true);
+        _hasSpawnedBossForCurrentEncounter = true;
+    }
+
+    private void EnsureRuntimeBossComponents(GameObject createdEnemy)
+    {
+        GetOrAddComponent<Rigidbody>(createdEnemy);
+        GetOrAddComponent<NavMeshAgent>(createdEnemy);
+        GetOrAddComponent<Damageable>(createdEnemy);
+        GetOrAddComponent<EnemyStatus>(createdEnemy);
+        GetOrAddComponent<EnemyAttack>(createdEnemy);
+        GetOrAddComponent<EnemyDetector>(createdEnemy);
+        GetOrAddComponent<EnemyMovement>(createdEnemy);
+        GetOrAddComponent<EnemyBrain>(createdEnemy);
+        ApplyRuntimeBossMaterial(createdEnemy);
+    }
+
+    private void RegisterRuntimeBoss(GameObject createdEnemy)
+    {
+        if (_gameObjectManager != null)
+        {
+            _gameObjectManager.RegisterGameObject(createdEnemy);
+        }
+
+        _runtimeTracker.RegisterEnemy(createdEnemy);
+    }
+
+    private TComponent GetOrAddComponent<TComponent>(GameObject targetObject)
+        where TComponent : Component
+    {
+        TComponent component = targetObject.GetComponent<TComponent>();
+        if (component != null)
+        {
+            return component;
+        }
+
+        return targetObject.AddComponent<TComponent>();
+    }
+
+    private void ApplyRuntimeBossMaterial(GameObject createdEnemy)
+    {
+        Renderer renderer = createdEnemy.GetComponentInChildren<Renderer>();
+        if (renderer == null)
+        {
+            return;
+        }
+
+        Shader shader = Shader.Find("Standard");
+        if (shader == null)
+        {
+            return;
+        }
+
+        Material material = new Material(shader);
+        material.color = new Color(0.45f, 0.85f, 1f, 1f);
+        renderer.sharedMaterial = material;
+    }
+
+    private GameObject[] GetBossEnemyPrefabs()
+    {
+        if (_bossEnemyPrefab != null)
+        {
+            return new[] { _bossEnemyPrefab };
+        }
+
+        GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
+        if (enemyPrefabs != null && enemyPrefabs.Length > 0)
+        {
+            return enemyPrefabs;
+        }
+
+        if (_step3EnemyPrefabs != null && _step3EnemyPrefabs.Length > 0)
+        {
+            return _step3EnemyPrefabs;
+        }
+
+        if (_step2EnemyPrefabs != null && _step2EnemyPrefabs.Length > 0)
+        {
+            return _step2EnemyPrefabs;
+        }
+
+        return _step1EnemyPrefabs;
+    }
+
+    private void ApplyBossDataToEnemy(GameObject createdEnemy)
+    {
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        BossData bossData = GetBossData();
+        ApplyBossVisualScale(createdEnemy);
+        if (bossData == null)
+        {
+            return;
+        }
+
+        EnemyStatus enemyStatus = createdEnemy.GetComponent<EnemyStatus>();
+        if (enemyStatus != null)
+        {
+            enemyStatus.Initialize(bossData);
+        }
+
+        EnemyAttack enemyAttack = createdEnemy.GetComponent<EnemyAttack>();
+        if (enemyAttack != null)
+        {
+            enemyAttack.Initialize(bossData);
+        }
+
+        EnemyDetector enemyDetector = createdEnemy.GetComponent<EnemyDetector>();
+        if (enemyDetector != null)
+        {
+            enemyDetector.Initialize(bossData);
+        }
+
+        EnemyMovement enemyMovement = createdEnemy.GetComponent<EnemyMovement>();
+        if (enemyMovement != null)
+        {
+            enemyMovement.Initialize(bossData, enemyDetector);
+        }
+    }
+
+    private void RenameBossObject(GameObject createdEnemy)
+    {
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        BossData bossData = GetBossData();
+        if (bossData != null && string.IsNullOrEmpty(bossData.DisplayName) == false)
+        {
+            createdEnemy.name = "Boss_" + bossData.DisplayName.Replace(" ", string.Empty);
+            return;
+        }
+
+        createdEnemy.name = "Boss_FrozenGolem";
+    }
+
+    private BossData GetBossData()
+    {
+        if (GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        GameDataManager gameDataManager = GameManager.Inst.GetGameDataManager();
+        if (gameDataManager == null)
+        {
+            return null;
+        }
+
+        string bossDataId = string.IsNullOrEmpty(_bossDataId) ? DefaultBossDataId : _bossDataId;
+        return gameDataManager.GetBoss(bossDataId);
+    }
+
+    private void ApplyBossVisualScale(GameObject createdEnemy)
+    {
+        float bossVisualScale = Mathf.Max(1f, _bossVisualScale);
+        createdEnemy.transform.localScale = createdEnemy.transform.localScale * bossVisualScale;
+    }
+
+    private void RegisterBossDefeat(GameObject createdEnemy)
+    {
+        EnemyStatus enemyStatus = createdEnemy.GetComponent<EnemyStatus>();
+        if (enemyStatus == null)
+        {
+            return;
+        }
+
+        enemyStatus.Died -= HandleBossDied;
+        enemyStatus.Died += HandleBossDied;
+    }
+
+    private void HandleBossDied(EnemyStatus enemyStatus)
+    {
+        if (enemyStatus != null)
+        {
+            enemyStatus.Died -= HandleBossDied;
+        }
+
+        if (_bossDefeatedHandler == null)
+        {
+            return;
+        }
+
+        _bossDefeatedHandler(enemyStatus);
     }
 
     private void ApplySpawnModeToEnemy(GameObject createdEnemy)
@@ -294,11 +599,19 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
+        enemyBrain.SetNightTime(UsesNightDetectionInCurrentMode());
+        enemyBrain.SetPlayerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+        enemyBrain.SetTowerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
     }
 
     private bool CanChaseCinderHeartInCurrentMode()
     {
         return _spawnMode != EnemySpawnMode.Day;
+    }
+
+    private bool UsesNightDetectionInCurrentMode()
+    {
+        return _spawnMode == EnemySpawnMode.Night || _spawnMode == EnemySpawnMode.Boss;
     }
 
     private void InitializeCreatedEnemy(GameObject createdEnemy, string enemyDataId)
@@ -324,6 +637,24 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         return _step1EnemyPrefabs;
+    }
+
+    private bool HasAnyPrefab(GameObject[] enemyPrefabs)
+    {
+        if (enemyPrefabs == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            if (enemyPrefabs[i] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private string GetEnemyDataIdByStep()
@@ -425,7 +756,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     private void SelectCurrentSpawnRuleData()
     {
         // 페이즈가 바뀔 때마다 enemy_spawn_rules.json 후보 중 weight 기반으로 하나를 선택합니다.
-        // QA는 JSON의 day, phase, weight, spawn count 값을 조절해 난이도를 빠르게 실험할 수 있습니다.
+        // Check는 JSON의 day, phase, weight, spawn count 값을 조절해 난이도를 빠르게 실험할 수 있습니다.
         _currentSpawnRuleData = GetRandomSpawnRuleData(GetCurrentPhaseName());
     }
 
@@ -438,14 +769,19 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
         GameDataManager gameDataManager = GameManager.Inst.GetGameDataManager();
         IReadOnlyDictionary<string, EnemySpawnRuleData> ruleDataList = gameDataManager.EnemySpawnRuleDataList;
-        int totalWeight = GetTotalSpawnRuleWeight(ruleDataList, phase);
-        if (totalWeight <= 0)
-        {
-            return null;
-        }
+        List<EnemySpawnRuleData> candidates = GetSpawnRuleCandidates(ruleDataList, phase);
+        return RandomUtil.PickWeighted(candidates, spawnRuleData => spawnRuleData.SpawnWeight);
+    }
 
-        int selectedWeight = UnityEngine.Random.Range(1, totalWeight + 1);
-        int accumulatedWeight = 0;
+    private List<EnemySpawnRuleData> GetSpawnRuleCandidates(
+        IReadOnlyDictionary<string, EnemySpawnRuleData> ruleDataList,
+        string phase)
+    {
+        List<EnemySpawnRuleData> candidates = new List<EnemySpawnRuleData>();
+        if (ruleDataList == null)
+        {
+            return candidates;
+        }
 
         foreach (KeyValuePair<string, EnemySpawnRuleData> pair in ruleDataList)
         {
@@ -455,14 +791,10 @@ public sealed class EnemySpawnPoint : MonoBehaviour
                 continue;
             }
 
-            accumulatedWeight += GetRuleWeight(spawnRuleData);
-            if (selectedWeight <= accumulatedWeight)
-            {
-                return spawnRuleData;
-            }
+            candidates.Add(spawnRuleData);
         }
 
-        return null;
+        return candidates;
     }
 
     private bool CanUseSpawnRuleData(string phase)
@@ -490,26 +822,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         return true;
     }
 
-    private int GetTotalSpawnRuleWeight(IReadOnlyDictionary<string, EnemySpawnRuleData> ruleDataList, string phase)
-    {
-        if (ruleDataList == null)
-        {
-            return 0;
-        }
-
-        int totalWeight = 0;
-        foreach (KeyValuePair<string, EnemySpawnRuleData> pair in ruleDataList)
-        {
-            EnemySpawnRuleData spawnRuleData = pair.Value;
-            if (IsSpawnRuleCandidate(spawnRuleData, phase) == true)
-            {
-                totalWeight += GetRuleWeight(spawnRuleData);
-            }
-        }
-
-        return totalWeight;
-    }
-
     private bool IsSpawnRuleCandidate(EnemySpawnRuleData spawnRuleData, string phase)
     {
         if (spawnRuleData == null)
@@ -523,16 +835,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         return string.Equals(spawnRuleData.Phase, phase, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private int GetRuleWeight(EnemySpawnRuleData spawnRuleData)
-    {
-        if (spawnRuleData == null)
-        {
-            return 0;
-        }
-
-        return Mathf.Max(0, spawnRuleData.SpawnWeight);
     }
 
     private string GetCurrentPhaseName()

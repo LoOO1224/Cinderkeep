@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// JSON에서 읽어오는 정적 데이터 구조입니다.
+// 이 파일에는 규칙 로직을 넣지 않고, 실제 처리는 Systems/Managers/Catalog 쪽에서 담당합니다.
 namespace Cinderkeep.Gameplay
 {
     // harvest_nodes.json의 한 줄을 담는 Static Data 클래스입니다.

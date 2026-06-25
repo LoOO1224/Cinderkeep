@@ -1,12 +1,11 @@
 using UnityEngine;
 
-// 피해를 받을 수 있는 오브젝트에 붙이는 공통 컴포넌트입니다.
-// 실제 체력 처리는 PlayerStatus, EnemyStatus, BuildingHp, CinderHeart 같은 역할 컴포넌트로 넘깁니다.
-// 적 체력 기준은 EnemyStatus이며, Damageable은 피해 요청을 전달하는 통로 역할만 합니다.
+// 피해를 받을 수 있는 대상에게 붙는 공통 진입점입니다.
+// 실제 체력 처리는 PlayerStatus, EnemyStatus, BuildingHp, CinderHeart 중 붙어 있는 역할 컴포넌트로 위임합니다.
 public sealed class Damageable : MonoBehaviour
 {
     [Header("Fallback Health")]
-    [Tooltip("역할 컴포넌트가 없을 때만 사용하는 fallback 체력입니다. 적은 EnemyStatus를 기준으로 사용합니다.")]
+    [Tooltip("역할 체력 컴포넌트가 없을 때만 사용하는 예비 체력입니다.")]
     [SerializeField] private float _maxHealth = 100f;
 
     private PlayerStatus _playerStatus;
@@ -129,6 +128,6 @@ public sealed class Damageable : MonoBehaviour
         _currentHealth = 0f;
         _isDead = true;
 
-        Debug.Log(gameObject.name + " is dead.");
+        global::CinderkeepLog.Verbose(gameObject.name + " is dead.");
     }
 }

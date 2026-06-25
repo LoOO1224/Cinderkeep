@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 namespace Cinderkeep.UI
 {
     // 메인 메뉴에서 시작되는 공용 BGM을 관리합니다.
@@ -14,7 +16,7 @@ namespace Cinderkeep.UI
         [SerializeField] private Text _volumeMuteText;
         [SerializeField] private Text _volumeValueText;
         [SerializeField] private AudioClip[] _bgmAudioClips;
-        [SerializeField] private float _volume = 0.3f;
+        [SerializeField] private float _volume = 0.7f;
 
         private static MainMenuBgmController _activeController;
 

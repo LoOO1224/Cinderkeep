@@ -1,14 +1,12 @@
-﻿using UnityEngine;
-
-using UnityEngine.Serialization;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Cinderkeep.Gameplay
 {
     // 게임 전체 생성 주기를 잡는 최상위 매니저입니다.
-    // 현재 목표는 3일/15분 게임 루프를 안정적으로 시작하고 끝내는 것입니다.
-    // 1일차는 채집/기초 제작, 2일차는 CinderHeart 방어, 3일차는 보스 클리어가 기준입니다.
-    // 이후 7일 루프 확장은 이 초기화 흐름을 유지한 채 Model과 매니저 기능을 늘립니다.
-    // 규칙: 게임 영역에서는 GameManager만 싱글톤으로 둡니다.
+    // GameData -> Model -> Scene Managers -> UI -> GameFlow 순서로 초기화하고, 실제 계산은 전용 시스템에 맡깁니다.
+    // 게임 영역 싱글톤은 이 클래스 하나만 두어 런타임 진입점과 재시작 흐름을 명확하게 유지합니다.
     public sealed class GameManager : MonoBehaviour
     {
         [SerializeField] private GameDataManager _gameDataManager;
@@ -19,53 +17,46 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private SoundManager _soundManager;
         [SerializeField] private MapManager _mapManager;
         [SerializeField] private GameFlowController _gameFlowController;
+        [SerializeField] private string _mainMenuSceneName = "Main_Lobby";
 
         private PlayerModel _playerModel = new PlayerModel();
         private GameRunModel _gameRunModel = new GameRunModel();
         private PlayerInventoryModel _playerInventoryModel = new PlayerInventoryModel();
         private PlayerEquipmentModel _playerEquipmentModel = new PlayerEquipmentModel();
         private bool _isInitialized;
+        private bool _isInitializing;
+        private bool _isStartRequested;
 
         public static GameManager Inst { get; private set; }
 
         public PlayerModel PlayerModel
         {
-            get
-            {
-                return _playerModel;
-            }
+            get { return _playerModel; }
         }
 
         public GameRunModel GameRunModel
         {
-            get
-            {
-                return _gameRunModel;
-            }
+            get { return _gameRunModel; }
         }
 
         public PlayerInventoryModel PlayerInventoryModel
         {
-            get
-            {
-                return _playerInventoryModel;
-            }
+            get { return _playerInventoryModel; }
         }
 
         public PlayerEquipmentModel PlayerEquipmentModel
         {
-            get
-            {
-                return _playerEquipmentModel;
-            }
+            get { return _playerEquipmentModel; }
         }
 
         public bool IsInitialized
         {
-            get
-            {
-                return _isInitialized;
-            }
+            get { return _isInitialized; }
+        }
+
+        public bool IsInitializing
+        {
+            get { return _isInitializing; }
         }
 
         private void Awake()
@@ -88,54 +79,33 @@ namespace Cinderkeep.Gameplay
 
         public void Initialize()
         {
-            if (_isInitialized)
+            if (_isInitialized || _isInitializing)
             {
                 return;
             }
 
-            // 생성 주기 순서:
-            // 1. 3일 게임 루프에 필요한 Static Data 로드
-            // 2. 프리팹, 사운드, UI 프리팹 같은 에셋 로딩 관리자 준비
-            // 3. 몬스터, 자원, 건축물 생성을 맡을 관리자 준비
-            // 4. 맵 생성과 모듈형 맵 확장을 맡을 관리자 준비
-            // 5. BGM과 효과음 관리자 준비
-            // 6. HUD, 인벤토리, 게임오버 UI 관리자 준비
-            // 7. 저장이 필요한 Instance Model 기본값 준비
-            // 8. 3일 게임 루프 진행 컨트롤러 준비
-            InitializeManager(_gameDataManager, "GameDataManager");
-            InitializeManager(_resourceManager, "ResourceManager");
-            InitializeManager(_gameObjectManager, "GameObjectManager");
-            ConnectBuildingManager();
-            InitializeBuildingManagerIfExists();
-            InitializeManager(_mapManager, "MapManager");
-            InitializeManager(_soundManager, "SoundManager");
-            InitializeManager(_uiManager, "UIManager");
-
-            _playerModel.InitializeDefault();
-            _gameRunModel.InitializeDefault();
-            _playerInventoryModel.InitializeDefault();
-            _playerEquipmentModel.InitializeDefault();
-            ConnectGameFlowController();
-            InitializeGameFlowControllerIfExists();
-            _isInitialized = true;
+            StartCoroutine(InitializeRoutine());
         }
 
         public void StartNewGame()
         {
-            Initialize();
-            if (_gameFlowController != null)
+            if (QueueStartUntilInitialized())
             {
-                _gameFlowController.StartFlow();
-            }
-            else
-            {
-                _gameRunModel.StartRun();
+                return;
             }
 
-            if (_uiManager != null)
+            BeginNewGameFlow();
+        }
+
+        public void RestartRun()
+        {
+            if (QueueStartUntilInitialized())
             {
-                _uiManager.OpenHud();
+                return;
             }
+
+            ResetRunState();
+            BeginNewGameFlow();
         }
 
         public void EndGame()
@@ -148,13 +118,26 @@ namespace Cinderkeep.Gameplay
             _gameRunModel.EndRun();
             if (_gameFlowController != null)
             {
-                _gameFlowController.StopFlowAsGameOver();
+                _gameFlowController.StopFlow();
             }
 
             if (_uiManager != null)
             {
                 _uiManager.OpenGameOverPanel();
             }
+        }
+
+        public void ReturnToMainLobby()
+        {
+            Time.timeScale = 1f;
+
+            if (string.IsNullOrEmpty(_mainMenuSceneName))
+            {
+                Debug.LogWarning("GameManager: main menu scene name is empty.");
+                return;
+            }
+
+            SceneManager.LoadScene(_mainMenuSceneName);
         }
 
         public GameDataManager GetGameDataManager()
@@ -195,6 +178,193 @@ namespace Cinderkeep.Gameplay
         public GameFlowController GetGameFlowController()
         {
             return _gameFlowController;
+        }
+
+        private IEnumerator InitializeRoutine()
+        {
+            _isInitializing = true;
+
+            // Data -> Model -> Resource/Object/Map/Sound -> UI -> GameFlow 순서를 고정합니다.
+            InitializeManager(_gameDataManager, "GameDataManager");
+            InitializeRuntimeModels();
+            yield return null;
+
+            InitializeManager(_resourceManager, "ResourceManager");
+            InitializeManager(_gameObjectManager, "GameObjectManager");
+            ConnectBuildingManager();
+            InitializeBuildingManagerIfExists();
+            yield return null;
+
+            InitializeManager(_mapManager, "MapManager");
+            InitializeManager(_soundManager, "SoundManager");
+            InitializeManager(_uiManager, "UIManager");
+            yield return null;
+
+            ConnectGameFlowController();
+            InitializeGameFlowControllerIfExists();
+
+            _isInitialized = true;
+            _isInitializing = false;
+
+            if (_isStartRequested)
+            {
+                _isStartRequested = false;
+                BeginNewGameFlow();
+            }
+        }
+
+        private bool QueueStartUntilInitialized()
+        {
+            if (_isInitialized)
+            {
+                return false;
+            }
+
+            _isStartRequested = true;
+            Initialize();
+            return true;
+        }
+
+        private void BeginNewGameFlow()
+        {
+            Time.timeScale = 1f;
+            ResetPlayerSceneState();
+            RunResultTracker.EnsureSceneTracker().BeginRun(_gameRunModel);
+            global::PlayerEquipmentStatApplier.EnsureSceneApplier();
+
+            if (_gameFlowController != null)
+            {
+                _gameFlowController.StartFlow();
+            }
+            else
+            {
+                _gameRunModel.StartRun();
+            }
+
+            if (_uiManager != null)
+            {
+                _uiManager.OpenHud();
+            }
+
+            global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
+            global::FoodPickupSceneBootstrap.EnsureFoodPickups();
+            global::TrapZoneSceneBootstrap.EnsureTrapZones();
+            global::CinderHeartPlayerRecoveryAura.EnsureSceneAura();
+            global::CinderHeartFoodCooker.EnsureSceneCooker();
+        }
+
+        private void ResetRunState()
+        {
+            Time.timeScale = 1f;
+
+            if (_gameFlowController != null)
+            {
+                _gameFlowController.StopFlow();
+            }
+
+            ResetRuntimeSceneObjects();
+            InitializeRuntimeModels();
+            ResetCinderHeartState();
+            ResetPlayerSceneState();
+            global::PlayerEquipmentStatApplier.EnsureSceneApplier();
+            global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
+            global::FoodPickupSceneBootstrap.EnsureFoodPickups();
+            global::TrapZoneSceneBootstrap.EnsureTrapZones();
+            global::CinderHeartPlayerRecoveryAura.EnsureSceneAura();
+            global::CinderHeartFoodCooker.EnsureSceneCooker();
+
+            if (_uiManager != null)
+            {
+                _uiManager.CloseGameOverPanel();
+                _uiManager.CloseInventory();
+                _uiManager.CloseCraftingUI();
+                _uiManager.CloseFurnaceUI();
+                _uiManager.CloseCinderHeartSkillSelectionUI();
+            }
+        }
+
+        private void InitializeRuntimeModels()
+        {
+            _playerModel.InitializeDefault();
+            _gameRunModel.InitializeDefault();
+            _playerInventoryModel.InitializeDefault();
+            _playerEquipmentModel.InitializeDefault();
+        }
+
+        private void ResetCinderHeartState()
+        {
+            GameObject cinderHeartObject = FindCinderHeartObject();
+            if (cinderHeartObject == null)
+            {
+                return;
+            }
+
+            CinderHeart cinderHeart = cinderHeartObject.GetComponent<CinderHeart>();
+            if (cinderHeart == null)
+            {
+                return;
+            }
+
+            cinderHeart.ResetForNewRun();
+        }
+
+        private void ResetPlayerSceneState()
+        {
+            global::PlayerStatus playerStatus = Object.FindFirstObjectByType<global::PlayerStatus>();
+            if (playerStatus != null)
+            {
+                playerStatus.ResetStatusForNewRun();
+            }
+
+            global::PlayerAttack playerAttack = Object.FindFirstObjectByType<global::PlayerAttack>();
+            if (playerAttack != null)
+            {
+                playerAttack.ResetRunBonuses();
+            }
+        }
+
+        private void ResetRuntimeSceneObjects()
+        {
+            ResetFurnaceStations();
+
+            if (_buildingManager != null)
+            {
+                _buildingManager.ResetRuntimeBuildings();
+            }
+
+            if (_gameObjectManager != null)
+            {
+                _gameObjectManager.DestroyAllRegisteredGameObjects();
+            }
+        }
+
+        private void ResetFurnaceStations()
+        {
+            FurnaceStation[] furnaceStations = Object.FindObjectsByType<FurnaceStation>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+
+            for (int i = 0; i < furnaceStations.Length; i++)
+            {
+                if (furnaceStations[i] == null)
+                {
+                    continue;
+                }
+
+                furnaceStations[i].ResetFurnaceState();
+            }
+        }
+
+        private GameObject FindCinderHeartObject()
+        {
+            try
+            {
+                return GameObject.FindGameObjectWithTag("CinderHeart");
+            }
+            catch (UnityException)
+            {
+                return GameObject.Find("CinderHeart");
+            }
         }
 
         private void RegisterSingleton()

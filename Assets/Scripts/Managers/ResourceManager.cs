@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 씬 참조와 런타임 모델을 연결하는 얇은 매니저 허브입니다.
+// 계산과 세부 규칙은 작은 시스템/헬퍼로 분리하고, 이 클래스는 연결 책임에 집중합니다.
 namespace Cinderkeep.Gameplay
 {
     // Resources 폴더 안의 Unity 에셋을 불러오는 매니저입니다.

@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 
+// 여러 시스템이 실제로 공유하는 작은 헬퍼만 모아둡니다.
+// 한 기능 전용 계산은 해당 시스템 안에 두고, 중복될 때만 유틸로 올립니다.
 namespace Cinderkeep.Gameplay
 {
     // 공용 계산과 데이터 로드 시작점을 모아두는 순수 도구 클래스입니다.

@@ -2,21 +2,34 @@ using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 
+// 적의 감지, 타깃 판단, 이동, 공격, 보스 클리어 연결 중 한 역할을 담당합니다.
+// AI 판단과 실제 행동 컴포넌트를 분리해 적 패턴이 늘어도 유지보수 가능하게 합니다.
 // 몬스터가 플레이어를 감지하는 컴포넌트입니다.
 // 감지 결과만 들고 있고, 이동과 공격은 EnemyMovement와 EnemyBrain이 처리합니다.
 public sealed class EnemyDetector : MonoBehaviour
 {
-    [Tooltip("몬스터가 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
-    [SerializeField] private float _viewAngle = 90f;
+    [Tooltip("낮에 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
+    [SerializeField] private float _dayViewAngle = 150f;
+    [Tooltip("밤에 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
+    [SerializeField] private float _nightViewAngle = 90f;
 
+    private float _viewAngle = 90f;
     private const string PlayerTag = "Player";
     private const int MaxOverlapCount = 20;
-    private const float DetectionInterval = 0.2f;
+    private const float DefaultDetectionInterval = 0.2f;
 
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];
 
     private Coroutine _detectionRoutine;
-    private float _detectorDistance = 8f;
+    [Tooltip("플레이어 감지 갱신 주기입니다. EnemyData의 _detectorInterval 값으로 초기화됩니다.")]
+    [SerializeField] private float _detectionInterval = DefaultDetectionInterval;
+    [Tooltip("낮에 플레이어를 감지할 수 있는 거리입니다.")]
+    [SerializeField] private float _dayDetectorDistance = 6f;
+    [Tooltip("밤에 플레이어를 감지할 수 있는 거리입니다.")]
+    [SerializeField] private float _nightDetectorDistance = 12f;
+
+    private float _detectorDistance = 12f;
+    private bool _isNightDetectionEnabled;
 
     public Transform DetectedPlayer { get; private set; }
 
@@ -30,6 +43,8 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private void OnEnable()
     {
+        RefreshDetectorDistance();
+        RefreshViewAngle();
         StartDetectionRoutine();
     }
 
@@ -45,7 +60,40 @@ public sealed class EnemyDetector : MonoBehaviour
             return;
         }
 
-        _detectorDistance = enemyData.DetectorDistance;
+        _dayDetectorDistance = enemyData.DetectorDistance;
+        if (enemyData.DetectorInterval > 0f)
+        {
+            _detectionInterval = enemyData.DetectorInterval;
+        }
+
+        RefreshDetectorDistance();
+
+        if (isActiveAndEnabled)
+        {
+            StartDetectionRoutine();
+        }
+    }
+
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        _dayDetectorDistance = bossData.DetectorDistance;
+        _nightDetectorDistance = Mathf.Max(_nightDetectorDistance, bossData.DetectorDistance);
+        if (bossData.DetectorInterval > 0f)
+        {
+            _detectionInterval = bossData.DetectorInterval;
+        }
+
+        RefreshDetectorDistance();
+
+        if (isActiveAndEnabled)
+        {
+            StartDetectionRoutine();
+        }
     }
 
     public void EnableAlertMode()
@@ -56,6 +104,40 @@ public sealed class EnemyDetector : MonoBehaviour
         }
 
         DetectPlayerWithoutViewAngle();
+    }
+
+    public void SetNightDetectionEnabled(bool isEnabled)
+    {
+        _isNightDetectionEnabled = isEnabled;
+        RefreshDetectorDistance();
+        RefreshViewAngle();
+
+        if (HasDetectedPlayer)
+        {
+            ClearPlayerIfOutOfRange();
+        }
+    }
+
+    private void RefreshDetectorDistance()
+    {
+        if (_isNightDetectionEnabled)
+        {
+            _detectorDistance = _nightDetectorDistance;
+            return;
+        }
+
+        _detectorDistance = _dayDetectorDistance;
+    }
+
+    private void RefreshViewAngle()
+    {
+        if (_isNightDetectionEnabled)
+        {
+            _viewAngle = _nightViewAngle;
+            return;
+        }
+
+        _viewAngle = _dayViewAngle;
     }
 
     private void StartDetectionRoutine()
@@ -77,7 +159,7 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private IEnumerator DetectPlayerRoutine()
     {
-        WaitForSeconds waitInterval = new WaitForSeconds(DetectionInterval);
+        WaitForSeconds waitInterval = new WaitForSeconds(_detectionInterval);
 
         while (true)
         {
@@ -122,12 +204,12 @@ public sealed class EnemyDetector : MonoBehaviour
             if (IsPlayerTarget(targetCollider))
             {
                 DetectedPlayer = targetCollider.transform;
-                Debug.Log(gameObject.name + ": 피격 반응으로 플레이어를 감지했습니다.");
+                global::CinderkeepLog.Verbose(gameObject.name + ": 피격 반응으로 플레이어를 감지했습니다.");
                 return;
             }
         }
 
-        Debug.Log(gameObject.name + ": 피격되었지만 감지 범위 안에 플레이어가 없습니다.");
+        global::CinderkeepLog.Verbose(gameObject.name + ": 피격되었지만 감지 범위 안에 플레이어가 없습니다.");
     }
 
     private void ClearPlayerIfOutOfRange()
@@ -164,5 +246,22 @@ public sealed class EnemyDetector : MonoBehaviour
         Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, directionToTarget);
         return angle <= _viewAngle * 0.5f;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _detectorDistance);
+
+        Gizmos.color = Color.yellow;
+
+        Vector3 forwardDirection = transform.forward;
+        Vector3 leftBoundary = Quaternion.Euler(0, -_viewAngle * 0.5f, 0) * forwardDirection;
+        Vector3 rightBoundary = Quaternion.Euler(0, _viewAngle * 0.5f, 0) * forwardDirection;
+
+        Gizmos.DrawLine(transform.position, transform.position + leftBoundary * _detectorDistance);
+        Gizmos.DrawLine(transform.position, transform.position + rightBoundary * _detectorDistance);
+
+        Gizmos.DrawLine(transform.position + leftBoundary * _detectorDistance, transform.position + rightBoundary * _detectorDistance);
     }
 }

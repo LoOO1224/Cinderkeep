@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 // 베이스 귀환 시전 시간을 화면에 표시하는 UI 컴포넌트입니다.
 // UI 오브젝트는 씬이나 프리팹에서 미리 만들고, 이 컴포넌트는 표시 값만 갱신합니다.
 public sealed class BaseTeleportProgressUI : MonoBehaviour

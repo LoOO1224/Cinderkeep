@@ -1,12 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 닫힌 플레이 루프 안에서 하나의 구체적인 게임플레이 기능을 실행합니다.
+// 클래스 책임은 좁게 유지하고, 다른 시스템과는 명확한 메서드나 이벤트로만 연결합니다.
 // 나무, 돌, 광석처럼 플레이어가 자원을 얻는 오브젝트입니다.
 // E 입력으로 줍는 자원과 좌클릭 도구 채집 자원을 모두 처리합니다.
 public sealed class ResourceNode : MonoBehaviour, IInteractable
 {
+    private const int BasicGatherTier = 1;
+
     [Header("Resource Data")]
     [Tooltip("harvest_nodes.json의 _id입니다. 비워두면 기존 Inspector 값으로 알맞은 데이터를 찾아봅니다.")]
     [SerializeField] private string _harvestNodeDataId = "";
@@ -20,6 +24,10 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
     [SerializeField] private GatherToolType _requiredToolType = GatherToolType.None;
     [Tooltip("채집에 필요한 도구 티어입니다. 현재는 데이터 확인용이며, 도구 티어 시스템 연결 뒤 판정에 사용합니다.")]
     [SerializeField] private int _requiredToolTier;
+    [Tooltip("고갈되기 전까지 채집 가능한 횟수입니다. harvest_nodes.json의 MaxGatherCount로 초기화됩니다.")]
+    [SerializeField] private int _maxGatherCount = 1;
+    [Tooltip("고갈된 뒤 다시 나타나는 시간입니다. 0 이하이면 리스폰하지 않습니다.")]
+    [SerializeField] private float _respawnSeconds;
     [Tooltip("채집 후 이 오브젝트를 비활성화할지 결정합니다.")]
     [SerializeField] private bool _disableAfterGather = true;
     [Tooltip("현재 이 자원을 채집하거나 주울 수 있는지 결정합니다.")]
@@ -27,6 +35,8 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
     private bool _hasAppliedHarvestNodeData;
     private bool _hasWarnedMissingHarvestNodeData;
+    private bool _hasInitializedGatherState;
+    private int _remainingGatherCount;
 
     public string HarvestNodeDataId
     {
@@ -97,6 +107,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GiveResourceToPlayer(_amount);
+        PlayResourcePickupSfx();
         ProcessGathered();
     }
 
@@ -109,17 +120,18 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
     {
         ApplyHarvestNodeDataIfPossible();
 
-        if (CanGatherWithTool(gameObjectInteractor, toolType) == false)
+        if (CanGatherWithTool(gameObjectInteractor, toolType, toolData) == false)
         {
             return false;
         }
 
         GiveResourceToPlayer(GetGatherAmount(toolData));
+        PlayResourceGatherSfx();
         ProcessGathered();
         return true;
     }
 
-    private bool CanGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType)
+    private bool CanGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType, ToolData toolData)
     {
         ApplyHarvestNodeDataIfPossible();
 
@@ -138,7 +150,52 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return false;
         }
 
-        return _requiredToolType == toolType;
+        if (CanGatherWithHandStone(toolData))
+        {
+            return true;
+        }
+
+        if (_requiredToolType != toolType)
+        {
+            return false;
+        }
+
+        return HasRequiredToolTier(toolData, toolType);
+    }
+
+    private bool CanGatherWithHandStone(ToolData toolData)
+    {
+        if (toolData == null || toolData.Id != PlayerToolController.HandStoneToolDataId)
+        {
+            return false;
+        }
+
+        if (_requiredToolTier > BasicGatherTier)
+        {
+            return false;
+        }
+
+        if (_resourceId == PlayerModel.ResourceWood)
+        {
+            return true;
+        }
+
+        return _resourceId == PlayerModel.ResourceStone;
+    }
+
+    private bool HasRequiredToolTier(ToolData toolData, GatherToolType toolType)
+    {
+        if (_requiredToolTier <= 0)
+        {
+            return true;
+        }
+
+        if (toolData == null)
+        {
+            return toolType != GatherToolType.None && _requiredToolTier <= BasicGatherTier;
+        }
+
+        return toolData.Tier >= _requiredToolTier;
     }
 
     public float GetToolGatherMultiplier(ToolData toolData)
@@ -211,19 +268,84 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GameManager.Inst.PlayerModel.AddResource(_resourceId, amount);
-        Debug.Log("ResourceNode: " + _resourceId + " +" + amount);
+        global::CinderkeepLog.Verbose("ResourceNode: " + _resourceId + " +" + amount);
     }
 
     private void ProcessGathered()
     {
-        _canInteract = false;
-
-        if (_disableAfterGather == false)
+        EnsureGatherStateInitialized();
+        _remainingGatherCount = Mathf.Max(0, _remainingGatherCount - 1);
+        if (_remainingGatherCount > 0)
         {
             return;
         }
 
-        gameObject.SetActive(false);
+        _canInteract = false;
+        if (_respawnSeconds > 0f)
+        {
+            SetNodeVisible(false);
+            CancelInvoke(nameof(RespawnNode));
+            Invoke(nameof(RespawnNode), _respawnSeconds);
+            return;
+        }
+
+        if (_disableAfterGather)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void RespawnNode()
+    {
+        _remainingGatherCount = Mathf.Max(1, _maxGatherCount);
+        _canInteract = true;
+        SetNodeVisible(true);
+    }
+
+    private void EnsureGatherStateInitialized()
+    {
+        if (_hasInitializedGatherState)
+        {
+            return;
+        }
+
+        _remainingGatherCount = Mathf.Max(1, _maxGatherCount);
+        _hasInitializedGatherState = true;
+    }
+
+    private void SetNodeVisible(bool isVisible)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = isVisible;
+        }
+
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = isVisible;
+        }
+    }
+
+    private void PlayResourcePickupSfx()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.GetSoundManager() == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.GetSoundManager().PlayResourcePickup();
+    }
+
+    private void PlayResourceGatherSfx()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.GetSoundManager() == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.GetSoundManager().PlayResourceGather(_resourceId);
     }
 
     private void ApplyHarvestNodeDataIfPossible()
@@ -298,7 +420,17 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GatherToolType dataToolType = ConvertToolType(harvestNodeData.RequiredToolType, _requiredToolType);
-        return dataToolType == _requiredToolType;
+        if (dataToolType != _requiredToolType)
+        {
+            return false;
+        }
+
+        if (_requiredToolTier > 0 && harvestNodeData.RequiredToolTier != _requiredToolTier)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private void ApplyHarvestNodeData(HarvestNodeData harvestNodeData)
@@ -320,7 +452,35 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
         _requiredToolType = ConvertToolType(harvestNodeData.RequiredToolType, _requiredToolType);
         _requiredToolTier = harvestNodeData.RequiredToolTier;
+        if (harvestNodeData.MaxGatherCount > 0)
+        {
+            _maxGatherCount = harvestNodeData.MaxGatherCount;
+        }
+
+        _respawnSeconds = Mathf.Max(0f, harvestNodeData.RespawnSeconds);
+        ApplyMaterialKeyColorToRenderers(harvestNodeData.MaterialKey);
         _hasAppliedHarvestNodeData = true;
+        _hasInitializedGatherState = false;
+    }
+
+    private void ApplyMaterialKeyColorToRenderers(string materialKey)
+    {
+        Color materialKeyColor;
+        if (GameDataMaterialColorResolver.TryResolveColor(materialKey, out materialKeyColor) == false)
+        {
+            return;
+        }
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] == null)
+            {
+                continue;
+            }
+
+            renderers[i].material.color = materialKeyColor;
+        }
     }
 
     private GatherToolType ConvertToolType(string toolTypeText, GatherToolType fallbackToolType)

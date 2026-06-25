@@ -33,6 +33,9 @@ public sealed class PlayerAttack : MonoBehaviour
     [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;
+    private PlayerController _playerController;
+    private string _lastEquippedWeaponItemId;
+    private float _bonusAttackDamage;
 
     public string WeaponDataId
     {
@@ -49,7 +52,12 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        ReadAttackInput();
+        RefreshEquippedWeapon();
+
+        if (ShouldReadAttackInputDirectly())
+        {
+            ReadAttackInput();
+        }
     }
 
     public void SetWeaponDataId(string weaponDataId)
@@ -62,6 +70,21 @@ public sealed class PlayerAttack : MonoBehaviour
         _weaponDataId = weaponDataId;
     }
 
+    public void AddBonusAttackDamage(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _bonusAttackDamage += amount;
+    }
+
+    public void ResetRunBonuses()
+    {
+        _bonusAttackDamage = 0f;
+    }
+
     public void TryAttack()
     {
         WeaponData weaponData = GetCurrentWeaponData();
@@ -69,6 +92,10 @@ public sealed class PlayerAttack : MonoBehaviour
         {
             return;
         }
+
+        // 좌클릭 피드백은 적중 여부와 분리해서, 빗나가도 1인칭 휘두르기가 보이게 합니다.
+        _lastAttackTime = Time.time;
+        PlayAttackView();
 
         Collider targetCollider = GetAttackTargetCollider(weaponData);
         if (targetCollider == null)
@@ -81,9 +108,12 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
-        _lastAttackTime = Time.time;
-        PlayAttackView();
-        ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData));
+        ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData), weaponData);
+    }
+
+    public void ExecuteAttack()
+    {
+        TryAttack();
     }
 
     private void ConnectComponents()
@@ -106,17 +136,57 @@ public sealed class PlayerAttack : MonoBehaviour
         {
             _damageDealer = GetComponent<DamageDealer>();
         }
+
+        if (_damageDealer != null)
+        {
+            _damageDealer.SetSourceType(DamageSourceType.Player);
+        }
+
+        _playerController = GetComponent<PlayerController>();
     }
 
     private void ReadAttackInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasLeftMousePressedThisFrame())
         {
             TryAttack();
         }
     }
 
-    private bool CanAttack(WeaponData weaponData)
+    private void RefreshEquippedWeapon()
+    {
+        if (GameManager.Inst == null)
+        {
+            return;
+        }
+
+        PlayerEquipmentModel equipmentModel = GameManager.Inst.PlayerEquipmentModel;
+        if (equipmentModel == null)
+        {
+            return;
+        }
+
+        string equippedWeaponItemId = equipmentModel.GetEquippedItemId(EquipmentSlotType.Weapon);
+        if (string.IsNullOrEmpty(equippedWeaponItemId))
+        {
+            return;
+        }
+
+        if (_lastEquippedWeaponItemId == equippedWeaponItemId)
+        {
+            return;
+        }
+
+        _lastEquippedWeaponItemId = equippedWeaponItemId;
+        SetWeaponDataId(equippedWeaponItemId);
+    }
+
+    public bool CanAttack(WeaponData weaponData)
     {
         return Time.time >= _lastAttackTime + GetAttackInterval(weaponData);
     }
@@ -161,7 +231,7 @@ public sealed class PlayerAttack : MonoBehaviour
         return targetCollider.GetComponentInParent<Damageable>() != null;
     }
 
-    private WeaponData GetCurrentWeaponData()
+    public WeaponData GetCurrentWeaponData()
     {
         if (_useWeaponData == false)
         {
@@ -186,10 +256,10 @@ public sealed class PlayerAttack : MonoBehaviour
     {
         if (weaponData != null && weaponData.Damage > 0f)
         {
-            return weaponData.Damage;
+            return weaponData.Damage + _bonusAttackDamage;
         }
 
-        return _attackDamage;
+        return _attackDamage + _bonusAttackDamage;
     }
 
     private float GetAttackDistance(WeaponData weaponData)
@@ -232,7 +302,7 @@ public sealed class PlayerAttack : MonoBehaviour
         _firstPersonToolView.PlaySwing();
     }
 
-    private void ApplyDamageToHitTarget(Collider targetCollider, float damage)
+    private void ApplyDamageToHitTarget(Collider targetCollider, float damage, WeaponData weaponData)
     {
         if (targetCollider == null)
         {
@@ -243,25 +313,50 @@ public sealed class PlayerAttack : MonoBehaviour
         if (enemyStatus != null)
         {
             enemyStatus.TakeDamage(damage);
+            RecordDirectEnemyDamage(damage);
             return;
         }
 
         Damageable damageable = targetCollider.GetComponentInParent<Damageable>();
         if (damageable != null)
         {
-            ApplyDamageToDamageable(damageable, damage);
+            ApplyDamageToDamageable(damageable, damage, weaponData);
         }
     }
 
-    private void ApplyDamageToDamageable(Damageable damageable, float damage)
+    private void ApplyDamageToDamageable(Damageable damageable, float damage, WeaponData weaponData)
     {
         if (_damageDealer != null)
         {
-            _damageDealer.SetDamageValue(damage);
+            _damageDealer.SetSourceType(DamageSourceType.Player);
+            if (weaponData != null)
+            {
+                _damageDealer.SetDamageValue(weaponData);
+            }
+            else
+            {
+                _damageDealer.SetDamageValue(damage);
+            }
+
             _damageDealer.ApplyDamage(damageable);
             return;
         }
 
         damageable.TakeDamage(damage);
+    }
+
+    private void RecordDirectEnemyDamage(float damage)
+    {
+        if (RunResultTracker.Instance == null)
+        {
+            return;
+        }
+
+        RunResultTracker.Instance.RecordPlayerDamageDealt(damage);
+    }
+
+    private bool ShouldReadAttackInputDirectly()
+    {
+        return _playerController == null || _playerController.enabled == false;
     }
 }

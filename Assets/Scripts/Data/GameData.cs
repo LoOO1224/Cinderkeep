@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// JSON에서 읽어오는 정적 데이터 구조입니다.
+// 이 파일에는 규칙 로직을 넣지 않고, 실제 처리는 Systems/Managers/Catalog 쪽에서 담당합니다.
 namespace Cinderkeep.Gameplay
 {
     // 변하지 않는 기획 데이터의 부모 클래스입니다.
@@ -34,6 +36,8 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private float _attackInterval;
         [SerializeField] private float _visualScale;
         [SerializeField] private float _detectorDistance;
+        [SerializeField] private int _tier;
+        [SerializeField] private float _detectorInterval;
 
         public string DisplayName
         {
@@ -96,6 +100,22 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _detectorDistance;
+            }
+        }
+
+        public int Tier
+        {
+            get
+            {
+                return _tier;
+            }
+        }
+
+        public float DetectorInterval
+        {
+            get
+            {
+                return _detectorInterval;
             }
         }
     }

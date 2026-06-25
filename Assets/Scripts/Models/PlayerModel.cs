@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 
+// 한 판 플레이 중 변하는 런타임 상태를 저장합니다.
+// 상태 변경은 명시적인 메서드로 처리하고, UI와 시스템은 이 모델을 읽거나 요청만 보냅니다.
 namespace Cinderkeep.Gameplay
 {
     // 플레이 중 저장되어야 하는 플레이어 Instance Data입니다.
@@ -175,6 +177,7 @@ namespace Cinderkeep.Gameplay
         }
 
         public event Action OnResourceChanged;
+        public static event Action<string, int> ResourceAddedGlobal;
 
         public void InitializeDefault()
         {
@@ -208,6 +211,7 @@ namespace Cinderkeep.Gameplay
             if (TryAddResource(resourceType, amount))
             {
                 NotifyResourceChanged();
+                NotifyResourceAdded(resourceType, amount);
             }
         }
 
@@ -317,6 +321,16 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void NotifyResourceAdded(string resourceType, int amount)
+        {
+            if (ResourceAddedGlobal == null)
+            {
+                return;
+            }
+
+            ResourceAddedGlobal(resourceType, amount);
         }
 
         private bool TryUseResource(string resourceType, int amount)

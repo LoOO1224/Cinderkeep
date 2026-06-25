@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.Serialization;
 
+// 씬 참조와 런타임 모델을 연결하는 얇은 매니저 허브입니다.
+// 계산과 세부 규칙은 작은 시스템/헬퍼로 분리하고, 이 클래스는 연결 책임에 집중합니다.
 namespace Cinderkeep.Gameplay
 {
     // 게임 중 동적으로 만들어지는 오브젝트를 등록하고 제거하는 매니저입니다.
@@ -101,6 +103,56 @@ namespace Cinderkeep.Gameplay
 
             _createdObjectById.Remove(instanceId);
             Destroy(targetObject);
+        }
+
+        public void UnregisterGameObject(GameObject targetObject)
+        {
+            if (targetObject == null)
+            {
+                return;
+            }
+
+            GameObjectIdentity identity = targetObject.GetComponent<GameObjectIdentity>();
+            if (identity == null || identity.IsInitialized == false)
+            {
+                return;
+            }
+
+            _createdObjectById.Remove(identity.InstanceId);
+        }
+
+        public void DestroyAllRegisteredGameObjects()
+        {
+            Initialize();
+
+            foreach (GameObjectIdentity identity in _createdObjectById.Values)
+            {
+                if (identity == null)
+                {
+                    continue;
+                }
+
+                DestroyRegisteredObject(identity.gameObject);
+            }
+
+            _createdObjectById.Clear();
+            _objectInstanceKeyGenerator = 0;
+        }
+
+        private void DestroyRegisteredObject(GameObject targetObject)
+        {
+            if (targetObject == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(targetObject);
+                return;
+            }
+
+            DestroyImmediate(targetObject);
         }
     }
 }

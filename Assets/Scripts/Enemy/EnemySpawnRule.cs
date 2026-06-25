@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 적의 감지, 타깃 판단, 이동, 공격, 보스 클리어 연결 중 한 역할을 담당합니다.
+// AI 판단과 실제 행동 컴포넌트를 분리해 적 패턴이 늘어도 유지보수 가능하게 합니다.
 public enum EnemySpawnMode
 {
     Day,

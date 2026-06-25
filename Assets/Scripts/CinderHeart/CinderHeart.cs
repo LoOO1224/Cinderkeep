@@ -1,10 +1,15 @@
 using Cinderkeep.Gameplay;
+using System;
 using UnityEngine;
 
+// CinderHeart의 체력, 피해, 파괴 이벤트를 관리하는 핵심 목표 오브젝트입니다.
+// 회복, 보상, 방어, 실패 조건이 모두 이 상태를 기준으로 연결됩니다.
 // CinderHeart는 3일 루프의 핵심 방어 대상입니다.
 // 체력이 0이 되면 GameManager를 통해 게임 오버 흐름으로 넘깁니다.
 public sealed class CinderHeart : MonoBehaviour
 {
+    public static event Action<float> CinderHeartDamagedGlobal;
+
     [Header("Health")]
     [Tooltip("CinderHeart 최대 체력입니다. 0이 되면 게임 오버가 됩니다.")]
     [SerializeField] private float _maxHealth = 500f;
@@ -18,6 +23,8 @@ public sealed class CinderHeart : MonoBehaviour
     [SerializeField] private float _testDamage = 1f;
 
     private float _currentHealth;
+    private float _baseMaxHealth;
+    private float _baseAttackDamage;
     private bool _isDestroyed;
 
     public float CurrentHealth
@@ -54,6 +61,7 @@ public sealed class CinderHeart : MonoBehaviour
 
     private void Awake()
     {
+        CacheBaseStats();
         InitializeHealth();
     }
 
@@ -74,6 +82,13 @@ public sealed class CinderHeart : MonoBehaviour
         _isDestroyed = false;
     }
 
+    public void ResetForNewRun()
+    {
+        _maxHealth = Mathf.Max(1f, _baseMaxHealth);
+        _attackDamage = Mathf.Max(0f, _baseAttackDamage);
+        InitializeHealth();
+    }
+
     public void TakeDamage(float damage)
     {
         if (_isDestroyed == true)
@@ -87,7 +102,8 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
-        Debug.Log("[CinderHeart] 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        NotifyCinderHeartDamaged(damage);
+        global::CinderkeepLog.Verbose("[CinderHeart] 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
 
         if (_currentHealth <= 0f)
         {
@@ -110,7 +126,7 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         _attackDamage += amount;
-        Debug.Log("[CinderHeart] 공격력 증가: +" + amount + ", 현재 공격력: " + _attackDamage);
+        global::CinderkeepLog.Verbose("[CinderHeart] 공격력 증가: +" + amount + ", 현재 공격력: " + _attackDamage);
     }
 
     public void AddMaxHealth(float amount)
@@ -126,7 +142,7 @@ public sealed class CinderHeart : MonoBehaviour
         _currentHealth += amount;
         ClampInspectorValues();
         _currentHealth = Mathf.Clamp(_currentHealth, 0f, _maxHealth);
-        Debug.Log("[CinderHeart] 최대 체력 증가: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[CinderHeart] 최대 체력 증가: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
     }
 
     public void Heal(float amount)
@@ -142,7 +158,7 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         _currentHealth = Mathf.Min(_currentHealth + amount, _maxHealth);
-        Debug.Log("[CinderHeart] 체력 회복: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[CinderHeart] 체력 회복: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
     }
 
     public void HealByRate(float rate)
@@ -178,6 +194,16 @@ public sealed class CinderHeart : MonoBehaviour
         GameManager.Inst.EndGame();
     }
 
+    private void NotifyCinderHeartDamaged(float damage)
+    {
+        if (CinderHeartDamagedGlobal == null)
+        {
+            return;
+        }
+
+        CinderHeartDamagedGlobal(damage);
+    }
+
     private void ClampInspectorValues()
     {
         if (_maxHealth < 1f)
@@ -194,5 +220,12 @@ public sealed class CinderHeart : MonoBehaviour
         {
             _attackDamage = 0f;
         }
+    }
+
+    private void CacheBaseStats()
+    {
+        ClampInspectorValues();
+        _baseMaxHealth = _maxHealth;
+        _baseAttackDamage = _attackDamage;
     }
 }

@@ -2,16 +2,13 @@ using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// CinderHeart 보상 스킬의 실제 효과를 적용하는 컴포넌트입니다.
-// GameFlow와 UI는 선택 흐름만 맡고, 수치 적용은 이 컴포넌트가 담당합니다.
+// CinderHeart 보상 선택 결과를 실제 플레이어/CinderHeart 수치에 적용합니다.
+// 적용 가능한 EffectType 기준은 GameDataCheckRules와 공유해 데이터 Check과 런타임 처리가 갈라지지 않게 합니다.
 public sealed class CinderHeartSkillApplier : MonoBehaviour
 {
-    private const string EffectTypeAttackDamageAdd = "CinderHeartAttackDamageAdd";
-    private const string EffectTypeMaxHealthAdd = "CinderHeartMaxHealthAdd";
-    private const string EffectTypePlayerHealRate = "PlayerHealRate";
-
     [SerializeField] private CinderHeart _cinderHeart;
     [SerializeField] private PlayerStatus _playerStatus;
+    [SerializeField] private PlayerAttack _playerAttack;
 
     public void SetTargets(CinderHeart cinderHeart, PlayerStatus playerStatus)
     {
@@ -21,32 +18,80 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
 
     public void ApplySkill(CinderHeartSkillData skillData)
     {
-        // cinderheart_skills.json의 EffectType 문자열을 기준으로 실제 효과를 분기합니다.
-        // 새 스킬을 추가할 때는 JSON의 effectType과 여기의 적용 메서드를 함께 맞춰야 합니다.
         if (skillData == null)
         {
             return;
         }
 
-        if (IsEffectType(skillData, EffectTypeAttackDamageAdd) == true)
+        ConnectTargetsIfNeeded();
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartAttackDamageAdd))
         {
             ApplyCinderHeartAttackDamageAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, EffectTypeMaxHealthAdd) == true)
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartMaxHealthAdd))
         {
             ApplyCinderHeartMaxHealthAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, EffectTypePlayerHealRate) == true)
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartHealFlat))
+        {
+            ApplyCinderHeartHealFlat(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartHealRate))
+        {
+            ApplyCinderHeartHealRate(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerHealRate))
         {
             ApplyPlayerHealRate(skillData.Value);
             return;
         }
 
-        Debug.LogWarning("[CinderHeartSkillApplier] 아직 연결되지 않은 스킬 효과입니다: " + skillData.EffectType);
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerReviveRate))
+        {
+            ApplyPlayerReviveRate(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerMaxHealthAdd))
+        {
+            ApplyPlayerMaxHealthAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerMaxStaminaAdd))
+        {
+            ApplyPlayerMaxStaminaAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerStaminaRecoveryAdd))
+        {
+            ApplyPlayerStaminaRecoveryAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerMaxSatietyAdd))
+        {
+            ApplyPlayerMaxSatietyAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerAttackDamageAdd))
+        {
+            ApplyPlayerAttackDamageAdd(skillData.Value);
+            return;
+        }
+
+        Debug.LogWarning("[CinderHeartSkillApplier] Unsupported reward effect: " + skillData.EffectType);
     }
 
     private bool IsEffectType(CinderHeartSkillData skillData, string effectType)
@@ -74,20 +119,127 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
         _cinderHeart.AddMaxHealth(amount);
     }
 
-    private void ApplyPlayerHealRate(float rate)
+    private void ApplyCinderHeartHealFlat(float amount)
     {
-        if (_playerStatus == null)
+        if (_cinderHeart == null)
         {
             return;
         }
 
-        if (rate <= 0f)
+        _cinderHeart.Heal(amount);
+        PlayHealSfx();
+    }
+
+    private void ApplyCinderHeartHealRate(float rate)
+    {
+        if (_cinderHeart == null || rate <= 0f)
+        {
+            return;
+        }
+
+        _cinderHeart.HealByRate(rate);
+        PlayHealSfx();
+    }
+
+    private void ApplyPlayerHealRate(float rate)
+    {
+        if (_playerStatus == null || rate <= 0f)
         {
             return;
         }
 
         float healAmount = _playerStatus.GetMaxHealth() * rate;
         _playerStatus.Heal(healAmount);
-        Debug.Log("[CinderHeartSkillApplier] 플레이어 체력 회복: +" + healAmount);
+        PlayHealSfx();
+    }
+
+    private void ApplyPlayerReviveRate(float rate)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.Revive(rate);
+        PlayHealSfx();
+    }
+
+    private void ApplyPlayerMaxHealthAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddMaxHealth(amount);
+        PlayHealSfx();
+    }
+
+    private void ApplyPlayerMaxStaminaAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddMaxStamina(amount);
+    }
+
+    private void ApplyPlayerStaminaRecoveryAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddStaminaRecoveryRate(amount);
+    }
+
+    private void ApplyPlayerMaxSatietyAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddMaxSatiety(amount);
+    }
+
+    private void ApplyPlayerAttackDamageAdd(float amount)
+    {
+        if (_playerAttack == null)
+        {
+            return;
+        }
+
+        _playerAttack.AddBonusAttackDamage(amount);
+    }
+
+    private void ConnectTargetsIfNeeded()
+    {
+        if (_cinderHeart == null)
+        {
+            _cinderHeart = UnityEngine.Object.FindFirstObjectByType<CinderHeart>();
+        }
+
+        if (_playerStatus == null)
+        {
+            _playerStatus = UnityEngine.Object.FindFirstObjectByType<PlayerStatus>();
+        }
+
+        if (_playerAttack == null)
+        {
+            _playerAttack = UnityEngine.Object.FindFirstObjectByType<PlayerAttack>();
+        }
+    }
+
+    private void PlayHealSfx()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.GetSoundManager() == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.GetSoundManager().PlayHeal();
     }
 }

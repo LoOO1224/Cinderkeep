@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // T 키 귀환 시전과 실제 위치 이동을 담당하는 플레이어 전용 컴포넌트입니다.
 // 베이스 도착 지점과 진행 UI는 씬 또는 프리팹에서 연결하고, 피격 취소는 PlayerStatus 이벤트로 받습니다.
 public sealed class PlayerBaseTeleport : MonoBehaviour
@@ -59,6 +61,12 @@ public sealed class PlayerBaseTeleport : MonoBehaviour
 
     private void Update()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            CancelTeleport();
+            return;
+        }
+
         if (_isTeleporting == true)
         {
             UpdateTeleportCast();
@@ -148,7 +156,7 @@ public sealed class PlayerBaseTeleport : MonoBehaviour
         float distanceFromBase = Vector3.Distance(transform.position, _baseTeleportPoint.position);
         if (distanceFromBase < _minimumDistanceFromBase)
         {
-            Debug.Log("[PlayerBaseTeleport] 베이스와 가까워 귀환을 시작하지 않습니다.");
+            global::CinderkeepLog.Verbose("[PlayerBaseTeleport] 베이스와 가까워 귀환을 시작하지 않습니다.");
             return false;
         }
 

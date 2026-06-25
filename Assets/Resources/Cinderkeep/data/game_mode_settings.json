@@ -1,0 +1,6 @@
+{
+  "_normalDayDuration": 180,
+  "_normalNightDuration": 120,
+  "_testFastDayDuration": 90,
+  "_testFastNightDuration": 60
+}

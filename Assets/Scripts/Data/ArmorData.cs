@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // Armor JSON의 한 줄을 담는 데이터 클래스입니다.
-    // 헬멧, 갑옷, 장화는 같은 방어 장비이므로 ArmorSlot 값으로 구분합니다.
+    // armors.json의 방어구 한 줄을 읽는 정적 데이터입니다.
+    // 실제 장착 효과는 PlayerEquipmentStatApplier가 PlayerStatus와 PlayerMovement에 적용합니다.
     [Serializable]
     public sealed class ArmorData : GameDataBase
     {
@@ -22,86 +22,56 @@ namespace Cinderkeep.Gameplay
 
         public string DisplayName
         {
-            get
-            {
-                return _displayName;
-            }
+            get { return _displayName; }
         }
 
         public string ArmorSlot
         {
-            get
-            {
-                return _armorSlot;
-            }
+            get { return _armorSlot; }
         }
 
         public int Tier
         {
-            get
-            {
-                return _tier;
-            }
+            get { return _tier; }
         }
 
         public string Description
         {
-            get
-            {
-                return _description;
-            }
+            get { return _description; }
         }
 
         public float Defense
         {
-            get
-            {
-                return _defense;
-            }
+            get { return _defense; }
         }
 
         public float MaxHealthBonus
         {
-            get
-            {
-                return _maxHealthBonus;
-            }
+            get { return _maxHealthBonus; }
         }
 
         public float StaminaBonus
         {
-            get
-            {
-                return _staminaBonus;
-            }
+            get { return _staminaBonus; }
         }
 
         public float MoveSpeedBonus
         {
-            get
-            {
-                return _moveSpeedBonus;
-            }
+            get { return _moveSpeedBonus; }
         }
 
         public string PrefabKey
         {
-            get
-            {
-                return _prefabKey;
-            }
+            get { return _prefabKey; }
         }
 
         public string CraftingRecipeId
         {
-            get
-            {
-                return _craftingRecipeId;
-            }
+            get { return _craftingRecipeId; }
         }
     }
 
-    // ArmorData도 JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
+    // JsonUtility가 읽을 수 있도록 Items 배열로 감싼 방어구 카탈로그입니다.
     [Serializable]
     public sealed class ArmorDataCatalog
     {

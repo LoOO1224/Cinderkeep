@@ -1,6 +1,8 @@
-﻿using Cinderkeep.Gameplay;
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // 플레이어가 현재 들고 있는 도구로 자원을 채집하는 컴포넌트입니다.
 // PlayerAttack은 적 공격만 담당하고, 도끼/곡괭이 좌클릭 채집은 이 클래스가 담당합니다.
 // 도구 거리, 범위, 쿨타임은 tools.json 값이 있으면 그 값을 우선 사용합니다.
@@ -45,23 +47,22 @@ public sealed class PlayerToolUse : MonoBehaviour
 
         ToolData toolData = _playerToolController.GetCurrentToolData();
         ResourceNode resourceNode = GetResourceNodeFromCast(toolData);
-        if (resourceNode == null)
-        {
-            return;
-        }
 
         if (CanUseToolByInterval(resourceNode, toolData) == false)
         {
             return;
         }
 
-        if (resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType, toolData) == false)
+        // 채집 피드백은 적중 여부와 분리해서, 빈 공간을 찍어도 광질/도끼질 연출이 보이게 합니다.
+        _lastToolUseTime = Time.time;
+        PlayToolUseView();
+
+        if (resourceNode == null)
         {
             return;
         }
 
-        _lastToolUseTime = Time.time;
-        PlayToolUseView();
+        resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType, toolData);
     }
 
     private void ConnectComponents()
@@ -88,6 +89,11 @@ public sealed class PlayerToolUse : MonoBehaviour
 
     private void ReadToolUseInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasLeftMousePressedThisFrame())
         {
             TryUseTool();
@@ -123,16 +129,42 @@ public sealed class PlayerToolUse : MonoBehaviour
         }
 
         Ray toolRay = new Ray(_toolOrigin.position, _toolOrigin.forward);
-        RaycastHit hitInfo;
         float useDistance = GetToolUseDistance(toolData);
         float useRadius = GetToolUseRadius(toolData);
+        Physics.SyncTransforms();
+        RaycastHit[] hitInfos = Physics.SphereCastAll(toolRay, useRadius, useDistance, _toolUseLayerMask);
 
-        if (Physics.SphereCast(toolRay, useRadius, out hitInfo, useDistance, _toolUseLayerMask) == false)
+        if (hitInfos == null || hitInfos.Length <= 0)
         {
             return null;
         }
 
-        return hitInfo.collider.GetComponentInParent<ResourceNode>();
+        ResourceNode closestResourceNode = null;
+        float closestDistance = float.MaxValue;
+        for (int i = 0; i < hitInfos.Length; i++)
+        {
+            Collider hitCollider = hitInfos[i].collider;
+            if (hitCollider == null)
+            {
+                continue;
+            }
+
+            ResourceNode resourceNode = hitCollider.GetComponentInParent<ResourceNode>();
+            if (resourceNode == null)
+            {
+                continue;
+            }
+
+            if (hitInfos[i].distance >= closestDistance)
+            {
+                continue;
+            }
+
+            closestResourceNode = resourceNode;
+            closestDistance = hitInfos[i].distance;
+        }
+
+        return closestResourceNode;
     }
 
     private float GetToolUseDistance(ToolData toolData)
