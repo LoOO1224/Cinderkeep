@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 // 한 판 동안 유지되는 플레이어 인벤토리, 퀵슬롯, 제작 완료 건축물 수량을 저장합니다.
 // UI와 플레이어 조작은 이 모델을 통해 아이템 상태를 읽고 변경합니다.
@@ -15,7 +14,7 @@ namespace Cinderkeep.Gameplay
 
         private InventoryItemModel[] _inventorySlots = new InventoryItemModel[InventorySlotCount];
         private InventoryItemModel[] _quickSlots = new InventoryItemModel[QuickSlotCount];
-        private readonly Dictionary<string, int> _preparedBuildingCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        private readonly PreparedBuildingInventory _preparedBuildings = new PreparedBuildingInventory();
 
         public event Action OnInventoryChanged;
 
@@ -23,7 +22,7 @@ namespace Cinderkeep.Gameplay
         {
             InitializeSlotArray(_inventorySlots);
             InitializeSlotArray(_quickSlots);
-            _preparedBuildingCounts.Clear();
+            _preparedBuildings.Clear();
 
             // 새 판은 빈 인벤토리로 시작합니다.
             // 손돌과 기본 자원은 필드 픽업/튜토리얼 루프에서 직접 얻도록 유지합니다.
@@ -113,59 +112,30 @@ namespace Cinderkeep.Gameplay
 
         public bool TryAddPreparedBuilding(string buildingId, int amount)
         {
-            if (string.IsNullOrEmpty(buildingId) || amount <= 0)
+            if (_preparedBuildings.TryAdd(buildingId, amount) == false)
             {
                 return false;
             }
 
-            int currentAmount = GetPreparedBuildingCount(buildingId);
-            _preparedBuildingCounts[buildingId] = currentAmount + amount;
             NotifyInventoryChanged();
             return true;
         }
 
         public bool HasPreparedBuilding(string buildingId)
         {
-            return GetPreparedBuildingCount(buildingId) > 0;
+            return _preparedBuildings.Has(buildingId);
         }
 
         public int GetPreparedBuildingCount(string buildingId)
         {
-            if (string.IsNullOrEmpty(buildingId))
-            {
-                return 0;
-            }
-
-            int amount;
-            if (_preparedBuildingCounts.TryGetValue(buildingId, out amount) == false)
-            {
-                return 0;
-            }
-
-            return Math.Max(0, amount);
+            return _preparedBuildings.GetCount(buildingId);
         }
 
         public bool TryConsumePreparedBuilding(string buildingId, int amount)
         {
-            if (string.IsNullOrEmpty(buildingId) || amount <= 0)
+            if (_preparedBuildings.TryConsume(buildingId, amount) == false)
             {
                 return false;
-            }
-
-            int currentAmount = GetPreparedBuildingCount(buildingId);
-            if (currentAmount < amount)
-            {
-                return false;
-            }
-
-            int nextAmount = currentAmount - amount;
-            if (nextAmount <= 0)
-            {
-                _preparedBuildingCounts.Remove(buildingId);
-            }
-            else
-            {
-                _preparedBuildingCounts[buildingId] = nextAmount;
             }
 
             NotifyInventoryChanged();
