@@ -129,9 +129,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c0e4c7484074b34890bb238fdb82f1d, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingHp
   _maxHp: 100
+  _defense: 0
 --- !u!114 &4724350899445293183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,7 +143,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damageable
   _maxHealth: 100
 --- !u!114 &1085651592963214202
@@ -155,8 +156,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17042677f0d950847be8e4de0a2d3ed1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingTower
+  _towerTargeting: {fileID: 0}
+  _towerAttack: {fileID: 0}
+  _turretHead: {fileID: 0}
 --- !u!114 &8042261594370963419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,8 +171,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e46e0381e558324b981856c83b77a65, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerTargeting
+  _attackRange: 8
+  _scanPoint: {fileID: 5534030876482766731}
 --- !u!114 &8375428777397888767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,5 +185,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 942d687182a910348a50fb49f0bfe91f, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerAttack
+  _attackDamage: 5
+  _attackInterval: 1.4
+  _damageDealer: {fileID: 0}
