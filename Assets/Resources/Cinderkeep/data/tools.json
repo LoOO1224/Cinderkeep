@@ -33,9 +33,9 @@
       "_gatherPower": 1,
       "_woodGatherMultiplier": 0.35,
       "_stoneGatherMultiplier": 0.35,
-      "_ironGatherMultiplier": 0,
-      "_goldGatherMultiplier": 0,
-      "_adamantiumGatherMultiplier": 0,
+      "_ironGatherMultiplier": 0.18,
+      "_goldGatherMultiplier": 0.09,
+      "_adamantiumGatherMultiplier": 0.045,
       "_targetResourceType": "Basic",
       "_prefabKey": "PF_Equipment_HandStone",
       "_craftingRecipeId": ""

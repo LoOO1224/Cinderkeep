@@ -16,6 +16,7 @@ namespace Cinderkeep.Gameplay
         private readonly TMP_Text[] _slotTexts = new TMP_Text[SlotCount];
         private readonly Image[] _slotBackgrounds = new Image[SlotCount];
         private PlayerInventoryModel _inventoryModel;
+        private PlayerToolController _toolController;
         private float _nextRefreshTime;
 
         public static QuickSlotHud EnsureSceneHud()
@@ -105,6 +106,7 @@ namespace Cinderkeep.Gameplay
 
             _nextRefreshTime = Time.unscaledTime + 0.15f;
             ConnectInventoryModel();
+            ConnectToolController();
             RefreshNow();
         }
 
@@ -189,9 +191,7 @@ namespace Cinderkeep.Gameplay
 
             if (_slotBackgrounds[slotIndex] != null)
             {
-                _slotBackgrounds[slotIndex].color = hasItem
-                    ? ResolveItemColor(itemModel.ItemType)
-                    : new Color(0.08f, 0.10f, 0.12f, 0.86f);
+                _slotBackgrounds[slotIndex].color = ResolveSlotColor(slotIndex, itemModel, hasItem);
             }
 
             if (_slotTexts[slotIndex] == null)
@@ -239,6 +239,31 @@ namespace Cinderkeep.Gameplay
             }
 
             return new Color(0.16f, 0.18f, 0.22f, 0.95f);
+        }
+
+        private void ConnectToolController()
+        {
+            if (_toolController != null)
+            {
+                return;
+            }
+
+            _toolController = FindFirstObjectByType<PlayerToolController>();
+        }
+
+        private Color ResolveSlotColor(int slotIndex, InventoryItemModel itemModel, bool hasItem)
+        {
+            bool isSelected = _toolController != null && _toolController.CurrentQuickSlotIndex == slotIndex;
+            if (isSelected)
+            {
+                return hasItem
+                    ? new Color(0.95f, 0.78f, 0.28f, 0.98f)
+                    : new Color(0.82f, 0.62f, 0.22f, 0.92f);
+            }
+
+            return hasItem
+                ? ResolveItemColor(itemModel.ItemType)
+                : new Color(0.08f, 0.10f, 0.12f, 0.86f);
         }
     }
 }

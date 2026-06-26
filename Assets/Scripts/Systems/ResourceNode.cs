@@ -150,14 +150,14 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return false;
         }
 
+        if (toolType == GatherToolType.None)
+        {
+            return false;
+        }
+
         if (CanGatherWithHandStone(toolData))
         {
             return true;
-        }
-
-        if (_requiredToolType != toolType)
-        {
-            return false;
         }
 
         return HasRequiredToolTier(toolData, toolType);
@@ -170,17 +170,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return false;
         }
 
-        if (_requiredToolTier > BasicGatherTier)
-        {
-            return false;
-        }
-
-        if (_resourceId == PlayerModel.ResourceWood)
-        {
-            return true;
-        }
-
-        return _resourceId == PlayerModel.ResourceStone;
+        return true;
     }
 
     private bool HasRequiredToolTier(ToolData toolData, GatherToolType toolType)
@@ -190,12 +180,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return true;
         }
 
-        if (toolData == null)
-        {
-            return toolType != GatherToolType.None && _requiredToolTier <= BasicGatherTier;
-        }
-
-        return toolData.Tier >= _requiredToolTier;
+        return toolData != null || toolType != GatherToolType.None;
     }
 
     public float GetToolGatherMultiplier(ToolData toolData)

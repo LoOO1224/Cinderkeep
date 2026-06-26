@@ -44,6 +44,8 @@ public sealed class PlayerToolController : MonoBehaviour
     [Tooltip("현재 장착 중인 tools.json의 _id입니다. 플레이 중 디버깅용으로 확인합니다.")]
     [SerializeField] private string _currentToolDataId = "stone_axe";
 
+    private int _currentQuickSlotIndex = -1;
+
     public GatherToolType CurrentToolType
     {
         get
@@ -57,6 +59,14 @@ public sealed class PlayerToolController : MonoBehaviour
         get
         {
             return _currentToolDataId;
+        }
+    }
+
+    public int CurrentQuickSlotIndex
+    {
+        get
+        {
+            return _currentQuickSlotIndex;
         }
     }
 
@@ -167,6 +177,7 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void EquipQuickSlot(int slotIndex)
     {
+        _currentQuickSlotIndex = slotIndex;
         PlayerInventoryModel inventoryModel = GetInventoryModel();
         if (inventoryModel == null)
         {
@@ -304,6 +315,7 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void EquipLegacySlotFallback(int slotIndex)
     {
+        _currentQuickSlotIndex = slotIndex;
         if (slotIndex == 0)
         {
             EquipTool(GatherToolType.Axe);

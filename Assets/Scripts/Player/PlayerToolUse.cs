@@ -85,6 +85,11 @@ public sealed class PlayerToolUse : MonoBehaviour
         {
             _firstPersonToolView = GetComponentInChildren<FirstPersonToolView>();
         }
+
+        if (_firstPersonToolView == null)
+        {
+            _firstPersonToolView = FirstPersonToolView.EnsureSceneView();
+        }
     }
 
     private void ReadToolUseInput()

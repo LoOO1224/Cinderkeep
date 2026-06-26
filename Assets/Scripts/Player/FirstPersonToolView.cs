@@ -35,6 +35,33 @@ public sealed class FirstPersonToolView : MonoBehaviour
     private bool _isSwinging;
     private int _lastSwingFrame = -1;
 
+    public static FirstPersonToolView EnsureSceneView()
+    {
+        FirstPersonToolView existing = FindFirstObjectByType<FirstPersonToolView>(FindObjectsInactive.Include);
+        if (existing != null)
+        {
+            existing.gameObject.SetActive(true);
+            return existing;
+        }
+
+        PlayerToolController toolController = FindFirstObjectByType<PlayerToolController>();
+        if (toolController == null)
+        {
+            return null;
+        }
+
+        Transform viewParent = FindViewParent(toolController.transform);
+        GameObject viewObject = new GameObject("View_FirstPersonToolRuntime");
+        viewObject.transform.SetParent(viewParent, false);
+        viewObject.transform.localPosition = Vector3.zero;
+        viewObject.transform.localRotation = Quaternion.identity;
+        viewObject.transform.localScale = Vector3.one;
+
+        FirstPersonToolView view = viewObject.AddComponent<FirstPersonToolView>();
+        view._playerToolController = toolController;
+        return view;
+    }
+
     private void Start()
     {
         ConnectComponents();
@@ -74,6 +101,22 @@ public sealed class FirstPersonToolView : MonoBehaviour
         }
 
         _playerToolController = GetComponentInParent<PlayerToolController>();
+    }
+
+    private static Transform FindViewParent(Transform playerRoot)
+    {
+        if (playerRoot == null)
+        {
+            return null;
+        }
+
+        Camera playerCamera = playerRoot.GetComponentInChildren<Camera>(true);
+        if (playerCamera != null)
+        {
+            return playerCamera.transform;
+        }
+
+        return playerRoot;
     }
 
     private void RefreshToolView()

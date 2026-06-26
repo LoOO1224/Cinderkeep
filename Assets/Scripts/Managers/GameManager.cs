@@ -231,6 +231,7 @@ namespace Cinderkeep.Gameplay
             ResetPlayerSceneState();
             RunResultTracker.EnsureSceneTracker().BeginRun(_gameRunModel);
             global::PlayerEquipmentStatApplier.EnsureSceneApplier();
+            global::FirstPersonToolView.EnsureSceneView();
 
             if (_gameFlowController != null)
             {
@@ -267,6 +268,7 @@ namespace Cinderkeep.Gameplay
             ResetCinderHeartState();
             ResetPlayerSceneState();
             global::PlayerEquipmentStatApplier.EnsureSceneApplier();
+            global::FirstPersonToolView.EnsureSceneView();
             global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
             global::FoodPickupSceneBootstrap.EnsureFoodPickups();
             global::TrapZoneSceneBootstrap.EnsureTrapZones();

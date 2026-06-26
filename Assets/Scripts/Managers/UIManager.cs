@@ -148,6 +148,7 @@ namespace Cinderkeep.Gameplay
         {
             global::HudTutorialGuide.EnsureSceneGuide();
             QuickSlotHud.EnsureSceneHud();
+            global::InteractionPromptHud.EnsureSceneHud();
             global::CrosshairFeedbackHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
