@@ -99,6 +99,7 @@ public sealed class BuildingSpot : MonoBehaviour
     private void Start()
     {
         RegisterToBuildingManager();
+        RefreshBuildSpotLabel();
     }
 
     private void RegisterToBuildingManager()
@@ -156,6 +157,7 @@ public sealed class BuildingSpot : MonoBehaviour
         _currentBuildingDataId = string.IsNullOrEmpty(buildingDataId) ? _buildingDataId : buildingDataId;
         buildingObject.transform.SetParent(transform, true);
         _isEmpty = false;
+        RefreshBuildSpotLabel();
     }
 
     public void HideBuildingSpot()
@@ -173,6 +175,7 @@ public sealed class BuildingSpot : MonoBehaviour
         _currentBuildingDataId = null;
         _isEmpty = true;
         ShowBuildingSpot();
+        RefreshBuildSpotLabel();
     }
 
     public void ReplaceBuilding(GameObject buildingObject, string buildingDataId)
@@ -181,6 +184,16 @@ public sealed class BuildingSpot : MonoBehaviour
         _isEmpty = true;
         PlaceBuilding(buildingObject, buildingDataId);
         HideBuildingSpot();
+        RefreshBuildSpotLabel();
+    }
+
+    private void RefreshBuildSpotLabel()
+    {
+        BuildingSpotLabel label = BuildingSpotLabel.EnsureForSpot(this);
+        if (label != null)
+        {
+            label.RefreshLabel();
+        }
     }
 
     private void InitializeAnchor()
