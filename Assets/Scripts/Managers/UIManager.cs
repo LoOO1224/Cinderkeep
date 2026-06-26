@@ -151,6 +151,7 @@ namespace Cinderkeep.Gameplay
             global::InteractionPromptHud.EnsureSceneHud();
             global::CrosshairFeedbackHud.EnsureSceneHud();
             global::GameplayFeedbackHud.EnsureSceneHud();
+            global::CinderHeartDamageFlashHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 
