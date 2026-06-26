@@ -421,7 +421,72 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            _messageText.text = message;
+            _messageText.text = NormalizeMessage(message);
+        }
+
+        private string NormalizeMessage(string message)
+        {
+            if (ContainsBrokenDisplayText(message) == false)
+            {
+                return message;
+            }
+
+            if (message.Contains("臾"))
+            {
+                return "무기를 장착하고 1번 퀵슬롯에 등록했습니다.";
+            }
+
+            if (message.Contains("媛"))
+            {
+                return "갑옷을 장착했습니다.";
+            }
+
+            if (message.Contains("踰") && message.Contains("뚯"))
+            {
+                return "음식을 퀵슬롯에 등록했습니다.";
+            }
+
+            if (message.Contains("踰"))
+            {
+                return "퀵슬롯에 등록하고 장착했습니다.";
+            }
+
+            if (message.Contains("紐"))
+            {
+                return "인벤토리 연결이 필요합니다.";
+            }
+
+            if (message.Contains("듭"))
+            {
+                return "퀵슬롯에 등록할 수 없습니다.";
+            }
+
+            if (message.Contains("λ"))
+            {
+                return "장비 슬롯이나 퀵슬롯을 선택하세요.";
+            }
+
+            return "작업 상태가 갱신되었습니다.";
+        }
+
+        private bool ContainsBrokenDisplayText(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+
+            return text.Contains("�")
+                || text.Contains("紐")
+                || text.Contains("踰")
+                || text.Contains("醫")
+                || text.Contains("遺")
+                || text.Contains("臾")
+                || text.Contains("媛")
+                || text.Contains("λ")
+                || text.Contains("?λ")
+                || text.Contains("?몃")
+                || text.Contains("?듭");
         }
 
         private void SetVisible(bool isVisible)

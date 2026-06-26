@@ -208,13 +208,34 @@ namespace Cinderkeep.Gameplay
                     previousGroup = statData.Group;
                 }
 
-                builder.AppendLine(statData.Label + ": " + GetStatValue(snapshot, statData.StatKey));
+                builder.AppendLine(statData.Label + ": " + GetSafeStatValue(snapshot, statData.StatKey));
             }
 
             builder.AppendLine();
             builder.AppendLine("R: Restart");
             builder.AppendLine("Esc: Main_Lobby");
             return builder.ToString();
+        }
+
+        private string GetSafeStatValue(RunResultSnapshot snapshot, string statKey)
+        {
+            string statValue = GetStatValue(snapshot, statKey);
+            if (ContainsBrokenDisplayText(statValue))
+            {
+                return "미집계";
+            }
+
+            return statValue;
+        }
+
+        private bool ContainsBrokenDisplayText(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+
+            return text.Contains("誘") || text.Contains("�");
         }
 
         private void AppendGroupHeader(StringBuilder builder, string group)
