@@ -154,6 +154,7 @@ namespace Cinderkeep.Gameplay
             global::CinderHeartDamageFlashHud.EnsureSceneHud();
             global::MorningPrepTimerHUD.EnsureSceneHud();
             global::PlayerDownHud.EnsureSceneHud();
+            global::BossEncounterHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 

@@ -27,7 +27,7 @@ namespace Cinderkeep.Gameplay
 
         [SerializeField] private AudioSource _bgmAudioSource;
         [SerializeField] private AudioSource _effectAudioSource;
-        [SerializeField] private float _defaultVolume = 0.7f;
+        [SerializeField] private float _defaultVolume = 0.3f;
 
         private AudioClip _uiClickClip;
         private AudioClip _uiBackClip;

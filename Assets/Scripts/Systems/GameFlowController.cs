@@ -232,6 +232,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             _gameRunModel.Day,
             _gameFlowSettings.BossApproachDuration));
         StartBossSpawn();
+        global::BossEncounterHud.ShowBossWarning();
         PlayPhaseBgm(GameRunPhase.BossApproach);
     }
 
