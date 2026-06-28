@@ -77,7 +77,7 @@ MonoBehaviour:
   - rid: 1333824726887039003
   - rid: 1333824726887039012
   - rid: 1333824726887039239
-  m_VersionTimestamp: 639180072027890250
+  m_VersionTimestamp: 639182811491912181
   m_SerializedVersion: 3
   m_DebugInfo: {fileID: -6615253633288418077}
   m_RuntimeGraph: {fileID: 723487754898012346}
@@ -100,7 +100,7 @@ MonoBehaviour:
     NamedChildren: []
     IsPlaceholder: 0
   - Name: Enemy Move To Target
-    Story: '[Self] moves to [Target]'
+    Story: '[Self] moves to [Target] when state is [RequiredState]'
     RuntimeTypeString: EnemyMoveToTargetAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
@@ -117,10 +117,15 @@ MonoBehaviour:
         m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
       Tooltip: 
+    - Name: RequiredState
+      Type:
+        m_SerializableType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: Enemy Wander Around Spawn Point
-    Story: '[Self] wanders around spawn point'
+    Story: '[Self] wanders around spawn point when state is [RequiredState]'
     RuntimeTypeString: EnemyWanderAroundSpawnPointAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
@@ -131,6 +136,11 @@ MonoBehaviour:
       Type:
         m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
+      Tooltip: 
+    - Name: RequiredState
+      Type:
+        m_SerializableType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
       Tooltip: 
     - Name: StopOnEnd
       Type:
@@ -167,7 +177,7 @@ MonoBehaviour:
     - rid: 1333824726887038977
       type: {class: StartNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
-        Position: {x: -31.692148, y: -123.490135}
+        Position: {x: -75.3125, y: -123.49014}
         ID:
           m_Value0: 13954113726189835637
           m_Value1: 14997138929448399260
@@ -213,6 +223,7 @@ MonoBehaviour:
         m_FieldValues:
         - rid: 1333824726887039006
         - rid: 1333824726887039007
+        - rid: 1333824796429123584
     - rid: 1333824726887039004
       type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
@@ -283,7 +294,7 @@ MonoBehaviour:
     - rid: 1333824726887039012
       type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
-        Position: {x: 52.450127, y: 115.56808}
+        Position: {x: 205.45013, y: 112.56808}
         ID:
           m_Value0: 16363456071999011709
           m_Value1: 3299687526512415317
@@ -299,6 +310,7 @@ MonoBehaviour:
           m_Value1: 3659861906595840
         m_FieldValues:
         - rid: 1333824726887039015
+        - rid: 1333824796429123585
         - rid: 1333824726887039016
     - rid: 1333824726887039013
       type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
@@ -406,6 +418,44 @@ MonoBehaviour:
         m_Connections:
         - rid: 1333824726887039004
         - rid: 1333824726887039013
+    - rid: 1333824796429123584
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: RequiredState
+        Type:
+          m_SerializableType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        LocalValue:
+          rid: 1333824796429123586
+        LinkedVariable:
+          rid: -2
+    - rid: 1333824796429123585
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: RequiredState
+        Type:
+          m_SerializableType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        LocalValue:
+          rid: 1333824796429123587
+        LinkedVariable:
+          rid: -2
+    - rid: 1333824796429123586
+      type: {class: 'BlackboardVariable`1[[System.String, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: MoveToCinderHeart
+    - rid: 1333824796429123587
+      type: {class: 'BlackboardVariable`1[[System.String, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: Wander
 --- !u!114 &723487754898012346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,8 +488,8 @@ MonoBehaviour:
           rid: 1333824726887038980
         BlackboardGroupReferences: []
         Root:
-          rid: 1333824726887039262
-        m_VersionTimestamp: 639180072027890250
+          rid: 1333824796429123599
+        m_VersionTimestamp: 639182811491912181
     - rid: 1333824726887038980
       type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -450,9 +500,33 @@ MonoBehaviour:
       type: {class: Blackboard, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         m_Variables:
-        - rid: 1333824726887039264
-        - rid: 1333824726887039265
-    - rid: 1333824726887039262
+        - rid: 1333824796429123601
+        - rid: 1333824796429123602
+    - rid: 1333824796429123596
+      type: {class: 'BlackboardVariable`1[[System.String, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: MoveToCinderHeart
+    - rid: 1333824796429123597
+      type: {class: 'BlackboardVariable`1[[System.String, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: Wander
+    - rid: 1333824796429123598
+      type: {class: 'BlackboardVariable`1[[System.Boolean, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 0
+    - rid: 1333824796429123599
       type: {class: Start, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -463,10 +537,10 @@ MonoBehaviour:
         m_Parent:
           rid: -2
         m_Child:
-          rid: 1333824726887039263
+          rid: 1333824796429123600
         Repeat: 1
         AllowMultipleRepeatsPerTick: 0
-    - rid: 1333824726887039263
+    - rid: 1333824796429123600
       type: {class: SelectorComposite, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -475,12 +549,12 @@ MonoBehaviour:
         Graph:
           rid: 1333824726887038979
         m_Parent:
-          rid: 1333824726887039262
+          rid: 1333824796429123599
         m_Children:
-        - rid: 1333824726887039266
-        - rid: 1333824726887039267
+        - rid: 1333824796429123603
+        - rid: 1333824796429123604
         m_RegisteredObservers: []
-    - rid: 1333824726887039264
+    - rid: 1333824796429123601
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -488,7 +562,7 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 0}
-    - rid: 1333824726887039265
+    - rid: 1333824796429123602
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -496,7 +570,7 @@ MonoBehaviour:
           m_Value1: 1123331028882471121
         Name: CinderHeart
         m_Value: {fileID: 0}
-    - rid: 1333824726887039266
+    - rid: 1333824796429123603
       type: {class: EnemyMoveToTargetAction, ns: , asm: Assembly-CSharp}
       data:
         ID:
@@ -505,12 +579,14 @@ MonoBehaviour:
         Graph:
           rid: 1333824726887038979
         m_Parent:
-          rid: 1333824726887039263
+          rid: 1333824796429123600
         Self:
-          rid: 1333824726887039264
+          rid: 1333824796429123601
         Target:
-          rid: 1333824726887039265
-    - rid: 1333824726887039267
+          rid: 1333824796429123602
+        RequiredState:
+          rid: 1333824796429123596
+    - rid: 1333824796429123604
       type: {class: EnemyWanderAroundSpawnPointAction, ns: , asm: Assembly-CSharp}
       data:
         ID:
@@ -519,19 +595,13 @@ MonoBehaviour:
         Graph:
           rid: 1333824726887038979
         m_Parent:
-          rid: 1333824726887039263
+          rid: 1333824796429123600
         Self:
-          rid: 1333824726887039264
+          rid: 1333824796429123601
+        RequiredState:
+          rid: 1333824796429123597
         StopOnEnd:
-          rid: 1333824726887039268
-    - rid: 1333824726887039268
-      type: {class: 'BlackboardVariable`1[[System.Boolean, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 0
-          m_Value1: 0
-        Name: 
-        m_Value: 0
+          rid: 1333824796429123598
 --- !u!114 &1043279613775423997
 MonoBehaviour:
   m_ObjectHideFlags: 0
