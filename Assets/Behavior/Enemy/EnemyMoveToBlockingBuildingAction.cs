@@ -18,25 +18,41 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Self;
     [SerializeReference] public BlackboardVariable<GameObject> CinderHeart;
 
-    [SerializeReference]
-    public BlackboardVariable<float> BlockingBuildingDetectDistance =
-        new BlackboardVariable<float>(5f);
+    [SerializeReference] public BlackboardVariable<float> BlockingBuildingDetectDistance = new BlackboardVariable<float>(5f);
 
-    [SerializeReference]
-    public BlackboardVariable<float> BlockingBuildingDetectRadius =
-        new BlackboardVariable<float>(1f);
+    [SerializeReference] public BlackboardVariable<float> BlockingBuildingDetectRadius = new BlackboardVariable<float>(1f);
 
-    [SerializeReference]
-    public BlackboardVariable<string> RequiredState =
-        new BlackboardVariable<string>("NightAssault");
+    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("NightAssault");
 
-    [SerializeReference]
-    public BlackboardVariable<bool> InterruptWhenPlayerDetected =
-        new BlackboardVariable<bool>(true);
+    [SerializeReference] public BlackboardVariable<bool> InterruptWhenPlayerDetected = new BlackboardVariable<bool>(true);
 
     private EnemyMovement _enemyMovement;
     private EnemyDetector _enemyDetector;
     private NavMeshPath _path;
+
+    protected override Status OnStart()
+    {
+        GameObject selfObject = GetSelfObject();
+        if(IsUnityObjectNull(selfObject))
+        {
+            Debug.LogWarning("EnemyMoveToBlockingBuildingAction: Self가 없습니다.");
+            return Status.Failure;
+        }
+        _enemyMovement = selfObject.GetComponent<EnemyMovement>();
+        _enemyDetector = selfObject.GetComponent<EnemyDetector>();
+        _path = new NavMeshPath();
+
+        if(_enemyMovement == null)
+        {
+            Debug.LogWarning("EnemyMoveToBlockingBuildingAction: Self에 EnemyMovement가 없습니다. object=" + selfObject.name);
+            return Status.Failure;
+        }
+
+        return Status.Running;
+    }
+
+
+
 
     private BuildingHp FindBlockingBuilding(GameObject selfObject, GameObject cinderHeartObject)
     {
