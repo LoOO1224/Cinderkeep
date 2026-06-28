@@ -9,27 +9,30 @@ using Action = Unity.Behavior.Action;
     name: "Enemy Move To Target",
     story: "[Self] moves to [Target] when state is [RequiredState]",
     category: "Action/Cinderkeep/Enemy",
-    id: "cinderkeep_enemy_move_to_target_action_v2")]
+    id: "cinderkeep_enemy_move_to_target_action")]
 public partial class EnemyMoveToTargetAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
     [SerializeReference] public BlackboardVariable<GameObject> Target;
 
-    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("MoveToCinderHeart");
+    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("NightAssault");
+    [SerializeReference] public BlackboardVariable<bool> InterruptWhenPlayerDetected = new BlackboardVariable<bool>(true);
+
 
     private EnemyMovement _enemyMovement;
+    private EnemyDetector _enemyDetector;
 
     protected override Status OnStart()
     {
         GameObject selfObject = GetSelfObject();
-        if (IsUnityObjectNull(selfObject))
+        if(IsUnityObjectNull(selfObject))
         {
             Debug.LogWarning("EnemyMoveToTargetAction: Self가 없습니다.");
             return Status.Failure;
         }
 
         GameObject targetObject = Target == null ? null : Target.Value;
-        if (IsUnityObjectNull(targetObject))
+        if(IsUnityObjectNull(targetObject))
         {
             Debug.LogWarning("EnemyMoveToTargetAction: Target이 없습니다.");
             return Status.Failure;
@@ -42,7 +45,10 @@ public partial class EnemyMoveToTargetAction : Action
             return Status.Failure;
         }
 
+        _enemyDetector = selfObject.GetComponent<EnemyDetector>();
+
         return Status.Running;
+
     }
 
     protected override Status OnUpdate()
@@ -50,22 +56,26 @@ public partial class EnemyMoveToTargetAction : Action
         GameObject selfObject = GetSelfObject();
         GameObject targetObject = Target == null ? null : Target.Value;
 
-        if (IsUnityObjectNull(selfObject) || IsUnityObjectNull(targetObject))
+        if( IsUnityObjectNull(selfObject) || IsUnityObjectNull(targetObject))
         {
             return Status.Failure;
         }
 
-        if (IsRequiredStateMatched(selfObject) == false)
+        if(IsRequiredStateMatched(selfObject) == false)
         {
             return Status.Failure;
         }
 
-        if (_enemyMovement == null)
+        if(ShouldInterruptForDetectedPlayer(selfObject))
+        {
+            return Status.Failure;
+        }
+
+        if(_enemyMovement == null)
         {
             _enemyMovement = selfObject.GetComponent<EnemyMovement>();
         }
-
-        if (_enemyMovement == null)
+        if(_enemyMovement == null)
         {
             return Status.Failure;
         }
@@ -73,10 +83,32 @@ public partial class EnemyMoveToTargetAction : Action
         _enemyMovement.MoveToTarget(targetObject.transform);
 
         return Status.Running;
+
     }
 
     protected override void OnEnd()
     {
+    }
+
+    private bool ShouldInterruptForDetectedPlayer(GameObject selfObject)
+    {
+        if(InterruptWhenPlayerDetected == null || InterruptWhenPlayerDetected.Value == false)
+        {
+            return false;
+        }
+
+        if(_enemyDetector == null)
+        {
+            _enemyDetector = selfObject.GetComponent<EnemyDetector>();
+        }
+
+        if(_enemyDetector == null)
+        {
+            return false;
+        }
+
+        return _enemyDetector.HasDetectedPlayer && _enemyDetector.DetectedPlayer != null;
+
     }
 
     private bool IsRequiredStateMatched(GameObject selfObject)
