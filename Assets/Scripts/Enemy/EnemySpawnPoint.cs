@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
@@ -592,16 +592,31 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return;
         }
 
+        bool canChaseCinderHeart = CanChaseCinderHeartInCurrentMode();
+        bool usesNightDetection = UsesNightDetectionInCurrentMode();
+
         EnemyBrain enemyBrain = createdEnemy.GetComponent<EnemyBrain>();
-        if (enemyBrain == null)
+        if (enemyBrain != null)
         {
-            return;
+            enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
+            enemyBrain.SetNightTime(UsesNightDetectionInCurrentMode());
+            enemyBrain.SetPlayerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+            enemyBrain.SetTowerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
         }
 
-        enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
-        enemyBrain.SetNightTime(UsesNightDetectionInCurrentMode());
-        enemyBrain.SetPlayerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
-        enemyBrain.SetTowerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+        EnemyBehaviorState behaviorState = createdEnemy.GetComponent<EnemyBehaviorState>();
+        if(behaviorState != null)
+        {
+            behaviorState.SetMode(canChaseCinderHeart ? BTEnemyMode.NightAssault : BTEnemyMode.DayWander);
+        }
+
+        EnemyDetector enemyDetector = createdEnemy.GetComponent<EnemyDetector>();
+        if(enemyDetector != null)
+        {
+            enemyDetector.SetNightDetectionEnabled(usesNightDetection);
+        }
+
+        
     }
 
     private bool CanChaseCinderHeartInCurrentMode()
