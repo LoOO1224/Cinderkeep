@@ -15,6 +15,7 @@ using Action = Unity.Behavior.Action;
 public partial class EnemyMoveToDetectedPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
+    [SerializeReference] public BlackboardVariable<float> CompleteDistance = new BlackboardVariable<float>(2.3f);
 
     private EnemyDetector _enemyDetector;
     private EnemyMovement _enemyMovement;
@@ -73,6 +74,14 @@ public partial class EnemyMoveToDetectedPlayerAction : Action
             return Status.Failure;
         }
 
+        Transform detectedPlayerTransform = _enemyDetector.DetectedPlayer;
+        if(IsWithinCompleteDistance(selfObject.transform, detectedPlayerTransform))
+        {
+            _enemyMovement.StopMoving();
+            return Status.Success;
+        }
+        
+
         _enemyMovement.MoveToTarget(_enemyDetector.DetectedPlayer);
 
         return Status.Running;
@@ -95,5 +104,17 @@ public partial class EnemyMoveToDetectedPlayerAction : Action
     private static bool IsUnityObjectNull(UnityEngine.Object targetObject)
     {
         return ReferenceEquals(targetObject, null) || targetObject == null;
+    }
+
+    private bool IsWithinCompleteDistance(Transform selfTransform, Transform targetTransform)
+    {
+        if(selfTransform == null || targetTransform == null)
+        {
+            return false;
+        }
+        float completeDistance = CompleteDistance == null ? 2.3f : CompleteDistance.Value;
+        float distance = Vector3.Distance(selfTransform.position, targetTransform.position);
+
+        return distance <= completeDistance;
     }
 }
