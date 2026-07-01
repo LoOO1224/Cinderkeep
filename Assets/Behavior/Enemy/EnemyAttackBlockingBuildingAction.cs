@@ -11,6 +11,8 @@ using Action = Unity.Behavior.Action;
     story: "[Self] attacks blocking building toward [CinderHeart] within [AttackDistance]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_attack_blocking_building_action")]
+// Behavior Graph 액션입니다. CinderHeart로 가는 경로를 막는 건물을 공격합니다.
+// NavMesh 경로로 막힌 건물을 탐색하고 파괴될 때까지 공격을 반복합니다.
 public partial class EnemyAttackBlockingBuildingAction : Action
 {
     private const string BuildTag = "Build";
@@ -32,7 +34,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
     protected override Status OnStart()
     {
         GameObject selfObject = GetSelfObject();
-        if(IsUnityObjectNull(selfObject))
+        if (IsUnityObjectNull(selfObject))
         {
             Debug.LogWarning("EnemyAttackBlockingBuildingAction: Self가 없습니다.");
             return Status.Failure;
@@ -43,7 +45,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
         _enemyDetector = selfObject.GetComponent<EnemyDetector>();
         _path = new NavMeshPath();
 
-        if(_enemyAttack == null)
+        if (_enemyAttack == null)
         {
             Debug.LogWarning("EnemyAttackBlockingBuildingAction: Self에 EnemyAttack이 없습니다. object=" + selfObject.name);
             return Status.Failure;
@@ -57,7 +59,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
         GameObject selfObject = GetSelfObject();
         GameObject cinderHeartObject = CinderHeart == null ? null : CinderHeart.Value;
 
-        if(IsUnityObjectNull(selfObject) || IsUnityObjectNull(cinderHeartObject))
+        if (IsUnityObjectNull(selfObject) || IsUnityObjectNull(cinderHeartObject))
         {
             return Status.Failure;
         }
@@ -72,7 +74,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
             return Status.Failure;
         }
         BuildingHp blockingBuilding = FindBlockingBuilding(selfObject, cinderHeartObject);
-        if(blockingBuilding == null)
+        if (blockingBuilding == null)
         {
             return Status.Failure;
         }
@@ -80,26 +82,26 @@ public partial class EnemyAttackBlockingBuildingAction : Action
         float attackDistance = AttackDistance == null ? 2.3f : AttackDistance.Value;
         float distance = Vector3.Distance(selfObject.transform.position, blockingBuilding.transform.position);
 
-        if(distance > attackDistance)
+        if (distance > attackDistance)
         {
             return Status.Failure;
         }
 
-        if(_enemyMovement == null)
+        if (_enemyMovement == null)
         {
             _enemyMovement = selfObject.GetComponent<EnemyMovement>();
         }
 
-        if(_enemyMovement != null)
+        if (_enemyMovement != null)
         {
             _enemyMovement.StopMoving();
         }
 
-        if(_enemyAttack == null)
+        if (_enemyAttack == null)
         {
             _enemyAttack = selfObject.GetComponent<EnemyAttack>();
         }
-        if(_enemyAttack == null)
+        if (_enemyAttack == null)
         {
             return Status.Failure;
         }
@@ -111,7 +113,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
 
     private BuildingHp FindBlockingBuilding(GameObject selfObject, GameObject cinderHeartObject)
     {
-        if(_path == null)
+        if (_path == null)
         {
             _path = new NavMeshPath();
         }
@@ -120,7 +122,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
             selfObject.transform,
             cinderHeartObject.transform,
             _path);
-        if(isPathBlocked == false)
+        if (isPathBlocked == false)
         {
             return null;
         }
@@ -135,7 +137,6 @@ public partial class EnemyAttackBlockingBuildingAction : Action
             detectDistance,
             BuildTag);
     }
-
 
     private bool IsRequiredStateMatched(GameObject selfObject)
     {
@@ -153,7 +154,6 @@ public partial class EnemyAttackBlockingBuildingAction : Action
 
         return behaviorState.IsCurrentState(requiredStateName);
     }
-
 
     private bool ShouldInterruptForDetectedPlayer(GameObject selfObject)
     {
@@ -174,7 +174,6 @@ public partial class EnemyAttackBlockingBuildingAction : Action
 
         return _enemyDetector.HasDetectedPlayer && _enemyDetector.DetectedPlayer != null;
     }
-
 
     private GameObject GetSelfObject()
     {

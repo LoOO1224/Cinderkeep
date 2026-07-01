@@ -11,6 +11,8 @@ using Action = Unity.Behavior.Action;
     story: "[Self] moves to blocking building toward [CinderHeart]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_move_to_blocking_building_action")]
+// Behavior Graph 액션입니다. CinderHeart 경로를 막는 건물 앞까지 이동합니다.
+// 경로가 뚫려 있으면 즉시 종료하고, 막힌 건물이 없으면 Failure를 반환합니다.
 public partial class EnemyMoveToBlockingBuildingAction : Action
 {
     private const string BuildTag = "Build";
@@ -33,7 +35,7 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
     protected override Status OnStart()
     {
         GameObject selfObject = GetSelfObject();
-        if(IsUnityObjectNull(selfObject))
+        if (IsUnityObjectNull(selfObject))
         {
             Debug.LogWarning("EnemyMoveToBlockingBuildingAction: Self가 없습니다.");
             return Status.Failure;
@@ -42,7 +44,7 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
         _enemyDetector = selfObject.GetComponent<EnemyDetector>();
         _path = new NavMeshPath();
 
-        if(_enemyMovement == null)
+        if (_enemyMovement == null)
         {
             Debug.LogWarning("EnemyMoveToBlockingBuildingAction: Self에 EnemyMovement가 없습니다. object=" + selfObject.name);
             return Status.Failure;

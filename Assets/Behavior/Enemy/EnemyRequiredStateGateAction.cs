@@ -10,7 +10,8 @@ using Action = Unity.Behavior.Action;
     story: "[Self] passes when state is [RequiredState]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_required_state_gate_action")]
-
+// Behavior Graph 게이트 액션입니다. EnemyBehaviorState가 RequiredState와 일치할 때만 Success를 반환합니다.
+// 낮/밤 행동 분기를 Behavior Graph 노드 레벨에서 제어할 때 사용합니다.
 public partial class EnemyRequiredStateGateAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
@@ -30,7 +31,7 @@ public partial class EnemyRequiredStateGateAction : Action
     private Status CheckState()
     {
         GameObject selfObject = GetSelfObject();
-        if(IsUnityObjectNull(selfObject))
+        if (IsUnityObjectNull(selfObject))
         {
             Debug.LogWarning("EnemyRequiredStateGateAction: Self가 없습니다.");
             return Status.Failure;

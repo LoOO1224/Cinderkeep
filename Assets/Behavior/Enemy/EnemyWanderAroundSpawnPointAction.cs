@@ -10,6 +10,8 @@ using Action = Unity.Behavior.Action;
     story: "[Self] wanders around spawn point when state is [RequiredState]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_wander_around_spawn_point_action_v2")]
+// Behavior Graph 액션입니다. 스폰 지점 주변을 랜덤 반경으로 배회합니다.
+// DayWander 상태에서 사용하며, 밤이 되어 상태가 바뀌면 즉시 종료합니다.
 public partial class EnemyWanderAroundSpawnPointAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
@@ -91,17 +93,17 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
 
     private bool ShouldInterruptForDetectedPlayer(GameObject selfObject)
     {
-        if(InterruptWhenPlayerDetected == null || InterruptWhenPlayerDetected.Value == false)
+        if (InterruptWhenPlayerDetected == null || InterruptWhenPlayerDetected.Value == false)
         {
             return false;
         }
 
-        if(_enemyDetector == null)
+        if (_enemyDetector == null)
         {
             _enemyDetector = selfObject.GetComponent<EnemyDetector>();
         }
 
-        if(_enemyDetector == null)
+        if (_enemyDetector == null)
         {
             return false;
         }
@@ -112,14 +114,14 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
     private bool IsRequiredStateMatched(GameObject selfObject)
     {
         string requiredStateName = RequiredState == null ? string.Empty : RequiredState.Value;
-        if(string.IsNullOrWhiteSpace(requiredStateName))
+        if (string.IsNullOrWhiteSpace(requiredStateName))
         {
             return true;
         }
 
         EnemyBehaviorState behaviorState = selfObject.GetComponent<EnemyBehaviorState>();
 
-        if(behaviorState == null)
+        if (behaviorState == null)
         {
             Debug.LogWarning("EnemyWanderAroundSpawnPointAction: EnemyBehaviorState가 없습니다. object=" + selfObject.name);
             return false;

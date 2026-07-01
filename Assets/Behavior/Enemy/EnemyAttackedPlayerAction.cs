@@ -10,6 +10,8 @@ using Action = Unity.Behavior.Action;
     story: "[Self] attacks detected player within [AttackDistance]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_attack_detected_player_action_v1")]
+// Behavior Graph 액션입니다. 감지된 플레이어에게 근접해 공격합니다.
+// 플레이어가 감지 범위를 벗어나거나 사라지면 즉시 종료합니다.
 public partial class EnemyAttackDetectedPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
@@ -64,18 +66,18 @@ public partial class EnemyAttackDetectedPlayerAction : Action
 
         RefreshComponentsIfNeeded(selfObject);
 
-        if(_enemyDetector == null || _enemyAttack == null)
+        if (_enemyDetector == null || _enemyAttack == null)
         {
             return Status.Failure;
         }
 
         Transform detectedPlayerTransform = _enemyDetector.DetectedPlayer;
-        if(_enemyDetector.HasDetectedPlayer == false || detectedPlayerTransform == null)
+        if (_enemyDetector.HasDetectedPlayer == false || detectedPlayerTransform == null)
         {
             return Status.Failure;
         }
         Damageable playerDamageable = GetDamageableFromTransform(detectedPlayerTransform);
-        if(playerDamageable == null)
+        if (playerDamageable == null)
         {
             return Status.Failure;
         }
@@ -84,7 +86,7 @@ public partial class EnemyAttackDetectedPlayerAction : Action
         {
             return Status.Failure;
         }
-        if(_enemyMovement != null)
+        if (_enemyMovement != null)
         {
             _enemyMovement.StopMoving();
         }
@@ -96,12 +98,6 @@ public partial class EnemyAttackDetectedPlayerAction : Action
     protected override void OnEnd()
     {
     }
-
-
-
-
-
-
 
     private void RefreshComponentsIfNeeded(GameObject selfObject)
     {
@@ -123,7 +119,7 @@ public partial class EnemyAttackDetectedPlayerAction : Action
 
     private bool IsInAttackDistance(Transform selfTransform, Transform targetTransform)
     {
-        if(selfTransform == null || targetTransform == null)
+        if (selfTransform == null || targetTransform == null)
         {
             return false;
         }
@@ -134,12 +130,12 @@ public partial class EnemyAttackDetectedPlayerAction : Action
 
     private Damageable GetDamageableFromTransform(Transform targetTransform)
     {
-        if(targetTransform == null)
+        if (targetTransform == null)
         {
             return null;
         }
         Damageable damageable = targetTransform.GetComponent<Damageable>();
-        if(damageable != null)
+        if (damageable != null)
         {
             return damageable;
         }

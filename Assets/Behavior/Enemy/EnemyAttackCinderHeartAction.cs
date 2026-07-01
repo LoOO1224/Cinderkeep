@@ -10,7 +10,8 @@ using Action = Unity.Behavior.Action;
     story: "[Self] attacks [CinderHeart] within [AttackDistance] when state is [RequiredState]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_attack_cinderheart_action_v1")]
-
+// Behavior Graph 액션입니다. CinderHeart에 근접한 적이 직접 공격합니다.
+// NightAssault 상태일 때만 동작하며, 플레이어가 감지되면 중단하고 플레이어 추격으로 전환됩니다.
 public partial class EnemyAttackCinderHeartAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
@@ -26,7 +27,7 @@ public partial class EnemyAttackCinderHeartAction : Action
     protected override Status OnStart()
     {
         GameObject selfObject = GetSelfObject();
-        if(IsUnityObjectNull(selfObject))
+        if (IsUnityObjectNull(selfObject))
         {
             Debug.LogWarning("EnemyAttackCinderHeartAction: Self가 없습니다.");
             return Status.Failure;
@@ -36,7 +37,7 @@ public partial class EnemyAttackCinderHeartAction : Action
         _enemyMovement = selfObject.GetComponent<EnemyMovement>();
         _enemyDetector = selfObject.GetComponent<EnemyDetector>();
 
-        if(_enemyAttack == null)
+        if (_enemyAttack == null)
         {
             Debug.LogWarning("EnemyAttackCinderHeartAction: Self에 EnemyAttack이 없습니다. object=" + selfObject.name);
             return Status.Failure;
@@ -47,7 +48,7 @@ public partial class EnemyAttackCinderHeartAction : Action
 
     protected override Status OnUpdate()
     {
-        GameObject selfObject = GetSelfObject ();
+        GameObject selfObject = GetSelfObject();
         GameObject cinderHeartObject = CinderHeart == null ? null : CinderHeart.Value;
 
         if (IsUnityObjectNull(selfObject) || IsUnityObjectNull(cinderHeartObject))
@@ -71,11 +72,10 @@ public partial class EnemyAttackCinderHeartAction : Action
             return Status.Failure;
         }
 
-
         float attackDistance = AttackDistance == null ? 3f : AttackDistance.Value;
         float distance = Vector3.Distance(selfObject.transform.position, cinderHeartDamageable.transform.position);
 
-        if(distance >  attackDistance)
+        if (distance >  attackDistance)
         {
             return Status.Failure;
         }
@@ -108,12 +108,12 @@ public partial class EnemyAttackCinderHeartAction : Action
 
     private bool ShouldInterruptForDetectedPlayer(GameObject selfObject)
     {
-        if(InterruptWhenPlayerDetected == null || InterruptWhenPlayerDetected.Value == false)
+        if (InterruptWhenPlayerDetected == null || InterruptWhenPlayerDetected.Value == false)
         {
             return false;
         }
 
-        if(_enemyDetector == null)
+        if (_enemyDetector == null)
         {
             _enemyDetector = selfObject.GetComponent<EnemyDetector>();
         }
@@ -129,13 +129,13 @@ public partial class EnemyAttackCinderHeartAction : Action
     private bool IsRequiredStateMatched(GameObject selfObject)
     {
         string requiredStateName = RequiredState == null ? null : RequiredState.Value;
-        if(string.IsNullOrWhiteSpace(requiredStateName))
+        if (string.IsNullOrWhiteSpace(requiredStateName))
         {
             return true;
         }
         EnemyBehaviorState behaviorState = selfObject.GetComponent<EnemyBehaviorState>();
 
-        if(behaviorState == null)
+        if (behaviorState == null)
         {
             return false;
         }
@@ -145,7 +145,7 @@ public partial class EnemyAttackCinderHeartAction : Action
 
     private Damageable GetDamageableFromObject(GameObject targetObject)
     {
-        if(targetObject == null)
+        if (targetObject == null)
         {
             return null;
         }
@@ -171,7 +171,6 @@ public partial class EnemyAttackCinderHeartAction : Action
         Debug.LogWarning("EnemyAttackCinderHeartAction: CinderHeart 또는 부모/자식에서 Damageable을 찾지 못했습니다. target=" + targetObject.name);
         return null;
     }
-
 
     private GameObject GetSelfObject()
     {

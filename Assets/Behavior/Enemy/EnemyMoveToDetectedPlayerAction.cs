@@ -8,10 +8,10 @@ using Action = Unity.Behavior.Action;
 [NodeDescription(
     name: "Enemy Move To Detected Player",
     story: "[Self] moves to detected Player",
-    category:"Action/Cinderkeep/Enemy",
-    id: "cinderkeep_enemy_move_to_detected_player_action"
-    )]
-
+    category: "Action/Cinderkeep/Enemy",
+    id: "cinderkeep_enemy_move_to_detected_player_action")]
+// Behavior Graph 액션입니다. 감지된 플레이어 위치로 NavMesh 이동합니다.
+// 플레이어가 사라지거나 감지가 해제되면 즉시 종료합니다.
 public partial class EnemyMoveToDetectedPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
@@ -75,12 +75,11 @@ public partial class EnemyMoveToDetectedPlayerAction : Action
         }
 
         Transform detectedPlayerTransform = _enemyDetector.DetectedPlayer;
-        if(IsWithinCompleteDistance(selfObject.transform, detectedPlayerTransform))
+        if (IsWithinCompleteDistance(selfObject.transform, detectedPlayerTransform))
         {
             _enemyMovement.StopMoving();
             return Status.Success;
         }
-
 
         _enemyMovement.MoveToTarget(_enemyDetector.DetectedPlayer);
 
@@ -108,7 +107,7 @@ public partial class EnemyMoveToDetectedPlayerAction : Action
 
     private bool IsWithinCompleteDistance(Transform selfTransform, Transform targetTransform)
     {
-        if(selfTransform == null || targetTransform == null)
+        if (selfTransform == null || targetTransform == null)
         {
             return false;
         }
