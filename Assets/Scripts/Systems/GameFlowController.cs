@@ -7,6 +7,8 @@ using UnityEngine;
 // 스폰 실행은 GameFlowEnemySpawnDirector에 맡기고, 이 클래스는 페이즈 전환과 보상 선택 타이밍을 결정합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
+    public static event Action BossApproachStartedGlobal;
+
     private const int MorningRewardOptionCount = 3;
 
     [Header("Flow Settings")]
@@ -232,8 +234,18 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             _gameRunModel.Day,
             _gameFlowSettings.BossApproachDuration));
         StartBossSpawn();
-        global::BossEncounterHud.ShowBossWarning();
+        NotifyBossApproachStarted();
         PlayPhaseBgm(GameRunPhase.BossApproach);
+    }
+
+    private void NotifyBossApproachStarted()
+    {
+        if (BossApproachStartedGlobal == null)
+        {
+            return;
+        }
+
+        BossApproachStartedGlobal();
     }
 
     private void StartBossFight()

@@ -9,7 +9,7 @@ public sealed class BossEncounterHud : MonoBehaviour
     private const string CanvasName = "Canvas_GameHUD";
     private const string HudRootName = "Panel_HUDRoot";
     private const string HudObjectName = "Panel_BossEncounterHud";
-    private const string BossWarningText = "Frozen Golem \uB4F1\uC7A5";
+    private const string BossWarningText = "Frozen Golem 등장";
     private const string BossHpPrefix = "Frozen Golem HP ";
 
     [SerializeField] private CanvasGroup _alertCanvasGroup;
@@ -75,26 +75,17 @@ public sealed class BossEncounterHud : MonoBehaviour
         return hud;
     }
 
-    public static void ShowBossWarning()
-    {
-        BossEncounterHud hud = EnsureSceneHud();
-        if (hud == null)
-        {
-            return;
-        }
-
-        hud.ShowWarning();
-    }
-
     private void OnEnable()
     {
         _instance = this;
+        GameFlowController.BossApproachStartedGlobal += HandleBossApproachStarted;
         BossStatus.BossDamagedGlobal += HandleBossDamaged;
         BossStatus.BossDiedGlobal += HandleBossDied;
     }
 
     private void OnDisable()
     {
+        GameFlowController.BossApproachStartedGlobal -= HandleBossApproachStarted;
         BossStatus.BossDamagedGlobal -= HandleBossDamaged;
         BossStatus.BossDiedGlobal -= HandleBossDied;
 
@@ -120,6 +111,11 @@ public sealed class BossEncounterHud : MonoBehaviour
 
         _alertUntilTime = Time.unscaledTime + Mathf.Max(0.1f, _alertSeconds);
         SetAlertVisible(true);
+    }
+
+    private void HandleBossApproachStarted()
+    {
+        ShowWarning();
     }
 
     private void RefreshTrackedBoss()
