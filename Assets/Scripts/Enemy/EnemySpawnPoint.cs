@@ -542,16 +542,37 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return;
         }
 
+        bool canChaseCinderHeart = CanChaseCinderHeartInCurrentMode();
+        bool usesNightDetection = UsesNightDetectionInCurrentMode();
+
         EnemyBrain enemyBrain = createdEnemy.GetComponent<EnemyBrain>();
-        if (enemyBrain == null)
+        if (enemyBrain != null)
+        {
+            enemyBrain.SetCinderHeartChaseEnabled(canChaseCinderHeart);
+            enemyBrain.SetNightTime(usesNightDetection);
+            enemyBrain.SetPlayerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+            enemyBrain.SetTowerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+        }
+
+        ApplyBehaviorModeToEnemy(createdEnemy, canChaseCinderHeart);
+
+        EnemyDetector enemyDetector = createdEnemy.GetComponent<EnemyDetector>();
+        if (enemyDetector != null)
+        {
+            enemyDetector.SetNightDetectionEnabled(usesNightDetection);
+        }
+    }
+
+    private void ApplyBehaviorModeToEnemy(GameObject createdEnemy, bool canChaseCinderHeart)
+    {
+        Component behaviorState = createdEnemy.GetComponent("EnemyBehaviorState");
+        if (behaviorState == null)
         {
             return;
         }
 
-        enemyBrain.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
-        enemyBrain.SetNightTime(UsesNightDetectionInCurrentMode());
-        enemyBrain.SetPlayerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
-        enemyBrain.SetTowerDetectionPriorityEnabled(_spawnMode != EnemySpawnMode.Boss);
+        string methodName = canChaseCinderHeart ? "SetNightAssaultMode" : "SetDayWanderMode";
+        behaviorState.SendMessage(methodName, SendMessageOptions.DontRequireReceiver);
     }
 
     private bool CanChaseCinderHeartInCurrentMode()

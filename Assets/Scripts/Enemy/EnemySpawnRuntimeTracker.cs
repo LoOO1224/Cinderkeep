@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // EnemySpawnPoint가 만든 적 목록을 추적합니다.
-// 살아 있는 적 수 계산, 낮/밤 상태 전파, 웨이브 종료 시 잔여 적 정리에 사용합니다.
+// 생존 적 계산, 낮/밤 상태 전파, 웨이브 종료 정리에 사용합니다.
 public sealed class EnemySpawnRuntimeTracker
 {
     private readonly List<GameObject> _spawnedEnemies = new List<GameObject>();
@@ -23,11 +23,19 @@ public sealed class EnemySpawnRuntimeTracker
 
         for (int i = 0; i < _spawnedEnemies.Count; i++)
         {
-            EnemyBrain enemyBrain = GetAliveEnemyBrain(_spawnedEnemies[i]);
+            GameObject enemyObject = GetAliveEnemyObject(_spawnedEnemies[i]);
+            if (enemyObject == null)
+            {
+                continue;
+            }
+
+            EnemyBrain enemyBrain = enemyObject.GetComponent<EnemyBrain>();
             if (enemyBrain != null)
             {
                 enemyBrain.SetCinderHeartChaseEnabled(isEnabled);
             }
+
+            ApplyBehaviorModeToEnemy(enemyObject, isEnabled);
         }
     }
 
@@ -37,10 +45,22 @@ public sealed class EnemySpawnRuntimeTracker
 
         for (int i = 0; i < _spawnedEnemies.Count; i++)
         {
-            EnemyBrain enemyBrain = GetAliveEnemyBrain(_spawnedEnemies[i]);
+            GameObject enemyObject = GetAliveEnemyObject(_spawnedEnemies[i]);
+            if (enemyObject == null)
+            {
+                continue;
+            }
+
+            EnemyBrain enemyBrain = enemyObject.GetComponent<EnemyBrain>();
             if (enemyBrain != null)
             {
                 enemyBrain.SetNightTime(isNightTime);
+            }
+
+            EnemyDetector enemyDetector = enemyObject.GetComponent<EnemyDetector>();
+            if (enemyDetector != null)
+            {
+                enemyDetector.SetNightDetectionEnabled(isNightTime);
             }
         }
     }
@@ -91,6 +111,18 @@ public sealed class EnemySpawnRuntimeTracker
         _spawnedEnemies.Clear();
     }
 
+    private void ApplyBehaviorModeToEnemy(GameObject enemyObject, bool canChaseCinderHeart)
+    {
+        Component behaviorState = enemyObject.GetComponent("EnemyBehaviorState");
+        if (behaviorState == null)
+        {
+            return;
+        }
+
+        string methodName = canChaseCinderHeart ? "SetNightAssaultMode" : "SetDayWanderMode";
+        behaviorState.SendMessage(methodName, SendMessageOptions.DontRequireReceiver);
+    }
+
     private void RemoveMissingEnemies()
     {
         for (int i = _spawnedEnemies.Count - 1; i >= 0; i--)
@@ -102,14 +134,14 @@ public sealed class EnemySpawnRuntimeTracker
         }
     }
 
-    private EnemyBrain GetAliveEnemyBrain(GameObject enemyObject)
+    private GameObject GetAliveEnemyObject(GameObject enemyObject)
     {
         if (enemyObject == null || enemyObject.activeInHierarchy == false)
         {
             return null;
         }
 
-        return enemyObject.GetComponent<EnemyBrain>();
+        return enemyObject;
     }
 
     private void DestroyEnemyObject(GameObject enemyObject)
