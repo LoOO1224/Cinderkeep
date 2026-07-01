@@ -2,20 +2,18 @@ using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 
-// CinderHeart의 체력, 피해, 파괴 이벤트를 관리하는 핵심 목표 오브젝트입니다.
-// 회복, 보상, 방어, 실패 조건이 모두 이 상태를 기준으로 연결됩니다.
-// CinderHeart는 3일 루프의 핵심 방어 대상입니다.
-// 체력이 0이 되면 GameManager를 통해 게임 오버 흐름으로 넘깁니다.
+// CinderHeart의 체력, 피해, 보상 효과를 관리하는 방어 목표 오브젝트입니다.
+// 체력이 0이 되면 GameManager를 통해 게임오버 흐름으로 넘어갑니다.
 public sealed class CinderHeart : MonoBehaviour
 {
     public static event Action<float> CinderHeartDamagedGlobal;
 
     [Header("Health")]
-    [Tooltip("CinderHeart 최대 체력입니다. 0이 되면 게임 오버가 됩니다.")]
+    [Tooltip("CinderHeart 최대 체력입니다. 0이 되면 게임오버가 됩니다.")]
     [SerializeField] private float _maxHealth = 500f;
 
     [Header("Skill Stats")]
-    [Tooltip("CinderHeart 보상 스킬로 증가하는 공격력입니다. 이후 CinderHeart 공격 로직에서 사용합니다.")]
+    [Tooltip("CinderHeart 보상으로 증가하는 공격력입니다. 이후 CinderHeart 공격 로직에서 사용합니다.")]
     [SerializeField] private float _attackDamage;
 
     [Header("Debug Damage")]
@@ -26,22 +24,6 @@ public sealed class CinderHeart : MonoBehaviour
     private float _baseMaxHealth;
     private float _baseAttackDamage;
     private bool _isDestroyed;
-
-    public float CurrentHealth
-    {
-        get
-        {
-            return _currentHealth;
-        }
-    }
-
-    public float MaxHealth
-    {
-        get
-        {
-            return _maxHealth;
-        }
-    }
 
     public bool IsDestroyed
     {
@@ -118,8 +100,6 @@ public sealed class CinderHeart : MonoBehaviour
 
     public void AddAttackDamage(float amount)
     {
-        // 아침 보상 스킬로 증가하는 CinderHeart 공격력입니다.
-        // 기본 스킬 수치는 cinderheart_skills.json의 value 값을 수정해 조절합니다.
         if (amount <= 0f)
         {
             return;
@@ -131,8 +111,7 @@ public sealed class CinderHeart : MonoBehaviour
 
     public void AddMaxHealth(float amount)
     {
-        // 최대 체력 증가 보상은 즉시 현재 체력도 같이 올려 다음 밤 준비 보상으로 체감되게 합니다.
-        // 보상량은 cinderheart_skills.json의 value 값을 수정해 조절합니다.
+        // 최대 체력 증가 보상은 현재 체력도 함께 올려 즉시 체감되게 합니다.
         if (amount <= 0f)
         {
             return;
@@ -184,7 +163,7 @@ public sealed class CinderHeart : MonoBehaviour
     private void DestroyCinderHeart()
     {
         _isDestroyed = true;
-        Debug.LogWarning("[CinderHeart] 체력이 0이 되어 게임 오버를 요청합니다.");
+        Debug.LogWarning("[CinderHeart] 체력이 0이 되어 게임오버를 요청합니다.");
 
         if (GameManager.Inst == null)
         {
