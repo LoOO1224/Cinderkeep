@@ -23,6 +23,7 @@ public sealed class BossEncounterHud : MonoBehaviour
 
     private BossStatus _trackedBossStatus;
     private float _alertUntilTime;
+    private float _nextBossSearchTime;
 
     public static BossEncounterHud EnsureSceneHud()
     {
@@ -128,6 +129,12 @@ public sealed class BossEncounterHud : MonoBehaviour
             return;
         }
 
+        if (Time.unscaledTime < _nextBossSearchTime)
+        {
+            return;
+        }
+
+        _nextBossSearchTime = Time.unscaledTime + 0.5f;
         _trackedBossStatus = FindActiveBoss();
     }
 
