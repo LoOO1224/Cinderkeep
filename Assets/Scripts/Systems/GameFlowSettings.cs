@@ -1,7 +1,8 @@
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// GameFlowController가 JSON 데이터를 못 읽을 때 사용하는 Inspector fallback 시간 설정입니다.
-// 실제 일반/테스트초고속 모드 시간은 GameLaunchSettings와 game_mode_settings.json을 우선 사용합니다.
+// GameFlowController가 JSON 데이터를 못 읽을 때 사용하는 Inspector fallback 설정입니다.
+// 일반/테스트초고속 시간은 GameLaunchSettings와 game_mode_settings.json 값이 우선됩니다.
 [System.Serializable]
 public sealed class GameFlowSettings
 {
@@ -16,6 +17,9 @@ public sealed class GameFlowSettings
 
     [Tooltip("마지막 밤 이후 보스 접근 페이즈에 사용하는 fallback 시간입니다.")]
     [SerializeField] private float _bossApproachDuration = 180f;
+
+    [Tooltip("보스가 등장하는 마지막 일차입니다. 기본값은 3일차이며 7일 루프 확장 때 조정합니다.")]
+    [SerializeField] private int _finalDay = GameRunModel.FinalDay;
 
     public float DayDuration
     {
@@ -49,11 +53,20 @@ public sealed class GameFlowSettings
         }
     }
 
+    public int FinalDay
+    {
+        get
+        {
+            return _finalDay;
+        }
+    }
+
     public void ClampValues()
     {
         _dayDuration = Mathf.Max(1f, _dayDuration);
         _nightDuration = Mathf.Max(1f, _nightDuration);
         _morningRewardDuration = Mathf.Max(1f, _morningRewardDuration);
         _bossApproachDuration = Mathf.Max(1f, _bossApproachDuration);
+        _finalDay = Mathf.Max(GameRunModel.FirstDay, _finalDay);
     }
 }

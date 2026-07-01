@@ -1,11 +1,9 @@
 using System;
 
-// 한 판 플레이 중 변하는 런타임 상태를 저장합니다.
-// 상태 변경은 명시적인 메서드로 처리하고, UI와 시스템은 이 모델을 읽거나 요청만 보냅니다.
+// 한 번의 플레이 진행 상태를 저장하는 런타임 모델입니다.
+// 현재 일차, 페이즈, 남은 시간, 승패 상태만 보관하고 실제 규칙 실행은 컨트롤러가 담당합니다.
 namespace Cinderkeep.Gameplay
 {
-    // 한 번의 플레이 진행 상황을 저장하는 Instance Data입니다.
-    // GameFlowController는 이 모델에 현재 일차, 페이즈, 남은 시간을 기록합니다.
     [Serializable]
     public sealed class GameRunModel
     {
@@ -13,6 +11,7 @@ namespace Cinderkeep.Gameplay
         public const int FinalDay = 3;
 
         private int _day;
+        private int _finalDay = FinalDay;
         private GameRunPhase _phase;
         private float _remainingTime;
         private float _phaseDuration;
@@ -79,6 +78,7 @@ namespace Cinderkeep.Gameplay
         public void InitializeDefault()
         {
             _day = FirstDay;
+            _finalDay = FinalDay;
             _phase = GameRunPhase.None;
             _remainingTime = 0f;
             _phaseDuration = 0f;
@@ -118,6 +118,20 @@ namespace Cinderkeep.Gameplay
             _phaseDuration = 0f;
         }
 
+        public void SetFinalDay(int finalDay)
+        {
+            _finalDay = Math.Max(FirstDay, finalDay);
+            if (_day > _finalDay)
+            {
+                _day = _finalDay;
+            }
+        }
+
+        public int GetFinalDay()
+        {
+            return _finalDay;
+        }
+
         public void SetDay(int day)
         {
             if (day < FirstDay)
@@ -126,9 +140,9 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            if (day > FinalDay)
+            if (day > _finalDay)
             {
-                _day = FinalDay;
+                _day = _finalDay;
                 return;
             }
 
@@ -175,7 +189,7 @@ namespace Cinderkeep.Gameplay
 
         public bool IsFinalDay()
         {
-            return _day >= FinalDay;
+            return _day >= _finalDay;
         }
     }
 

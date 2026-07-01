@@ -88,6 +88,13 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return;
         }
 
+        if (_gameFlowSettings == null)
+        {
+            _gameFlowSettings = new GameFlowSettings();
+        }
+
+        _gameFlowSettings.ClampValues();
+        _gameRunModel.SetFinalDay(_gameFlowSettings.FinalDay);
         _gameRunModel.StartRun();
         _isFlowRunning = true;
         _isBossClearHandled = false;
