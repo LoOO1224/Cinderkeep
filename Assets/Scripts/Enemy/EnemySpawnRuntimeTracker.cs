@@ -62,6 +62,8 @@ public sealed class EnemySpawnRuntimeTracker
             {
                 enemyDetector.SetNightDetectionEnabled(isNightTime);
             }
+
+            ApplyBehaviorModeToEnemy(enemyObject, isNightTime);
         }
     }
 
