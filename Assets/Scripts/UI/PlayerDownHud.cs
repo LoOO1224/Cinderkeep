@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,8 +10,8 @@ public sealed class PlayerDownHud : MonoBehaviour
     private const string HudRootName = "Panel_HUDRoot";
     private const string HudObjectName = "Panel_PlayerDownHud";
 
-    private const string TitleText = "\uD50C\uB808\uC774\uC5B4 \uB2E4\uC6B4";
-    private const string BodyText = "CinderHeart\uAC00 \uBC84\uD2F0\uBA74 \uB2E4\uC74C \uBCF4\uC0C1\uC5D0 \uBD80\uD65C \uC120\uD0DD\uC9C0\uAC00 \uB4F1\uC7A5\uD569\uB2C8\uB2E4.";
+    private const string TitleText = "플레이어 다운";
+    private const string BodyText = "CinderHeart가 버티면 다음 보상에 부활 선택지가 등장합니다.";
 
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private TMP_Text _titleText;
@@ -62,8 +62,21 @@ public sealed class PlayerDownHud : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-        TMP_Text titleText = CreateText(rootObject.transform, "Text_PlayerDownTitle", TitleText, 30f, new Vector2(0f, 22f), new Vector2(520f, 42f));
-        TMP_Text bodyText = CreateText(rootObject.transform, "Text_PlayerDownBody", BodyText, 18f, new Vector2(0f, -24f), new Vector2(520f, 42f));
+        TMP_Text titleText = CreateText(
+            rootObject.transform,
+            "Text_PlayerDownTitle",
+            TitleText,
+            30f,
+            new Vector2(0f, 22f),
+            new Vector2(520f, 42f));
+
+        TMP_Text bodyText = CreateText(
+            rootObject.transform,
+            "Text_PlayerDownBody",
+            BodyText,
+            18f,
+            new Vector2(0f, -24f),
+            new Vector2(520f, 42f));
 
         PlayerDownHud hud = rootObject.AddComponent<PlayerDownHud>();
         hud._canvasGroup = canvasGroup;
@@ -74,7 +87,13 @@ public sealed class PlayerDownHud : MonoBehaviour
         return hud;
     }
 
-    private static TMP_Text CreateText(Transform parent, string objectName, string text, float fontSize, Vector2 anchoredPosition, Vector2 sizeDelta)
+    private static TMP_Text CreateText(
+        Transform parent,
+        string objectName,
+        string text,
+        float fontSize,
+        Vector2 anchoredPosition,
+        Vector2 sizeDelta)
     {
         GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(TextMeshProUGUI));
         textObject.transform.SetParent(parent, false);

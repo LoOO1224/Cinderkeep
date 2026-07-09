@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,9 +10,9 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
 {
     private const string RootName = "Panel_MorningPrepTimerHUD";
     private const string CanvasName = "Canvas_GameHUD";
-    private const string TitleText = "\uC544\uCE68 \uC815\uBE44 \uC2DC\uAC04";
-    private const string TimerPrefix = "\uB2E4\uC74C \uB0AE\uAE4C\uC9C0 ";
-    private const string HintText = "\uC81C\uC791 / \uAC74\uCD95 / \uC7A5\uBE44 \uC815\uB9AC";
+    private const string TitleText = "아침 정비 시간";
+    private const string TimerPrefix = "다음 낮까지 ";
+    private const string HintText = "제작 / 건축 / 장비 정리";
 
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameFlowController _gameFlowController;
@@ -101,9 +101,29 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-        TMP_Text titleText = CreateText(rootObject.transform, "Text_MorningPrepTitle", TitleText, 18f, new Vector2(14f, -10f), new Vector2(292f, 24f));
-        TMP_Text timerText = CreateText(rootObject.transform, "Text_MorningPrepTimer", TimerPrefix + "00:30", 24f, new Vector2(14f, -38f), new Vector2(292f, 30f));
-        TMP_Text hintText = CreateText(rootObject.transform, "Text_MorningPrepHint", HintText, 14f, new Vector2(14f, -72f), new Vector2(292f, 20f));
+        TMP_Text titleText = CreateText(
+            rootObject.transform,
+            "Text_MorningPrepTitle",
+            TitleText,
+            18f,
+            new Vector2(14f, -10f),
+            new Vector2(292f, 24f));
+
+        TMP_Text timerText = CreateText(
+            rootObject.transform,
+            "Text_MorningPrepTimer",
+            TimerPrefix + "00:30",
+            24f,
+            new Vector2(14f, -38f),
+            new Vector2(292f, 30f));
+
+        TMP_Text hintText = CreateText(
+            rootObject.transform,
+            "Text_MorningPrepHint",
+            HintText,
+            14f,
+            new Vector2(14f, -72f),
+            new Vector2(292f, 20f));
 
         MorningPrepTimerHUD timerHud = rootObject.AddComponent<MorningPrepTimerHUD>();
         GameManager gameManager = null;
@@ -122,7 +142,13 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
         return timerHud;
     }
 
-    private static TMP_Text CreateText(Transform parent, string objectName, string text, float fontSize, Vector2 anchoredPosition, Vector2 sizeDelta)
+    private static TMP_Text CreateText(
+        Transform parent,
+        string objectName,
+        string text,
+        float fontSize,
+        Vector2 anchoredPosition,
+        Vector2 sizeDelta)
     {
         GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
         textObject.transform.SetParent(parent, false);

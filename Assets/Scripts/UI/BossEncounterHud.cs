@@ -120,7 +120,7 @@ public sealed class BossEncounterHud : MonoBehaviour
 
     private void RefreshTrackedBoss()
     {
-        if (_trackedBossStatus != null && _trackedBossStatus.gameObject.activeInHierarchy && _trackedBossStatus.IsDead == false)
+        if (IsBossAlive(_trackedBossStatus))
         {
             return;
         }
@@ -140,13 +140,29 @@ public sealed class BossEncounterHud : MonoBehaviour
         for (int i = 0; i < bossStatuses.Length; i++)
         {
             BossStatus bossStatus = bossStatuses[i];
-            if (bossStatus != null && bossStatus.gameObject.activeInHierarchy && bossStatus.IsDead == false)
+            if (IsBossAlive(bossStatus))
             {
                 return bossStatus;
             }
         }
 
         return null;
+    }
+
+    // HP 추적을 계속해도 되는 살아있는 보스인지 확인합니다.
+    private bool IsBossAlive(BossStatus bossStatus)
+    {
+        if (bossStatus == null)
+        {
+            return false;
+        }
+
+        if (bossStatus.gameObject.activeInHierarchy == false)
+        {
+            return false;
+        }
+
+        return bossStatus.IsDead == false;
     }
 
     private void RefreshHpPanel()
@@ -228,7 +244,13 @@ public sealed class BossEncounterHud : MonoBehaviour
         _alertCanvasGroup.interactable = false;
         _alertCanvasGroup.blocksRaycasts = false;
 
-        _alertText = CreateText(panelObject.transform, "Text_BossAlert", BossWarningText, 28f, Vector2.zero, new Vector2(490f, 42f));
+        _alertText = CreateText(
+            panelObject.transform,
+            "Text_BossAlert",
+            BossWarningText,
+            28f,
+            Vector2.zero,
+            new Vector2(490f, 42f));
     }
 
     private void CreateHpPanel(Transform root)
@@ -251,11 +273,23 @@ public sealed class BossEncounterHud : MonoBehaviour
         _hpCanvasGroup.interactable = false;
         _hpCanvasGroup.blocksRaycasts = false;
 
-        _hpText = CreateText(panelObject.transform, "Text_BossHp", BossHpPrefix + "0 / 0", 18f, new Vector2(0f, 16f), new Vector2(500f, 26f));
+        _hpText = CreateText(
+            panelObject.transform,
+            "Text_BossHp",
+            BossHpPrefix + "0 / 0",
+            18f,
+            new Vector2(0f, 16f),
+            new Vector2(500f, 26f));
         _hpFillImage = CreateHpFill(panelObject.transform);
     }
 
-    private TMP_Text CreateText(Transform parent, string objectName, string text, float fontSize, Vector2 anchoredPosition, Vector2 sizeDelta)
+    private TMP_Text CreateText(
+        Transform parent,
+        string objectName,
+        string text,
+        float fontSize,
+        Vector2 anchoredPosition,
+        Vector2 sizeDelta)
     {
         GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(TextMeshProUGUI));
         textObject.transform.SetParent(parent, false);
