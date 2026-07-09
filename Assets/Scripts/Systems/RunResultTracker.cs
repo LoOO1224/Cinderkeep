@@ -239,13 +239,25 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            if (IsResource(resourceId, PlayerModel.ResourceIron) || IsResource(resourceId, PlayerModel.ResourceIronOre) || IsResource(resourceId, PlayerModel.ResourceIronIngot))
+            bool isIronTier = IsResourceTier(
+                resourceId,
+                PlayerModel.ResourceIron,
+                PlayerModel.ResourceIronOre,
+                PlayerModel.ResourceIronIngot);
+
+            if (isIronTier)
             {
                 _ironGained += amount;
                 return;
             }
 
-            if (IsResource(resourceId, PlayerModel.ResourceGold) || IsResource(resourceId, PlayerModel.ResourceGoldOre) || IsResource(resourceId, PlayerModel.ResourceGoldIngot))
+            bool isGoldTier = IsResourceTier(
+                resourceId,
+                PlayerModel.ResourceGold,
+                PlayerModel.ResourceGoldOre,
+                PlayerModel.ResourceGoldIngot);
+
+            if (isGoldTier)
             {
                 _goldGained += amount;
                 return;
@@ -257,10 +269,32 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            if (IsResource(resourceId, PlayerModel.ResourceAdamantium) || IsResource(resourceId, PlayerModel.ResourceAdamantiumOre) || IsResource(resourceId, PlayerModel.ResourceAdamantiumIngot))
+            bool isAdamantiumTier = IsResourceTier(
+                resourceId,
+                PlayerModel.ResourceAdamantium,
+                PlayerModel.ResourceAdamantiumOre,
+                PlayerModel.ResourceAdamantiumIngot);
+
+            if (isAdamantiumTier)
             {
                 _adamantiumGained += amount;
             }
+        }
+
+        // 원석/주괴가 있는 자원 계열(철, 금 등)을 하나의 획득 항목으로 묶어 판정합니다.
+        private bool IsResourceTier(string resourceId, string baseId, string oreId, string ingotId)
+        {
+            if (IsResource(resourceId, baseId))
+            {
+                return true;
+            }
+
+            if (IsResource(resourceId, oreId))
+            {
+                return true;
+            }
+
+            return IsResource(resourceId, ingotId);
         }
 
         private void HandleEnemyDied(EnemyStatus enemyStatus)
@@ -273,7 +307,11 @@ namespace Cinderkeep.Gameplay
             _monsterKillCount++;
         }
 
-        private void HandleDamageApplied(global::DamageDealer damageDealer, global::Damageable damageable, float damage, global::DamageSourceType sourceType)
+        private void HandleDamageApplied(
+            global::DamageDealer damageDealer,
+            global::Damageable damageable,
+            float damage,
+            global::DamageSourceType sourceType)
         {
             if (_isTracking == false || damage <= 0f)
             {
