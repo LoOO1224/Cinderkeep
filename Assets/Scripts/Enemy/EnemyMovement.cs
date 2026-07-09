@@ -159,7 +159,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     public void StopMoving()
     {
-        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh && _navMeshAgent.hasPath)
+        if (IsAgentOnNavMesh() && _navMeshAgent.hasPath)
         {
             _navMeshAgent.ResetPath();
         }
@@ -171,6 +171,23 @@ public sealed class EnemyMovement : MonoBehaviour
         {
             _navMeshAgent = GetComponent<NavMeshAgent>();
         }
+    }
+
+    // NavMeshAgent를 조작해도 안전한 상태인지 확인합니다.
+    // null, 비활성, NavMesh 밖 상태에서 agent API를 호출하면 예외가 발생하므로 모든 조작 전에 사용합니다.
+    private bool IsAgentOnNavMesh()
+    {
+        if (_navMeshAgent == null)
+        {
+            return false;
+        }
+
+        if (_navMeshAgent.enabled == false)
+        {
+            return false;
+        }
+
+        return _navMeshAgent.isOnNavMesh;
     }
 
     private void ApplyNavMeshAgentSettings()
@@ -211,7 +228,7 @@ public sealed class EnemyMovement : MonoBehaviour
         Vector3 targetPosition = targetTransform.position + _targetSpreadOffset;
         targetPosition.y = targetTransform.position.y;
 
-        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
+        if (IsAgentOnNavMesh())
         {
             NavMeshHit navMeshHit;
             if (NavMesh.SamplePosition(targetPosition, out navMeshHit, _arrivalSpreadRadius + 0.5f, NavMesh.AllAreas))
@@ -274,7 +291,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     private void MoveWithNavMeshOrTransform(Vector3 targetPosition)
     {
-        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
+        if (IsAgentOnNavMesh())
         {
             _navMeshAgent.isStopped = false;
             _navMeshAgent.speed = GetCurrentMoveSpeed();
@@ -345,7 +362,7 @@ public sealed class EnemyMovement : MonoBehaviour
         }
 
         Vector3 pushOffset = pushDirection.normalized * (_separationStrength * Time.deltaTime);
-        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
+        if (IsAgentOnNavMesh())
         {
             _navMeshAgent.Move(pushOffset);
             return;
