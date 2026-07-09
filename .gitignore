@@ -219,3 +219,8 @@ Assets/ThirdParty/PlayModeComponentSaver.meta
 /Assets/ThirdParty/Free/Equipment/Stylized 3D Tools/Textures/*.PSD.meta
 ProjectSettings/Packages/com.unity.probuilder
 ProjectSettings/Packages/com.unity.probuilder/Settings.json
+
+# AI assistant instruction files (local only)
+CLAUDE.md
+AGENTS.md
+.claude/
