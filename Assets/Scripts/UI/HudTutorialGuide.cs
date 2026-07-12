@@ -76,6 +76,19 @@ public sealed class HudTutorialGuide : MonoBehaviour
 
     public static HudTutorialGuide EnsureSceneGuide()
     {
+        HudTutorialGuide existingGuide = FindFirstObjectByType<HudTutorialGuide>(FindObjectsInactive.Include);
+        if (existingGuide != null)
+        {
+            existingGuide.gameObject.SetActive(true);
+            return existingGuide;
+        }
+
+        if (HudRuntimeCreationPolicy.IsRuntimeCreationEnabled == false)
+        {
+            global::CinderkeepLog.Verbose("[HudTutorialGuide] 씬에 배치된 가이드가 없어 런타임 생성을 건너뜁니다.");
+            return null;
+        }
+
         GameObject canvasObject = GameObject.Find(CanvasName);
         if (canvasObject == null)
         {

@@ -35,6 +35,12 @@ public sealed class BuildProgressUI : MonoBehaviour
             return existing;
         }
 
+        if (HudRuntimeCreationPolicy.IsRuntimeCreationEnabled == false)
+        {
+            global::CinderkeepLog.Verbose("[BuildProgressUI] 씬에 배치된 UI가 없어 런타임 생성을 건너뜁니다.");
+            return null;
+        }
+
         GameObject canvasObject = GameObject.Find(CanvasName);
         if (canvasObject == null)
         {

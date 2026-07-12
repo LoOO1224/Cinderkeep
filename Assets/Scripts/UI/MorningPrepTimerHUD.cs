@@ -41,6 +41,12 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
             return existing;
         }
 
+        if (HudRuntimeCreationPolicy.IsRuntimeCreationEnabled == false)
+        {
+            global::CinderkeepLog.Verbose("[MorningPrepTimerHUD] 씬에 배치된 HUD가 없어 런타임 생성을 건너뜁니다.");
+            return null;
+        }
+
         GameObject gameManagerObject = GameObject.Find("GameManager");
         if (gameManagerObject == null && SceneManager.GetActiveScene().name != "Cinderkeep_Game")
         {

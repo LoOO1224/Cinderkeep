@@ -33,6 +33,12 @@ public sealed class GameplayFeedbackHud : MonoBehaviour
             return _instance;
         }
 
+        if (HudRuntimeCreationPolicy.IsRuntimeCreationEnabled == false)
+        {
+            global::CinderkeepLog.Verbose("[GameplayFeedbackHud] 씬에 배치된 HUD가 없어 런타임 생성을 건너뜁니다.");
+            return null;
+        }
+
         GameObject canvasObject = GameObject.Find(CanvasName);
         if (canvasObject == null)
         {
