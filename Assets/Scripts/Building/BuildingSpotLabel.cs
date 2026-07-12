@@ -96,7 +96,9 @@ public sealed class BuildingSpotLabel : MonoBehaviour
         BuildingData buildingData = GetBuildingData();
         if (buildingData == null)
         {
-            return FormatLabel(_buildingSpot.BuildingDataId, "건축 지점");
+            // 데이터 로드 전이거나 ID가 등록되지 않은 경우입니다.
+            // 영어 데이터 ID 원문을 노출하지 않고 일반 명칭만 표시합니다.
+            return FormatLabel("건축 지점", "E 길게");
         }
 
         string koreanName = ResolveKoreanName(buildingData);
@@ -151,7 +153,8 @@ public sealed class BuildingSpotLabel : MonoBehaviour
             return "모루";
         }
 
-        return string.IsNullOrEmpty(buildingData.DisplayName) ? "건축물" : buildingData.DisplayName;
+        // DisplayName은 데이터에 영어로 들어 있으므로 매핑되지 않은 타입은 일반 명칭으로 표시합니다.
+        return "건축물";
     }
 
     private string FormatLabel(string title, string hint)
