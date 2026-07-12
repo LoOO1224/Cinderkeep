@@ -736,7 +736,8 @@ public static class CinderkeepGameLoopSceneBuilder
             103f,
             0.35f,
             new Vector3(2.2f, 2.2f, 2.2f),
-            resourceMaterials.Stone);
+            resourceMaterials.Stone,
+            scatterAcrossWorld: true);
 
         resourceIndex = CreateResourceFieldByCount(
             resourceRoot,
@@ -752,7 +753,8 @@ public static class CinderkeepGameLoopSceneBuilder
             127f,
             0.35f,
             new Vector3(1.75f, 1.75f, 1.75f),
-            resourceMaterials.Iron);
+            resourceMaterials.Iron,
+            scatterAcrossWorld: true);
 
         resourceIndex = CreateResourceFieldByCount(
             resourceRoot,
@@ -768,7 +770,8 @@ public static class CinderkeepGameLoopSceneBuilder
             151f,
             0.35f,
             new Vector3(1.75f, 1.75f, 1.75f),
-            resourceMaterials.Gold);
+            resourceMaterials.Gold,
+            scatterAcrossWorld: true);
 
         CreateResourceFieldByCount(
             resourceRoot,
@@ -784,7 +787,8 @@ public static class CinderkeepGameLoopSceneBuilder
             173f,
             0.35f,
             new Vector3(1.85f, 1.85f, 1.85f),
-            resourceMaterials.Adamantium);
+            resourceMaterials.Adamantium,
+            scatterAcrossWorld: true);
     }
 
     private static int CreateResourceFieldByCount(
