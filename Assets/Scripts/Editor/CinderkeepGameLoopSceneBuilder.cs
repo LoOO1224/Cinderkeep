@@ -663,7 +663,8 @@ public static class CinderkeepGameLoopSceneBuilder
             0f,
             0f,
             new Vector3(1.15f, 1.15f, 1.15f),
-            resourceMaterials.WoodTier1);
+            resourceMaterials.WoodTier1,
+            scatterAcrossWorld: true);
 
         resourceIndex = CreateResourceFieldByCount(
             resourceRoot,
@@ -679,7 +680,8 @@ public static class CinderkeepGameLoopSceneBuilder
             19f,
             0f,
             new Vector3(1.25f, 1.25f, 1.25f),
-            resourceMaterials.WoodTier2);
+            resourceMaterials.WoodTier2,
+            scatterAcrossWorld: true);
 
         resourceIndex = CreateResourceFieldByCount(
             resourceRoot,
@@ -695,7 +697,8 @@ public static class CinderkeepGameLoopSceneBuilder
             41f,
             0f,
             new Vector3(1.35f, 1.35f, 1.35f),
-            resourceMaterials.WoodTier3);
+            resourceMaterials.WoodTier3,
+            scatterAcrossWorld: true);
 
         CreateResourceFieldByCount(
             resourceRoot,
@@ -711,7 +714,8 @@ public static class CinderkeepGameLoopSceneBuilder
             67f,
             0f,
             new Vector3(1.45f, 1.45f, 1.45f),
-            resourceMaterials.WoodTier4);
+            resourceMaterials.WoodTier4,
+            scatterAcrossWorld: true);
     }
 
     private static void CreateRockResourceField(Transform resourceRoot, ResourceMaterialSet resourceMaterials)
@@ -796,13 +800,24 @@ public static class CinderkeepGameLoopSceneBuilder
         float angleOffset,
         float height,
         Vector3 visualScale,
-        Material fallbackMaterial)
+        Material fallbackMaterial,
+        bool scatterAcrossWorld = false)
     {
         for (int i = 0; i < count; i++)
         {
             int resourceIndex = startIndex + i + 1;
             string objectName = objectPrefix + "_" + resourceIndex.ToString("00");
-            Vector3 position = GetResourceFieldPosition(resourceIndex, angleOffset, height);
+
+            Vector3 position;
+            if (scatterAcrossWorld)
+            {
+                position = GetScatteredWorldPosition(resourceIndex, angleOffset, height);
+            }
+            else
+            {
+                position = GetResourceFieldPosition(resourceIndex, angleOffset, height);
+            }
+
             CreateResourceNode(resourceRoot, objectName, prefabPath, position, harvestNodeDataId, resourceId, amount, requiredToolType, requiredToolTier, visualScale, fallbackMaterial);
         }
 
@@ -816,6 +831,47 @@ public static class CinderkeepGameLoopSceneBuilder
         float x = Mathf.Cos(angle) * radius;
         float z = Mathf.Sin(angle) * radius;
         return new Vector3(x, height, z);
+    }
+
+    // 맵 능선(±54) 안쪽에서 나무를 흩뿌릴 수 있는 최대 절반 크기입니다.
+    private const float TreeScatterHalfExtent = 50f;
+    // CinderHeart 기지 구역을 비워두는 반경입니다. 건축 지점과 적 스폰 마커(15m)를 덮습니다.
+    private const float BaseKeepOutRadius = 20f;
+
+    // 나무를 맵 전체(능선 안쪽)에 고르게 흩뿌리는 결정적 배치입니다.
+    // 같은 index는 항상 같은 위치를 반환하므로 빌더를 다시 실행해도 배치가 유지됩니다.
+    private static Vector3 GetScatteredWorldPosition(int index, float angleOffset, float height)
+    {
+        float hashX = GetStableHash01(index * 2 + 1, angleOffset);
+        float hashZ = GetStableHash01(index * 2 + 2, angleOffset);
+
+        float x = Mathf.Lerp(-TreeScatterHalfExtent, TreeScatterHalfExtent, hashX);
+        float z = Mathf.Lerp(-TreeScatterHalfExtent, TreeScatterHalfExtent, hashZ);
+
+        Vector2 planarPosition = new Vector2(x, z);
+        float distanceFromCenter = planarPosition.magnitude;
+
+        if (distanceFromCenter < BaseKeepOutRadius)
+        {
+            // 기지 구역에 떨어지면 같은 방향으로 구역 밖까지 밀어낸다.
+            Vector2 pushDirection = Vector2.right;
+            if (distanceFromCenter >= 0.01f)
+            {
+                pushDirection = planarPosition / distanceFromCenter;
+            }
+
+            float pushedRadius = Mathf.Lerp(BaseKeepOutRadius, TreeScatterHalfExtent, hashX);
+            planarPosition = pushDirection * pushedRadius;
+        }
+
+        return new Vector3(planarPosition.x, height, planarPosition.y);
+    }
+
+    // 0~1 범위의 결정적 의사 난수입니다. 씬 빌더를 다시 실행해도 같은 값이 나옵니다.
+    private static float GetStableHash01(int seed, float offset)
+    {
+        float raw = Mathf.Sin(seed * 12.9898f + offset * 0.137f + 78.233f) * 43758.5453f;
+        return raw - Mathf.Floor(raw);
     }
 
     private static void AddAxeFallbackShape(Transform parent, Material handleMaterial, Material headMaterial)
