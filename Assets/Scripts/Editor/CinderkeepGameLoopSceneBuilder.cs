@@ -619,6 +619,7 @@ public static class CinderkeepGameLoopSceneBuilder
         Transform resourceRoot = GetOrCreateChild(runtimeRoot, "Resources_GameLoop");
         ClearChildren(resourceRoot);
 
+        _scatteredNodePositions.Clear();
         CreateTreeResourceField(resourceRoot, resourceMaterials);
         CreateRockResourceField(resourceRoot, resourceMaterials);
     }
@@ -833,17 +834,45 @@ public static class CinderkeepGameLoopSceneBuilder
         return new Vector3(x, height, z);
     }
 
-    // 맵 능선(±54) 안쪽에서 나무를 흩뿌릴 수 있는 최대 절반 크기입니다.
+    // 맵 능선(±54) 안쪽에서 자원 노드를 흩뿌릴 수 있는 최대 절반 크기입니다.
     private const float TreeScatterHalfExtent = 50f;
     // CinderHeart 기지 구역을 비워두는 반경입니다. 건축 지점과 적 스폰 마커(15m)를 덮습니다.
     private const float BaseKeepOutRadius = 20f;
+    // 자원 노드끼리 확보해야 하는 최소 거리입니다. 4면 플레이어가 사이로 지나갈 수 있습니다.
+    private const float MinNodeSpacing = 4f;
+    // 최소 간격을 만족하는 위치를 찾기 위한 최대 재시도 횟수입니다.
+    private const int MaxScatterAttempts = 12;
 
-    // 나무를 맵 전체(능선 안쪽)에 고르게 흩뿌리는 결정적 배치입니다.
+    // 이번 빌드에서 배치된 노드 위치 목록입니다. SetupResources 시작 시 비웁니다.
+    private static readonly System.Collections.Generic.List<Vector3> _scatteredNodePositions =
+        new System.Collections.Generic.List<Vector3>();
+
+    // 자원 노드를 맵 전체(능선 안쪽)에 고르게 흩뿌리는 결정적 배치입니다.
     // 같은 index는 항상 같은 위치를 반환하므로 빌더를 다시 실행해도 배치가 유지됩니다.
+    // 이미 배치된 노드와 MinNodeSpacing 미만으로 겹치면 위치를 다시 뽑습니다.
     private static Vector3 GetScatteredWorldPosition(int index, float angleOffset, float height)
     {
-        float hashX = GetStableHash01(index * 2 + 1, angleOffset);
-        float hashZ = GetStableHash01(index * 2 + 2, angleOffset);
+        Vector3 candidate = Vector3.zero;
+
+        for (int attempt = 0; attempt < MaxScatterAttempts; attempt++)
+        {
+            candidate = ComputeScatterCandidate(index, attempt, angleOffset, height);
+
+            if (IsFarEnoughFromPlacedNodes(candidate))
+            {
+                break;
+            }
+        }
+
+        _scatteredNodePositions.Add(candidate);
+        return candidate;
+    }
+
+    private static Vector3 ComputeScatterCandidate(int index, int attempt, float angleOffset, float height)
+    {
+        int seedBase = index * 31 + attempt * 977;
+        float hashX = GetStableHash01(seedBase + 1, angleOffset);
+        float hashZ = GetStableHash01(seedBase + 2, angleOffset);
 
         float x = Mathf.Lerp(-TreeScatterHalfExtent, TreeScatterHalfExtent, hashX);
         float z = Mathf.Lerp(-TreeScatterHalfExtent, TreeScatterHalfExtent, hashZ);
@@ -865,6 +894,24 @@ public static class CinderkeepGameLoopSceneBuilder
         }
 
         return new Vector3(planarPosition.x, height, planarPosition.y);
+    }
+
+    private static bool IsFarEnoughFromPlacedNodes(Vector3 candidate)
+    {
+        for (int i = 0; i < _scatteredNodePositions.Count; i++)
+        {
+            Vector3 placed = _scatteredNodePositions[i];
+            float planarDistance = Vector2.Distance(
+                new Vector2(candidate.x, candidate.z),
+                new Vector2(placed.x, placed.z));
+
+            if (planarDistance < MinNodeSpacing)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // 0~1 범위의 결정적 의사 난수입니다. 씬 빌더를 다시 실행해도 같은 값이 나옵니다.
