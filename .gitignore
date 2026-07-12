@@ -1,4 +1,4 @@
-# This .gitignore file should be placed at the root of your Unity project directory
+﻿# This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
@@ -224,3 +224,7 @@ ProjectSettings/Packages/com.unity.probuilder/Settings.json
 CLAUDE.md
 AGENTS.md
 .claude/
+KARPATHY.md
+.cursor/
+GAMEDEV.md
+GameDev/
