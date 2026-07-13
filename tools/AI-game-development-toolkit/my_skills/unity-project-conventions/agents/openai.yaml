@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity Project Conventions"
+  short_description: "Consistent Unity architecture and C# code rules"
+  default_prompt: "Use $unity-project-conventions to implement this Unity feature consistently."

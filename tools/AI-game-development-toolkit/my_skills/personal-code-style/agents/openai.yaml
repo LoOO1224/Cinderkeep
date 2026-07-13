@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Code Style"
+  short_description: "Consistent, readable, and debuggable game code"
+  default_prompt: "Use $personal-code-style to review this change for readability and consistency."
