@@ -16,9 +16,14 @@ public static class CinderkeepFirstPersonEquipmentApplicator
         "Assets/Prefabs/Equipment/PF_Equipment_Axe_Stone.prefab";
     private const string StonePickaxePrefabPath =
         "Assets/Prefabs/Equipment/PF_Equipment_Pickaxe_Stone.prefab";
+    private const string ExternalWeaponRoot =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomWeapon/";
+    private const string StoneSwordPrefabPath =
+        ExternalWeaponRoot + "Prefabs/PF_Frostbound_StoneSword.prefab";
     private const string HandStoneViewName = "GameObject_HandStoneView";
     private const string AxeViewName = "GameObject_AxeView";
     private const string PickaxeViewName = "GameObject_PickaxeView";
+    private const string WeaponViewName = "GameObject_WeaponView";
     private const string PreviewFolderName = "CinderkeepAssetPreviews";
     private const int PreviewLayer = 31;
 
@@ -65,6 +70,21 @@ public static class CinderkeepFirstPersonEquipmentApplicator
             1.05f,
             "FirstPerson_StonePickaxe.png",
             "돌곡괭이");
+    }
+
+    [MenuItem("Cinderkeep/Assets/First Person Equipment/Apply Stone Sword")]
+    public static void ApplyStoneSword()
+    {
+        ApplyEquipmentView(
+            StoneSwordPrefabPath,
+            WeaponViewName,
+            "_weaponView",
+            "Visual_StoneSword",
+            Vector3.zero,
+            new Vector3(10f, -12f, -12f),
+            1.15f,
+            "FirstPerson_StoneSword.png",
+            "돌검");
     }
 
     private static void ApplyEquipmentView(

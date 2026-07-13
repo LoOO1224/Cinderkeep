@@ -16,9 +16,9 @@ public sealed class FirstPersonToolView : MonoBehaviour
     [SerializeField] private GameObject _pickaxeView;
     [Tooltip("손돌 또는 빈손 상태에서 보여줄 1인칭 오브젝트입니다.")]
     [SerializeField] private GameObject _handView;
-    [Tooltip("손돌을 주웠을 때 오른손에 보이는 임시 돌덩이 View입니다.")]
+    [Tooltip("손돌을 주웠을 때 오른손에 보이는 장비 View입니다.")]
     [SerializeField] private GameObject _handStoneView;
-    [Tooltip("무기를 장착했을 때 보여줄 1인칭 오브젝트입니다. 비어 있으면 임시 검 형태를 런타임에 만듭니다.")]
+    [Tooltip("무기를 장착했을 때 보여줄 1인칭 오브젝트입니다. 참조가 없으면 비상용 검 형태를 만듭니다.")]
     [SerializeField] private GameObject _weaponView;
 
     [Header("Simple Swing")]
