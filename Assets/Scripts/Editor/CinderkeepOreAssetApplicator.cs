@@ -73,8 +73,8 @@ public static class CinderkeepOreAssetApplicator
             AdamantiumOrePrefabPath,
             AdamantiumCrystalPath,
             AdamantiumMaterialPath,
-            1.15f,
-            new Vector3(0f, 0f, 0f),
+            2.4f,
+            new Vector3(0.3f, 2f, -0.15f),
             new Vector3(6f, 30f, -5f),
             "PF_4_0_Resource_Rock_AdamantiumOre_Crystal.png");
     }
