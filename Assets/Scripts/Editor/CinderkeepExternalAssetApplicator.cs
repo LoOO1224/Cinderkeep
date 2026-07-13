@@ -12,6 +12,7 @@ public static class CinderkeepExternalAssetApplicator
     private const string TowerArrowPrefabFolder = "Assets/Resources/Cinderkeep/prefabs/vfx";
     private const string TowerArrowPrefabPath = TowerArrowPrefabFolder + "/PF_VFX_TowerArrow.prefab";
     private const string PreviewFolderName = "CinderkeepAssetPreviews";
+    private const int PreviewLayer = 31;
     private const string FrozenTowerFolder =
         "Assets/ThirdParty/Free/CinderkeepExternalAssets/FrozenRuins";
     private const string WoodTowerModelPath = FrozenTowerFolder + "/KB3D_DKF_Tower_J.fbx";
@@ -31,8 +32,29 @@ public static class CinderkeepExternalAssetApplicator
     private const string FrozenTowerSnowMaterialPath = BuildingMaterialFolder + "/Tower_Snow.mat";
     private const string FireBowlModelPath =
         "Assets/ThirdParty/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
+    private const string CinderHeartBrazierModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomProps/Models/"
+        + "SM_Prop_Camp_Brazier_01.fbx";
+    private const string CinderHeartBrazierAlbedoPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomProps/Textures/"
+        + "PolygonFantasyKingdom_Texture_01_A.png";
+    private const string CinderHeartBrazierNormalPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomProps/Textures/"
+        + "PolygonFantasyKingdom_Texture_Normal_01.png";
     private const string FlameModelPath =
         "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX.fbx";
+    private const string HeartModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/FX_Heart_01.fbx";
+    private const string CinderHeartVisualFolder = "Assets/Prefabs/CinderHeart";
+    private const string CinderHeartVisualPrefabPath =
+        CinderHeartVisualFolder + "/PF_CinderHeart_ShrineVisual.prefab";
+    private const string CinderHeartMaterialFolder = "Assets/Materials/CinderHeart";
+    private const string CinderHeartShrineMaterialPath =
+        CinderHeartMaterialFolder + "/CinderHeart_ShrineStone.mat";
+    private const string CinderHeartEmberMaterialPath =
+        CinderHeartMaterialFolder + "/CinderHeart_Ember.mat";
+    private const string CinderHeartCoreMaterialPath =
+        CinderHeartMaterialFolder + "/CinderHeart_Core.mat";
     private const string FurnacePrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace.prefab";
     private const string FurnaceTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace_Tier2.prefab";
     private const string FurnaceStoneMaterialPath = BuildingMaterialFolder + "/Furnace_Stone.mat";
@@ -44,6 +66,83 @@ public static class CinderkeepExternalAssetApplicator
         FrozenTowerFolder + "/KB3D_DKF_Tower_E.fbx",
         FrozenTowerFolder + "/KB3D_DKF_Tower_J.fbx"
     };
+
+    [MenuItem("Cinderkeep/Assets/Create CinderHeart Shrine Visual")]
+    private static void CreateCinderHeartShrineVisual()
+    {
+        CreateOrUpdateCinderHeartShrineVisualPrefab();
+    }
+
+    // CinderHeart의 고유 제단 외형을 만들고 씬 빌더가 재사용할 프리팹을 반환합니다.
+    public static GameObject CreateOrUpdateCinderHeartShrineVisualPrefab()
+    {
+        GameObject brazierModel = AssetDatabase.LoadAssetAtPath<GameObject>(CinderHeartBrazierModelPath);
+        GameObject flameModel = AssetDatabase.LoadAssetAtPath<GameObject>(FlameModelPath);
+        GameObject heartModel = AssetDatabase.LoadAssetAtPath<GameObject>(HeartModelPath);
+        Texture2D brazierAlbedo = AssetDatabase.LoadAssetAtPath<Texture2D>(CinderHeartBrazierAlbedoPath);
+        Texture2D brazierNormal = AssetDatabase.LoadAssetAtPath<Texture2D>(CinderHeartBrazierNormalPath);
+        if (brazierModel == null
+            || flameModel == null
+            || heartModel == null
+            || brazierAlbedo == null
+            || brazierNormal == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] CinderHeart 제단 원본 에셋을 찾지 못했습니다.");
+            return null;
+        }
+
+        EnsureAssetFolder(CinderHeartVisualFolder);
+
+        Material shrineMaterial = GetOrCreateProjectMaterial(
+            CinderHeartShrineMaterialPath,
+            new Color(0.78f, 0.84f, 0.92f, 1f),
+            0.18f,
+            0.3f);
+        ConfigureSurfaceTextures(shrineMaterial, brazierAlbedo, brazierNormal);
+        Material emberMaterial = GetOrCreateProjectMaterial(
+            CinderHeartEmberMaterialPath,
+            new Color(0.95f, 0.16f, 0.025f, 1f),
+            0.05f,
+            0.38f);
+        Material coreMaterial = GetOrCreateProjectMaterial(
+            CinderHeartCoreMaterialPath,
+            new Color(1f, 0.05f, 0.015f, 1f),
+            0.08f,
+            0.45f);
+        ConfigureEmission(emberMaterial, new Color(2.4f, 0.28f, 0.025f, 1f));
+        ConfigureEmission(coreMaterial, new Color(3.2f, 0.08f, 0.015f, 1f));
+
+        GameObject prefabRoot = new GameObject("PF_CinderHeart_ShrineVisual");
+        bool didCreateVisual = AddCinderHeartShrineModels(
+            prefabRoot.transform,
+            brazierModel,
+            flameModel,
+            heartModel,
+            shrineMaterial,
+            emberMaterial,
+            coreMaterial);
+
+        if (didCreateVisual == false)
+        {
+            Object.DestroyImmediate(prefabRoot);
+            return null;
+        }
+
+        GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(prefabRoot, CinderHeartVisualPrefabPath);
+        Object.DestroyImmediate(prefabRoot);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        if (savedPrefab == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] CinderHeart 제단 프리팹 저장에 실패했습니다.");
+            return null;
+        }
+
+        RenderPrefabPreview(savedPrefab, GetPreviewOutputPath("PF_CinderHeart_ShrineVisual.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] CinderHeart 제단 에셋 적용 완료: " + CinderHeartVisualPrefabPath);
+        return savedPrefab;
+    }
 
     [MenuItem("Cinderkeep/Assets/Apply Tower Arrow")]
     public static void ApplyTowerArrow()
@@ -421,6 +520,29 @@ public static class CinderkeepExternalAssetApplicator
         EditorUtility.SetDirty(material);
     }
 
+    private static void ConfigureSurfaceTextures(
+        Material material,
+        Texture2D albedoTexture,
+        Texture2D normalTexture)
+    {
+        if (material.HasProperty("_BaseMap"))
+        {
+            material.SetTexture("_BaseMap", albedoTexture);
+        }
+        else if (material.HasProperty("_MainTex"))
+        {
+            material.SetTexture("_MainTex", albedoTexture);
+        }
+
+        if (material.HasProperty("_BumpMap") && normalTexture != null)
+        {
+            material.SetTexture("_BumpMap", normalTexture);
+            material.EnableKeyword("_NORMALMAP");
+        }
+
+        EditorUtility.SetDirty(material);
+    }
+
     private static bool ApplyTowerVisual(
         string towerPrefabPath,
         string towerModelPath,
@@ -705,6 +827,51 @@ public static class CinderkeepExternalAssetApplicator
         Object.DestroyImmediate(instance);
     }
 
+    private static bool AddCinderHeartShrineModels(
+        Transform parent,
+        GameObject brazierModel,
+        GameObject flameModel,
+        GameObject heartModel,
+        Material shrineMaterial,
+        Material emberMaterial,
+        Material coreMaterial)
+    {
+        GameObject shrineVisual = InstantiateAssetCanBeNull(brazierModel);
+        GameObject flameVisual = InstantiateAssetCanBeNull(flameModel);
+        GameObject heartVisual = InstantiateAssetCanBeNull(heartModel);
+        if (shrineVisual == null || flameVisual == null || heartVisual == null)
+        {
+            Object.DestroyImmediate(shrineVisual);
+            Object.DestroyImmediate(flameVisual);
+            Object.DestroyImmediate(heartVisual);
+            Debug.LogError("[CinderkeepExternalAssetApplicator] CinderHeart 제단 시각물 생성에 실패했습니다.");
+            return false;
+        }
+
+        shrineVisual.name = "Visual_CinderHeart_Shrine";
+        shrineVisual.transform.SetParent(parent, false);
+        FitVisualToHeight(shrineVisual, 2.4f);
+        PlaceVisualOnGround(shrineVisual, Vector3.zero);
+        ApplyMaterialToRenderers(shrineVisual, shrineMaterial);
+        DestroyCollidersInChildren(shrineVisual);
+
+        flameVisual.name = "Visual_CinderHeart_Flame";
+        flameVisual.transform.SetParent(parent, false);
+        FitVisualToHeight(flameVisual, 1.4f);
+        PlaceVisualOnGround(flameVisual, new Vector3(0f, 1.68f, 0f));
+        ApplyMaterialToRenderers(flameVisual, emberMaterial);
+        DestroyCollidersInChildren(flameVisual);
+
+        heartVisual.name = "Visual_CinderHeart_Core";
+        heartVisual.transform.SetParent(parent, false);
+        FitVisualToHeight(heartVisual, 0.9f);
+        PlaceVisualOnGround(heartVisual, new Vector3(0f, 1.92f, 0f));
+        heartVisual.transform.localRotation = Quaternion.Euler(0f, -22f, 0f);
+        ApplyMaterialToRenderers(heartVisual, coreMaterial);
+        DestroyCollidersInChildren(heartVisual);
+        return true;
+    }
+
     private static void ApplyMaterialPaletteToRenderers(
         GameObject visual,
         Material primaryMaterial,
@@ -833,12 +1000,13 @@ public static class CinderkeepExternalAssetApplicator
 
     private static void RenderGameObjectPreview(GameObject previewObject, string outputPath)
     {
-
+        SetLayerRecursively(previewObject, PreviewLayer);
         Bounds bounds = GetRendererBounds(previewObject);
         GameObject cameraObject = new GameObject("PreviewCamera");
         Camera camera = cameraObject.AddComponent<Camera>();
         camera.clearFlags = CameraClearFlags.SolidColor;
         camera.backgroundColor = new Color(0.06f, 0.08f, 0.12f, 1f);
+        camera.cullingMask = 1 << PreviewLayer;
         float objectSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
         camera.transform.position = bounds.center + new Vector3(
             objectSize * 2.5f,
@@ -852,6 +1020,7 @@ public static class CinderkeepExternalAssetApplicator
         Light light = lightObject.AddComponent<Light>();
         light.type = LightType.Directional;
         light.intensity = 2f;
+        light.cullingMask = 1 << PreviewLayer;
         light.transform.rotation = Quaternion.Euler(35f, -35f, 0f);
 
         RenderTexture renderTexture = new RenderTexture(512, 512, 24);
@@ -879,5 +1048,15 @@ public static class CinderkeepExternalAssetApplicator
         Object.DestroyImmediate(lightObject);
         Object.DestroyImmediate(cameraObject);
         Object.DestroyImmediate(previewObject);
+    }
+
+    private static void SetLayerRecursively(GameObject rootObject, int layer)
+    {
+        rootObject.layer = layer;
+        Transform rootTransform = rootObject.transform;
+        for (int i = 0; i < rootTransform.childCount; i++)
+        {
+            SetLayerRecursively(rootTransform.GetChild(i).gameObject, layer);
+        }
     }
 }

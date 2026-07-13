@@ -35,6 +35,8 @@ public static class CinderkeepGameLoopSceneBuilder
     private const string MageBlackPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MageBlack.prefab";
     private const string TowerModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_A.fbx";
     private const string FireBowlPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
+    private const string CinderHeartVisualPrefabPath =
+        "Assets/Prefabs/CinderHeart/PF_CinderHeart_ShrineVisual.prefab";
     private const string FontPath = "Assets/Fonts/NotoSansKR-Medium SDF3.asset";
 
     // 자원 테스트 필드에서 쓰는 재질 묶음입니다.
@@ -517,8 +519,30 @@ public static class CinderkeepGameLoopSceneBuilder
         ResetLocalTransform(visualRoot);
         ClearChildren(visualRoot);
 
-        AddPrefabOrModelChild(visualRoot, "Model_CinderHeart_Heart", HeartModelPath, new Vector3(0f, 0.15f, 0f), new Vector3(1.4f, 1.4f, 1.4f), cinderHeartMaterial);
-        AddCinderHeartFallbackShape(visualRoot, cinderHeartMaterial);
+        GameObject shrineVisualPrefab =
+            CinderkeepExternalAssetApplicator.CreateOrUpdateCinderHeartShrineVisualPrefab();
+        if (shrineVisualPrefab != null)
+        {
+            AddPrefabOrModelChild(
+                visualRoot,
+                "Model_CinderHeart_Shrine",
+                CinderHeartVisualPrefabPath,
+                new Vector3(0f, -0.8f, 0f),
+                Vector3.one,
+                null,
+                false);
+        }
+        else
+        {
+            AddPrefabOrModelChild(
+                visualRoot,
+                "Model_CinderHeart_Heart",
+                HeartModelPath,
+                new Vector3(0f, 0.15f, 0f),
+                new Vector3(1.4f, 1.4f, 1.4f),
+                cinderHeartMaterial);
+            AddCinderHeartFallbackShape(visualRoot, cinderHeartMaterial);
+        }
 
         Light light = EnsureComponent<Light>(cinderHeart);
         light.type = LightType.Point;

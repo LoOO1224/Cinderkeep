@@ -8,8 +8,9 @@ using UnityEngine.SceneManagement;
 public static class CinderkeepCinderHeartVisualSceneBuilder
 {
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
-    private const string MaterialFolderPath = "Assets/Materials/Generated";
     private const string CinderHeartName = "CinderHeart";
+    private const string VisualRootName = "Visual_CinderHeart_Core";
+    private const string ShrineVisualName = "Model_CinderHeart_Shrine";
 
     [MenuItem("Cinderkeep/Setup Visible CinderHeart")]
     public static void SetupVisibleCinderHeart()
@@ -23,13 +24,16 @@ public static class CinderkeepCinderHeartVisualSceneBuilder
             return;
         }
 
-        Material cinderHeartMaterial = GetOrCreateMaterial("MAT_CinderHeart_Visible_Red", new Color(1f, 0.05f, 0.02f, 1f));
-        Transform visualRoot = GetOrCreateChild(cinderHeart.transform, "Visual_CinderHeart_Core");
+        GameObject shrineVisualPrefab =
+            CinderkeepExternalAssetApplicator.CreateOrUpdateCinderHeartShrineVisualPrefab();
+        if (shrineVisualPrefab == null)
+        {
+            return;
+        }
 
-        CreateOrUpdatePrimitive(visualRoot, "Beacon_CinderHeart_Core", PrimitiveType.Sphere, new Vector3(0f, 1.9f, 0f), new Vector3(2.0f, 2.0f, 2.0f), cinderHeartMaterial);
-        CreateOrUpdatePrimitive(visualRoot, "Beacon_CinderHeart_Pillar", PrimitiveType.Cylinder, new Vector3(0f, 2.5f, 0f), new Vector3(0.36f, 3.0f, 0.36f), cinderHeartMaterial);
-        CreateOrUpdatePrimitive(visualRoot, "Beacon_CinderHeart_Base", PrimitiveType.Cube, new Vector3(0f, -0.25f, 0f), new Vector3(2.2f, 0.24f, 2.2f), cinderHeartMaterial);
-        CreateOrUpdateLight(cinderHeart.transform);
+        Transform visualRoot = GetOrCreateChild(cinderHeart.transform, VisualRootName);
+        ReplaceVisualWithPrefab(visualRoot, shrineVisualPrefab, scene);
+        CreateOrUpdateLight(cinderHeart);
         SetupCinderHeartStatus(cinderHeart);
         SetupPlayerDeathView(cinderHeart.transform);
 
@@ -72,86 +76,49 @@ public static class CinderkeepCinderHeartVisualSceneBuilder
         return childObject.transform;
     }
 
-    private static void CreateOrUpdatePrimitive(
-        Transform parent,
-        string objectName,
-        PrimitiveType primitiveType,
-        Vector3 localPosition,
-        Vector3 localScale,
-        Material material)
+    private static void ReplaceVisualWithPrefab(
+        Transform visualRoot,
+        GameObject visualPrefab,
+        Scene scene)
     {
-        Transform childTransform = parent.Find(objectName);
-        GameObject childObject;
-
-        if (childTransform == null)
+        for (int i = visualRoot.childCount - 1; i >= 0; i--)
         {
-            childObject = GameObject.CreatePrimitive(primitiveType);
-            childObject.name = objectName;
-            childObject.transform.SetParent(parent);
-            RemoveCollider(childObject);
-        }
-        else
-        {
-            childObject = childTransform.gameObject;
+            Object.DestroyImmediate(visualRoot.GetChild(i).gameObject);
         }
 
-        childObject.transform.localPosition = localPosition;
-        childObject.transform.localRotation = Quaternion.identity;
-        childObject.transform.localScale = localScale;
-        ApplyMaterial(childObject, material);
-    }
-
-    private static void RemoveCollider(GameObject targetObject)
-    {
-        Collider collider = targetObject.GetComponent<Collider>();
-        if (collider == null)
+        GameObject visualInstance = PrefabUtility.InstantiatePrefab(visualPrefab, scene) as GameObject;
+        if (visualInstance == null)
         {
+            Debug.LogError("CinderkeepCinderHeartVisualSceneBuilder: CinderHeart 제단 프리팹 생성에 실패했습니다.");
             return;
         }
 
-        Object.DestroyImmediate(collider);
+        visualInstance.name = ShrineVisualName;
+        visualInstance.transform.SetParent(visualRoot, false);
+        visualInstance.transform.localPosition = new Vector3(0f, -0.8f, 0f);
+        visualInstance.transform.localRotation = Quaternion.identity;
+        visualInstance.transform.localScale = Vector3.one;
     }
 
-    private static void ApplyMaterial(GameObject targetObject, Material material)
+    private static void CreateOrUpdateLight(GameObject cinderHeart)
     {
-        Renderer renderer = targetObject.GetComponent<Renderer>();
-        if (renderer == null)
+        Transform previousLight = cinderHeart.transform.Find("Light_CinderHeart_Beacon");
+        if (previousLight != null)
         {
-            return;
+            Object.DestroyImmediate(previousLight.gameObject);
         }
 
-        renderer.sharedMaterial = material;
-    }
-
-    private static void CreateOrUpdateLight(Transform cinderHeartTransform)
-    {
-        Transform lightTransform = cinderHeartTransform.Find("Light_CinderHeart_Beacon");
-        GameObject lightObject;
-
-        if (lightTransform == null)
-        {
-            lightObject = new GameObject("Light_CinderHeart_Beacon");
-            lightObject.transform.SetParent(cinderHeartTransform);
-        }
-        else
-        {
-            lightObject = lightTransform.gameObject;
-        }
-
-        lightObject.transform.localPosition = new Vector3(0f, 2.2f, 0f);
-        lightObject.transform.localRotation = Quaternion.identity;
-        lightObject.transform.localScale = Vector3.one;
-
-        Light light = lightObject.GetComponent<Light>();
+        Light light = cinderHeart.GetComponent<Light>();
         if (light == null)
         {
-            light = lightObject.AddComponent<Light>();
+            light = cinderHeart.AddComponent<Light>();
         }
 
         light.type = LightType.Point;
-        light.color = new Color(1f, 0.2f, 0.06f, 1f);
-        light.range = 14f;
-        light.intensity = 3.5f;
+        light.color = new Color(1f, 0.22f, 0.045f, 1f);
+        light.range = 15f;
+        light.intensity = 4f;
+        light.shadows = LightShadows.None;
     }
 
     private static void SetupCinderHeartStatus(GameObject cinderHeart)
@@ -204,37 +171,4 @@ public static class CinderkeepCinderHeartVisualSceneBuilder
         return null;
     }
 
-    private static Material GetOrCreateMaterial(string materialName, Color color)
-    {
-        EnsureFolder("Assets/Materials");
-        EnsureFolder(MaterialFolderPath);
-
-        string materialPath = MaterialFolderPath + "/" + materialName + ".mat";
-        Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-        if (material != null)
-        {
-            material.color = color;
-            EditorUtility.SetDirty(material);
-            return material;
-        }
-
-        material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-        material.name = materialName;
-        material.color = color;
-        AssetDatabase.CreateAsset(material, materialPath);
-        return material;
-    }
-
-    private static void EnsureFolder(string folderPath)
-    {
-        if (AssetDatabase.IsValidFolder(folderPath))
-        {
-            return;
-        }
-
-        string parentPath = System.IO.Path.GetDirectoryName(folderPath);
-        string folderName = System.IO.Path.GetFileName(folderPath);
-        parentPath = parentPath.Replace("\\", "/");
-        AssetDatabase.CreateFolder(parentPath, folderName);
-    }
 }
