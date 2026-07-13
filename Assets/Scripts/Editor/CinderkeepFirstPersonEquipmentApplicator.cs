@@ -14,8 +14,11 @@ public static class CinderkeepFirstPersonEquipmentApplicator
         "Assets/Prefabs/Equipment/PF_Equipment_HandStone.prefab";
     private const string StoneAxePrefabPath =
         "Assets/Prefabs/Equipment/PF_Equipment_Axe_Stone.prefab";
+    private const string StonePickaxePrefabPath =
+        "Assets/Prefabs/Equipment/PF_Equipment_Pickaxe_Stone.prefab";
     private const string HandStoneViewName = "GameObject_HandStoneView";
     private const string AxeViewName = "GameObject_AxeView";
+    private const string PickaxeViewName = "GameObject_PickaxeView";
     private const string PreviewFolderName = "CinderkeepAssetPreviews";
     private const int PreviewLayer = 31;
 
@@ -47,6 +50,21 @@ public static class CinderkeepFirstPersonEquipmentApplicator
             1.05f,
             "FirstPerson_StoneAxe.png",
             "돌도끼");
+    }
+
+    [MenuItem("Cinderkeep/Assets/First Person Equipment/Apply Stone Pickaxe")]
+    public static void ApplyStonePickaxe()
+    {
+        ApplyEquipmentView(
+            StonePickaxePrefabPath,
+            PickaxeViewName,
+            "_pickaxeView",
+            "Visual_StonePickaxe",
+            Vector3.zero,
+            new Vector3(8f, -12f, -18f),
+            1.05f,
+            "FirstPerson_StonePickaxe.png",
+            "돌곡괭이");
     }
 
     private static void ApplyEquipmentView(
