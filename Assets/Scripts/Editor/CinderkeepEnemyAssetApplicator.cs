@@ -22,6 +22,7 @@ public static class CinderkeepEnemyAssetApplicator
         EnemyPrefabFolder + "/PF_Boss_FrozenGolem.prefab";
 
     private const string MageBluePrefabPath = MageFolder + "/MageBlue.prefab";
+    private const string MageTexturePath = MageFolder + "/Textures/MagesTexture.png";
     private const string PlantYellowPrefabPath =
         PlantFolder + "/Prefabs/Carnivorous Plant-Yellow.prefab";
     private const string RockSmallModelPath = PolygonIceFolder + "/SM_Rock_01.fbx";
@@ -31,6 +32,7 @@ public static class CinderkeepEnemyAssetApplicator
     private const string CrystalShardModelPath = PolygonIceFolder + "/FX_CrystalShard_01.fbx";
 
     private const string IcePlantMaterialPath = EnemyMaterialFolder + "/IcePlant_Frost.mat";
+    private const string FrostMageMaterialPath = EnemyMaterialFolder + "/FrostMage_Blue.mat";
     private const string GolemBodyMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Body.mat";
     private const string GolemCoreMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Core.mat";
     private const string EnemyVisualPrefix = "Visual_";
@@ -47,12 +49,20 @@ public static class CinderkeepEnemyAssetApplicator
     [MenuItem("Cinderkeep/Assets/Enemies/Apply Blue Frost Mage")]
     public static void ApplyBlueFrostMage()
     {
+        Material frostMageMaterial = GetOrCreateMaterial(
+            FrostMageMaterialPath,
+            Color.white,
+            0f,
+            0.28f);
+        Texture2D mageTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(MageTexturePath);
+        SetMaterialTexture(frostMageMaterial, mageTexture);
+
         bool didApply = ReplaceEnemyVisual(
             FrostMagePrefabPath,
             MageBluePrefabPath,
             "Visual_PF_Enemy_LowPoly_FrostMage",
             1.2f,
-            null);
+            frostMageMaterial);
 
         if (didApply == false)
         {
@@ -371,6 +381,27 @@ public static class CinderkeepEnemyAssetApplicator
         }
 
         material.SetFloat(propertyName, value);
+    }
+
+    private static void SetMaterialTexture(Material material, Texture texture)
+    {
+        if (material == null || texture == null)
+        {
+            return;
+        }
+
+        if (material.HasProperty("_BaseMap"))
+        {
+            material.SetTexture("_BaseMap", texture);
+        }
+
+        if (material.HasProperty("_MainTex"))
+        {
+            material.SetTexture("_MainTex", texture);
+        }
+
+        EditorUtility.SetDirty(material);
+        AssetDatabase.SaveAssets();
     }
 
     private static void EnsureAssetFolder(string folderPath)
