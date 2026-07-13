@@ -11,7 +11,21 @@ public static class CinderkeepExternalAssetApplicator
     private const string ArrowMaterialPath = "Assets/Materials/Generated/Projectile_Arrow.mat";
     private const string TowerArrowPrefabFolder = "Assets/Resources/Cinderkeep/prefabs/vfx";
     private const string TowerArrowPrefabPath = TowerArrowPrefabFolder + "/PF_VFX_TowerArrow.prefab";
-    private const string TowerArrowPreviewPath = "Temp/Cinderkeep/PF_VFX_TowerArrow.png";
+    private const string PreviewFolderName = "CinderkeepAssetPreviews";
+    private const string FrozenTowerFolder =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FrozenRuins";
+    private const string WoodTowerModelPath = FrozenTowerFolder + "/KB3D_DKF_Tower_J.fbx";
+    private const string WoodTowerPrefabPath = "Assets/Prefabs/Building/PF_Building_Tower_Wood.prefab";
+    private const string BuildingMaterialFolder = "Assets/Materials/Building";
+    private const string WoodTowerMaterialPath = BuildingMaterialFolder + "/Tower_Wood.mat";
+    private const string FrozenTowerSnowMaterialPath = BuildingMaterialFolder + "/Tower_Snow.mat";
+
+    private static readonly string[] FrozenTowerCandidatePaths =
+    {
+        FrozenTowerFolder + "/KB3D_DKF_Tower_A.fbx",
+        FrozenTowerFolder + "/KB3D_DKF_Tower_E.fbx",
+        FrozenTowerFolder + "/KB3D_DKF_Tower_J.fbx"
+    };
 
     [MenuItem("Cinderkeep/Assets/Apply Tower Arrow")]
     public static void ApplyTowerArrow()
@@ -29,7 +43,7 @@ public static class CinderkeepExternalAssetApplicator
         GameObject prefabRoot = new GameObject("PF_VFX_TowerArrow");
         prefabRoot.AddComponent<TowerProjectileView>();
 
-        GameObject visual = PrefabUtility.InstantiatePrefab(sourceModel) as GameObject;
+        GameObject visual = InstantiateAssetCanBeNull(sourceModel);
         if (visual == null)
         {
             Object.DestroyImmediate(prefabRoot);
@@ -56,8 +70,74 @@ public static class CinderkeepExternalAssetApplicator
             return;
         }
 
-        RenderPrefabPreview(savedPrefab, TowerArrowPreviewPath);
+        RenderPrefabPreview(savedPrefab, GetPreviewOutputPath("PF_VFX_TowerArrow.png"));
         Debug.Log("[CinderkeepExternalAssetApplicator] 타워 화살 에셋 적용 완료: " + TowerArrowPrefabPath);
+    }
+
+    [MenuItem("Cinderkeep/Assets/Preview Frozen Tower Candidates")]
+    public static void PreviewFrozenTowerCandidates()
+    {
+        for (int i = 0; i < FrozenTowerCandidatePaths.Length; i++)
+        {
+            string candidatePath = FrozenTowerCandidatePaths[i];
+            GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(candidatePath);
+            if (sourceModel == null)
+            {
+                Debug.LogWarning("[CinderkeepExternalAssetApplicator] 타워 후보를 찾지 못했습니다: " + candidatePath);
+                continue;
+            }
+
+            GameObject previewRoot = new GameObject("Preview_FrozenTower");
+            GameObject visual = InstantiateAssetCanBeNull(sourceModel);
+            if (visual == null)
+            {
+                Object.DestroyImmediate(previewRoot);
+                Debug.LogWarning("[CinderkeepExternalAssetApplicator] 타워 후보 인스턴스 생성에 실패했습니다: " + candidatePath);
+                continue;
+            }
+
+            visual.transform.SetParent(previewRoot.transform, false);
+            FitVisualToHeight(visual, 4f);
+            PlaceVisualOnGround(visual, Vector3.zero);
+
+            string candidateName = Path.GetFileNameWithoutExtension(candidatePath);
+            string outputPath = GetPreviewOutputPath(candidateName + ".png");
+            RenderGameObjectPreview(previewRoot, outputPath);
+        }
+
+        Debug.Log("[CinderkeepExternalAssetApplicator] FrozenRuins 타워 후보 프리뷰 생성을 완료했습니다.");
+    }
+
+    [MenuItem("Cinderkeep/Assets/Apply Wood Tower Visual")]
+    public static void ApplyWoodTowerVisual()
+    {
+        Material towerMaterial = GetOrCreateProjectMaterial(
+            WoodTowerMaterialPath,
+            new Color(0.3f, 0.17f, 0.08f, 1f),
+            0f,
+            0.22f);
+        Material snowMaterial = GetOrCreateProjectMaterial(
+            FrozenTowerSnowMaterialPath,
+            new Color(0.52f, 0.64f, 0.72f, 1f),
+            0.05f,
+            0.32f);
+
+        bool didApply = ApplyTowerVisual(
+            WoodTowerPrefabPath,
+            WoodTowerModelPath,
+            towerMaterial,
+            snowMaterial,
+            "Visual_FrozenTower_Wood",
+            2.4f);
+
+        if (didApply == false)
+        {
+            return;
+        }
+
+        GameObject towerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WoodTowerPrefabPath);
+        RenderPrefabPreview(towerPrefab, GetPreviewOutputPath("PF_Building_Tower_Wood.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] 목재 타워 외형 적용 완료: " + WoodTowerPrefabPath);
     }
 
     private static void EnsureAssetFolder(string folderPath)
@@ -74,6 +154,145 @@ public static class CinderkeepExternalAssetApplicator
             }
 
             currentPath = nextPath;
+        }
+    }
+
+    private static GameObject InstantiateAssetCanBeNull(GameObject sourceAsset)
+    {
+        GameObject instance = PrefabUtility.InstantiatePrefab(sourceAsset) as GameObject;
+        if (instance != null)
+        {
+            return instance;
+        }
+
+        return Object.Instantiate(sourceAsset);
+    }
+
+    private static string GetPreviewOutputPath(string fileName)
+    {
+        return Path.GetFullPath(Path.Combine(
+            Application.dataPath,
+            "..",
+            "Library",
+            PreviewFolderName,
+            fileName));
+    }
+
+    private static Material GetOrCreateProjectMaterial(
+        string materialPath,
+        Color color,
+        float metallic,
+        float smoothness)
+    {
+        Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+        if (material == null)
+        {
+            EnsureAssetFolder(Path.GetDirectoryName(materialPath).Replace('\\', '/'));
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            material = new Material(shader);
+            AssetDatabase.CreateAsset(material, materialPath);
+        }
+
+        if (material.HasProperty("_BaseColor"))
+        {
+            material.SetColor("_BaseColor", color);
+        }
+
+        material.color = color;
+        material.SetFloat("_Metallic", metallic);
+        material.SetFloat("_Smoothness", smoothness);
+        EditorUtility.SetDirty(material);
+        return material;
+    }
+
+    private static bool ApplyTowerVisual(
+        string towerPrefabPath,
+        string towerModelPath,
+        Material primaryMaterial,
+        Material secondaryMaterial,
+        string visualName,
+        float targetHeight)
+    {
+        GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(towerModelPath);
+        if (sourceModel == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 타워 모델을 찾지 못했습니다: " + towerModelPath);
+            return false;
+        }
+
+        if (primaryMaterial == null || secondaryMaterial == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 타워 머티리얼을 찾지 못했습니다.");
+            return false;
+        }
+
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(towerPrefabPath);
+        if (prefabRoot == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 타워 프리팹을 열지 못했습니다: " + towerPrefabPath);
+            return false;
+        }
+
+        bool didSave = false;
+        try
+        {
+            Transform previousVisual = prefabRoot.transform.Find(visualName);
+            if (previousVisual != null)
+            {
+                Object.DestroyImmediate(previousVisual.gameObject);
+            }
+
+            Renderer rootRenderer = prefabRoot.GetComponent<Renderer>();
+            if (rootRenderer != null)
+            {
+                rootRenderer.enabled = false;
+            }
+
+            GameObject visual = InstantiateAssetCanBeNull(sourceModel);
+            if (visual == null)
+            {
+                return false;
+            }
+
+            visual.name = visualName;
+            visual.transform.SetParent(prefabRoot.transform, false);
+            FitVisualToHeight(visual, targetHeight);
+
+            Vector3 groundPosition = prefabRoot.transform.position + Vector3.down;
+            PlaceVisualOnGround(visual, groundPosition);
+            ApplyMaterialPaletteToRenderers(visual, primaryMaterial, secondaryMaterial);
+            DestroyCollidersInChildren(visual);
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, towerPrefabPath);
+            didSave = true;
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        return didSave;
+    }
+
+    private static void ApplyMaterialPaletteToRenderers(
+        GameObject visual,
+        Material primaryMaterial,
+        Material secondaryMaterial)
+    {
+        Renderer[] renderers = visual.GetComponentsInChildren<Renderer>();
+        for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+        {
+            Material[] materials = renderers[rendererIndex].sharedMaterials;
+            for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+            {
+                materials[materialIndex] = materialIndex == 0
+                    ? primaryMaterial
+                    : secondaryMaterial;
+            }
+
+            renderers[rendererIndex].sharedMaterials = materials;
         }
     }
 
@@ -105,6 +324,25 @@ public static class CinderkeepExternalAssetApplicator
         visual.transform.localScale *= scale;
     }
 
+    private static void FitVisualToHeight(GameObject visual, float targetHeight)
+    {
+        Bounds bounds = GetRendererBounds(visual);
+        if (bounds.size.y <= 0.01f)
+        {
+            return;
+        }
+
+        float scale = targetHeight / bounds.size.y;
+        visual.transform.localScale *= scale;
+    }
+
+    private static void PlaceVisualOnGround(GameObject visual, Vector3 groundPosition)
+    {
+        Bounds bounds = GetRendererBounds(visual);
+        Vector3 visualBasePosition = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+        visual.transform.position += groundPosition - visualBasePosition;
+    }
+
     private static void CenterVisualAtRoot(GameObject visual, Vector3 rootPosition)
     {
         Bounds bounds = GetRendererBounds(visual);
@@ -134,7 +372,13 @@ public static class CinderkeepExternalAssetApplicator
         Renderer[] renderers = visual.GetComponentsInChildren<Renderer>();
         for (int i = 0; i < renderers.Length; i++)
         {
-            renderers[i].sharedMaterial = material;
+            Material[] materials = renderers[i].sharedMaterials;
+            for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+            {
+                materials[materialIndex] = material;
+            }
+
+            renderers[i].sharedMaterials = materials;
         }
     }
 
@@ -149,11 +393,17 @@ public static class CinderkeepExternalAssetApplicator
 
     private static void RenderPrefabPreview(GameObject prefab, string outputPath)
     {
-        GameObject previewObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+        GameObject previewObject = InstantiateAssetCanBeNull(prefab);
         if (previewObject == null)
         {
             return;
         }
+
+        RenderGameObjectPreview(previewObject, outputPath);
+    }
+
+    private static void RenderGameObjectPreview(GameObject previewObject, string outputPath)
+    {
 
         Bounds bounds = GetRendererBounds(previewObject);
         GameObject cameraObject = new GameObject("PreviewCamera");
