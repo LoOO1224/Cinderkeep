@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 namespace Cinderkeep.Gameplay
 {
-    // Always-visible 1~7 HUD bar for the current quick slots.
+    // 플레이 중 항상 보이는 1~7 퀵슬롯과 현재 선택 상태를 표시합니다.
+    // 아이템 배치와 장착 규칙은 PlayerInventoryModel과 PlayerToolController가 담당합니다.
     public sealed class QuickSlotHud : MonoBehaviour
     {
         private const string CanvasName = "Canvas_GameHUD";
@@ -18,6 +19,11 @@ namespace Cinderkeep.Gameplay
         private PlayerInventoryModel _inventoryModel;
         private PlayerToolController _toolController;
         private float _nextRefreshTime;
+
+        private void Awake()
+        {
+            BindSceneReferences();
+        }
 
         public static QuickSlotHud EnsureSceneHud()
         {
@@ -94,6 +100,7 @@ namespace Cinderkeep.Gameplay
 
         private void OnEnable()
         {
+            BindSceneReferences();
             ConnectInventoryModel();
             RefreshNow();
         }
@@ -158,6 +165,30 @@ namespace Cinderkeep.Gameplay
                 text.raycastTarget = false;
                 text.textWrappingMode = TextWrappingModes.NoWrap;
                 _slotTexts[i] = text;
+            }
+        }
+
+        private void BindSceneReferences()
+        {
+            for (int i = 0; i < SlotCount; i++)
+            {
+                string slotName = "HUD_QuickSlot_" + (i + 1);
+                Transform slotTransform = transform.Find(slotName);
+                if (slotTransform == null)
+                {
+                    continue;
+                }
+
+                _slotBackgrounds[i] = slotTransform.GetComponent<Image>();
+
+                string textName = "Text_HUD_QuickSlot_" + (i + 1);
+                Transform textTransform = slotTransform.Find(textName);
+                if (textTransform == null)
+                {
+                    continue;
+                }
+
+                _slotTexts[i] = textTransform.GetComponent<TMP_Text>();
             }
         }
 

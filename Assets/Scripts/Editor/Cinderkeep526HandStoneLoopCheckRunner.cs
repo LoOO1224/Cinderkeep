@@ -230,7 +230,14 @@ public static class Cinderkeep526HandStoneLoopCheckRunner
         for (int i = 0; i < children.Length; i++)
         {
             Transform child = children[i];
-            if (child == null || child.name != "View_HandStone_Fallback")
+            if (child == null)
+            {
+                continue;
+            }
+
+            bool isConnectedHandStoneView = child.name == "GameObject_HandStoneView";
+            bool isFallbackHandStoneView = child.name == "View_HandStone_Fallback";
+            if (isConnectedHandStoneView == false && isFallbackHandStoneView == false)
             {
                 continue;
             }
