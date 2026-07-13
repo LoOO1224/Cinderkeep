@@ -16,6 +16,8 @@ public static class CinderkeepEnemyAssetApplicator
     private const string PlantFolder = ExternalAssetFolder + "/CarnivorousPlant";
     private const string GolemFolder = ExternalAssetFolder + "/GolemCollection";
 
+    private const string RedMagePrefabPath =
+        EnemyPrefabFolder + "/PF_Enemy_LowPoly_RedMage.prefab";
     private const string FrostMagePrefabPath =
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_FrostMage.prefab";
     private const string IcePlantPrefabPath =
@@ -32,6 +34,7 @@ public static class CinderkeepEnemyAssetApplicator
     private const string CrystalGolemDiffusePath = GolemFolder + "/CrG_Diffuse.png";
     private const string CrystalGolemNormalPath = GolemFolder + "/CrGNormals.png";
 
+    private const string RedMageMaterialPath = EnemyMaterialFolder + "/FireMage_Red.mat";
     private const string IcePlantMaterialPath = EnemyMaterialFolder + "/IcePlant_Frost.mat";
     private const string FrostMageMaterialPath = EnemyMaterialFolder + "/FrostMage_Blue.mat";
     private const string FrozenGolemMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Crystal.mat";
@@ -42,10 +45,45 @@ public static class CinderkeepEnemyAssetApplicator
     [MenuItem("Cinderkeep/Assets/Enemies/Preview Current Enemies")]
     public static void PreviewCurrentEnemies()
     {
+        RenderAssetPreview(RedMagePrefabPath, "Enemy_RedMage_Current.png");
         RenderAssetPreview(FrostMagePrefabPath, "Enemy_FrostMage_Current.png");
         RenderAssetPreview(IcePlantPrefabPath, "Enemy_IcePlant_Current.png");
         RenderAssetPreview(FrozenGolemPrefabPath, "Boss_FrozenGolem_Current.png");
         Debug.Log("[CinderkeepEnemyAssetApplicator] 현재 적 프리뷰를 생성했습니다.");
+    }
+
+    [MenuItem("Cinderkeep/Assets/Enemies/Apply Red Fire Mage")]
+    public static void ApplyRedFireMage()
+    {
+        Material redMageMaterial = GetOrCreateMaterial(
+            RedMageMaterialPath,
+            Color.white,
+            0f,
+            0.28f);
+        Texture2D mageTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(MageTexturePath);
+        SetMaterialTexture(redMageMaterial, mageTexture);
+
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(RedMagePrefabPath);
+        if (prefabRoot == null)
+        {
+            return;
+        }
+
+        try
+        {
+            ApplyMaterialToRenderers(prefabRoot, redMageMaterial);
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, RedMagePrefabPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        RenderAssetPreview(RedMagePrefabPath, "Enemy_RedMage_Fire.png");
+        Debug.Log("[CinderkeepEnemyAssetApplicator] RedMage 원본 아틀라스를 적용했습니다.");
     }
 
     [MenuItem("Cinderkeep/Assets/Enemies/Apply Blue Frost Mage")]
