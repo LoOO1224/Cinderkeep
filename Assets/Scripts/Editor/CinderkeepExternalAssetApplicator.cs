@@ -31,6 +31,8 @@ public static class CinderkeepExternalAssetApplicator
     private const string FrozenTowerSnowMaterialPath = BuildingMaterialFolder + "/Tower_Snow.mat";
     private const string FireBowlModelPath =
         "Assets/ThirdParty/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
+    private const string FlameModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX.fbx";
     private const string FurnacePrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace.prefab";
     private const string FurnaceTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace_Tier2.prefab";
     private const string FurnaceStoneMaterialPath = BuildingMaterialFolder + "/Furnace_Stone.mat";
@@ -298,6 +300,50 @@ public static class CinderkeepExternalAssetApplicator
         Debug.Log("[CinderkeepExternalAssetApplicator] 용광로 FireBowl 외형 적용을 완료했습니다.");
     }
 
+    [MenuItem("Cinderkeep/Assets/Apply Furnace Flame Visuals")]
+    public static void ApplyFurnaceFlameVisuals()
+    {
+        Material emberMaterial = GetOrCreateProjectMaterial(
+            FurnaceEmberMaterialPath,
+            new Color(0.9f, 0.2f, 0.03f, 1f),
+            0.1f,
+            0.35f);
+        ConfigureEmission(emberMaterial, new Color(1.8f, 0.28f, 0.03f, 1f));
+
+        bool didApplyTier1 = ApplyFurnaceFlameVisual(
+            FurnacePrefabPath,
+            emberMaterial,
+            0.75f,
+            0.48f);
+        bool didApplyTier2 = ApplyFurnaceFlameVisual(
+            FurnaceTier2PrefabPath,
+            emberMaterial,
+            0.95f,
+            0.58f);
+
+        if (didApplyTier1 == false || didApplyTier2 == false)
+        {
+            return;
+        }
+
+        GameObject tier1Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FurnacePrefabPath);
+        GameObject tier2Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FurnaceTier2PrefabPath);
+        RenderPrefabPreview(tier1Prefab, GetPreviewOutputPath("PF_Building_Furnace_Flame.png"));
+        RenderPrefabPreview(tier2Prefab, GetPreviewOutputPath("PF_Building_Furnace_Tier2_Flame.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] 용광로 불꽃 외형 적용을 완료했습니다.");
+    }
+
+    [MenuItem("Cinderkeep/Assets/Report Applied Asset Bounds")]
+    public static void ReportAppliedAssetBounds()
+    {
+        ReportPrefabBounds(FurnacePrefabPath);
+        ReportPrefabBounds(FurnaceTier2PrefabPath);
+        ReportPrefabBounds(WoodTowerPrefabPath);
+        ReportPrefabBounds(IronTowerPrefabPath);
+        ReportPrefabBounds(GoldTowerPrefabPath);
+        ReportPrefabBounds(AdamantiumTowerPrefabPath);
+    }
+
     private static void EnsureAssetFolder(string folderPath)
     {
         string[] folders = folderPath.Split('/');
@@ -510,6 +556,88 @@ public static class CinderkeepExternalAssetApplicator
         return didSave;
     }
 
+    private static bool ApplyFurnaceFlameVisual(
+        string furnacePrefabPath,
+        Material emberMaterial,
+        float flameHeight,
+        float flameBaseHeight)
+    {
+        GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(FlameModelPath);
+        if (sourceModel == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 불꽃 모델을 찾지 못했습니다.");
+            return false;
+        }
+
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(furnacePrefabPath);
+        if (prefabRoot == null)
+        {
+            return false;
+        }
+
+        bool didSave = false;
+        try
+        {
+            Transform fireBowl = prefabRoot.transform.Find("Visual_FireBowl");
+            if (fireBowl == null)
+            {
+                Debug.LogError("[CinderkeepExternalAssetApplicator] FireBowl 시각물이 없습니다: " + furnacePrefabPath);
+                return false;
+            }
+
+            DestroyChildIfExists(prefabRoot.transform, "Visual_FurnaceFlame");
+            GameObject flameVisual = InstantiateAssetCanBeNull(sourceModel);
+            if (flameVisual == null)
+            {
+                return false;
+            }
+
+            flameVisual.name = "Visual_FurnaceFlame";
+            flameVisual.transform.SetParent(prefabRoot.transform, false);
+            FitVisualToHeight(flameVisual, flameHeight);
+
+            Vector3 flameBasePosition = prefabRoot.transform.position + Vector3.up * flameBaseHeight;
+            PlaceVisualOnGround(flameVisual, flameBasePosition);
+            ApplyMaterialToRenderers(flameVisual, emberMaterial);
+            DestroyCollidersInChildren(flameVisual);
+            FitBoxColliderToVisual(prefabRoot, fireBowl.gameObject, 0.1f);
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, furnacePrefabPath);
+            didSave = true;
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        return didSave;
+    }
+
+    private static void FitBoxColliderToVisual(
+        GameObject rootObject,
+        GameObject visualObject,
+        float padding)
+    {
+        Bounds bounds = GetRendererBounds(visualObject);
+        BoxCollider interactionCollider = rootObject.GetComponent<BoxCollider>();
+        if (interactionCollider == null)
+        {
+            interactionCollider = rootObject.AddComponent<BoxCollider>();
+        }
+
+        Vector3 localCenter = rootObject.transform.InverseTransformPoint(bounds.center);
+        Vector3 localSize = rootObject.transform.InverseTransformVector(bounds.size);
+        localSize = new Vector3(
+            Mathf.Abs(localSize.x) + padding,
+            Mathf.Abs(localSize.y) + padding,
+            Mathf.Abs(localSize.z) + padding);
+
+        interactionCollider.center = localCenter;
+        interactionCollider.size = localSize;
+    }
+
     private static void DisableExistingRenderers(GameObject rootObject)
     {
         Renderer[] renderers = rootObject.GetComponentsInChildren<Renderer>(true);
@@ -552,6 +680,29 @@ public static class CinderkeepExternalAssetApplicator
         furnaceLight.range = 4f;
         furnaceLight.intensity = intensity;
         furnaceLight.shadows = LightShadows.None;
+    }
+
+    private static void ReportPrefabBounds(string prefabPath)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        GameObject instance = InstantiateAssetCanBeNull(prefab);
+        if (instance == null)
+        {
+            Debug.LogWarning("[CinderkeepExternalAssetApplicator] 바운드 확인 실패: " + prefabPath);
+            return;
+        }
+
+        Bounds bounds = GetRendererBounds(instance);
+        Debug.Log(
+            "[CinderkeepExternalAssetApplicator] Bounds "
+            + prefabPath
+            + " size="
+            + bounds.size
+            + " min="
+            + bounds.min
+            + " max="
+            + bounds.max);
+        Object.DestroyImmediate(instance);
     }
 
     private static void ApplyMaterialPaletteToRenderers(
