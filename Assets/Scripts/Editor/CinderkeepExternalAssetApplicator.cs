@@ -16,11 +16,14 @@ public static class CinderkeepExternalAssetApplicator
         "Assets/ThirdParty/Free/CinderkeepExternalAssets/FrozenRuins";
     private const string WoodTowerModelPath = FrozenTowerFolder + "/KB3D_DKF_Tower_J.fbx";
     private const string IronTowerModelPath = FrozenTowerFolder + "/KB3D_DKF_Tower_A.fbx";
+    private const string GoldTowerModelPath = FrozenTowerFolder + "/KB3D_DKF_Tower_E.fbx";
     private const string WoodTowerPrefabPath = "Assets/Prefabs/Building/PF_Building_Tower_Wood.prefab";
     private const string IronTowerPrefabPath = "Assets/Prefabs/Building/PF_Building_Tower_Iron.prefab";
+    private const string GoldTowerPrefabPath = "Assets/Prefabs/Building/PF_Building_Tower_Gold.prefab";
     private const string BuildingMaterialFolder = "Assets/Materials/Building";
     private const string WoodTowerMaterialPath = BuildingMaterialFolder + "/Tower_Wood.mat";
     private const string IronTowerMaterialPath = BuildingMaterialFolder + "/Tower_Iron.mat";
+    private const string GoldTowerMaterialPath = BuildingMaterialFolder + "/Tower_Gold.mat";
     private const string FrozenTowerSnowMaterialPath = BuildingMaterialFolder + "/Tower_Snow.mat";
 
     private static readonly string[] FrozenTowerCandidatePaths =
@@ -173,6 +176,38 @@ public static class CinderkeepExternalAssetApplicator
         GameObject towerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(IronTowerPrefabPath);
         RenderPrefabPreview(towerPrefab, GetPreviewOutputPath("PF_Building_Tower_Iron.png"));
         Debug.Log("[CinderkeepExternalAssetApplicator] 철제 타워 외형 적용 완료: " + IronTowerPrefabPath);
+    }
+
+    [MenuItem("Cinderkeep/Assets/Apply Gold Tower Visual")]
+    public static void ApplyGoldTowerVisual()
+    {
+        Material towerMaterial = GetOrCreateProjectMaterial(
+            GoldTowerMaterialPath,
+            new Color(0.72f, 0.45f, 0.08f, 1f),
+            0.65f,
+            0.45f);
+        Material snowMaterial = GetOrCreateProjectMaterial(
+            FrozenTowerSnowMaterialPath,
+            new Color(0.52f, 0.64f, 0.72f, 1f),
+            0.05f,
+            0.32f);
+
+        bool didApply = ApplyTowerVisual(
+            GoldTowerPrefabPath,
+            GoldTowerModelPath,
+            towerMaterial,
+            snowMaterial,
+            "Visual_FrozenTower_Gold",
+            2.7f);
+
+        if (didApply == false)
+        {
+            return;
+        }
+
+        GameObject towerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GoldTowerPrefabPath);
+        RenderPrefabPreview(towerPrefab, GetPreviewOutputPath("PF_Building_Tower_Gold.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] 금 타워 외형 적용 완료: " + GoldTowerPrefabPath);
     }
 
     private static void EnsureAssetFolder(string folderPath)
