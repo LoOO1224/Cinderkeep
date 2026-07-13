@@ -29,6 +29,12 @@ public static class CinderkeepExternalAssetApplicator
     private const string GoldTowerMaterialPath = BuildingMaterialFolder + "/Tower_Gold.mat";
     private const string AdamantiumTowerMaterialPath = BuildingMaterialFolder + "/Tower_Adamantium.mat";
     private const string FrozenTowerSnowMaterialPath = BuildingMaterialFolder + "/Tower_Snow.mat";
+    private const string FireBowlModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
+    private const string FurnacePrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace.prefab";
+    private const string FurnaceTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace_Tier2.prefab";
+    private const string FurnaceStoneMaterialPath = BuildingMaterialFolder + "/Furnace_Stone.mat";
+    private const string FurnaceEmberMaterialPath = BuildingMaterialFolder + "/Furnace_Ember.mat";
 
     private static readonly string[] FrozenTowerCandidatePaths =
     {
@@ -250,6 +256,48 @@ public static class CinderkeepExternalAssetApplicator
             + AdamantiumTowerPrefabPath);
     }
 
+    [MenuItem("Cinderkeep/Assets/Apply Furnace Fire Bowl Visuals")]
+    public static void ApplyFurnaceFireBowlVisuals()
+    {
+        Material stoneMaterial = GetOrCreateProjectMaterial(
+            FurnaceStoneMaterialPath,
+            new Color(0.12f, 0.14f, 0.16f, 1f),
+            0.15f,
+            0.24f);
+        Material emberMaterial = GetOrCreateProjectMaterial(
+            FurnaceEmberMaterialPath,
+            new Color(0.9f, 0.2f, 0.03f, 1f),
+            0.1f,
+            0.35f);
+        ConfigureEmission(emberMaterial, new Color(1.8f, 0.28f, 0.03f, 1f));
+
+        bool didApplyTier1 = ApplyFurnaceVisual(
+            FurnacePrefabPath,
+            stoneMaterial,
+            emberMaterial,
+            1.35f,
+            new Vector3(1.6f, 1.35f, 1.6f),
+            1.6f);
+        bool didApplyTier2 = ApplyFurnaceVisual(
+            FurnaceTier2PrefabPath,
+            stoneMaterial,
+            emberMaterial,
+            1.65f,
+            new Vector3(1.9f, 1.65f, 1.9f),
+            2.1f);
+
+        if (didApplyTier1 == false || didApplyTier2 == false)
+        {
+            return;
+        }
+
+        GameObject tier1Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FurnacePrefabPath);
+        GameObject tier2Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FurnaceTier2PrefabPath);
+        RenderPrefabPreview(tier1Prefab, GetPreviewOutputPath("PF_Building_Furnace.png"));
+        RenderPrefabPreview(tier2Prefab, GetPreviewOutputPath("PF_Building_Furnace_Tier2.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] 용광로 FireBowl 외형 적용을 완료했습니다.");
+    }
+
     private static void EnsureAssetFolder(string folderPath)
     {
         string[] folders = folderPath.Split('/');
@@ -396,6 +444,114 @@ public static class CinderkeepExternalAssetApplicator
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         return didSave;
+    }
+
+    private static bool ApplyFurnaceVisual(
+        string furnacePrefabPath,
+        Material stoneMaterial,
+        Material emberMaterial,
+        float targetHeight,
+        Vector3 colliderSize,
+        float lightIntensity)
+    {
+        GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(FireBowlModelPath);
+        if (sourceModel == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] FireBowl 모델을 찾지 못했습니다.");
+            return false;
+        }
+
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(furnacePrefabPath);
+        if (prefabRoot == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 용광로 프리팹을 열지 못했습니다: " + furnacePrefabPath);
+            return false;
+        }
+
+        bool didSave = false;
+        try
+        {
+            DisableExistingRenderers(prefabRoot);
+            DestroyChildIfExists(prefabRoot.transform, "Visual_FireBowl");
+
+            GameObject visual = InstantiateAssetCanBeNull(sourceModel);
+            if (visual == null)
+            {
+                return false;
+            }
+
+            visual.name = "Visual_FireBowl";
+            visual.transform.SetParent(prefabRoot.transform, false);
+            FitVisualToHeight(visual, targetHeight);
+            PlaceVisualOnGround(visual, prefabRoot.transform.position);
+            ApplyMaterialPaletteToRenderers(visual, stoneMaterial, emberMaterial);
+            DestroyCollidersInChildren(visual);
+
+            BoxCollider interactionCollider = prefabRoot.GetComponent<BoxCollider>();
+            if (interactionCollider == null)
+            {
+                interactionCollider = prefabRoot.AddComponent<BoxCollider>();
+            }
+
+            interactionCollider.center = new Vector3(0f, colliderSize.y * 0.5f, 0f);
+            interactionCollider.size = colliderSize;
+
+            SetupFurnaceLight(prefabRoot.transform, targetHeight, lightIntensity);
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, furnacePrefabPath);
+            didSave = true;
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        return didSave;
+    }
+
+    private static void DisableExistingRenderers(GameObject rootObject)
+    {
+        Renderer[] renderers = rootObject.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = false;
+        }
+    }
+
+    private static void DestroyChildIfExists(Transform parent, string childName)
+    {
+        Transform child = parent.Find(childName);
+        if (child == null)
+        {
+            return;
+        }
+
+        Object.DestroyImmediate(child.gameObject);
+    }
+
+    private static void SetupFurnaceLight(Transform parent, float height, float intensity)
+    {
+        Transform lightTransform = parent.Find("Light_Furnace");
+        if (lightTransform == null)
+        {
+            GameObject lightObject = new GameObject("Light_Furnace");
+            lightTransform = lightObject.transform;
+            lightTransform.SetParent(parent, false);
+        }
+
+        lightTransform.localPosition = new Vector3(0f, height * 0.78f, 0f);
+        Light furnaceLight = lightTransform.GetComponent<Light>();
+        if (furnaceLight == null)
+        {
+            furnaceLight = lightTransform.gameObject.AddComponent<Light>();
+        }
+
+        furnaceLight.type = LightType.Point;
+        furnaceLight.color = new Color(1f, 0.28f, 0.06f, 1f);
+        furnaceLight.range = 4f;
+        furnaceLight.intensity = intensity;
+        furnaceLight.shadows = LightShadows.None;
     }
 
     private static void ApplyMaterialPaletteToRenderers(
