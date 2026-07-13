@@ -60,8 +60,8 @@ public static class CinderkeepOreAssetApplicator
             GoldOrePrefabPath,
             GoldCrystalPath,
             GoldMaterialPath,
-            1.02f,
-            new Vector3(0.06f, 0f, -0.02f),
+            2.2f,
+            new Vector3(1.45f, 0f, -1.2f),
             new Vector3(-4f, -22f, 7f),
             "PF_4_0_Resource_Rock_GoldOre_Crystal.png");
     }
