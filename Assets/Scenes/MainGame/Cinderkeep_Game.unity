@@ -11269,8 +11269,7 @@ MonoBehaviour:
   _step1EnemyPrefabs:
   - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
   _step2EnemyPrefabs:
-  - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
-  - {fileID: 4529582642562796652, guid: bc3764b09f75aaa488494d25a4364d47, type: 3}
+  - {fileID: 4529582642562796652, guid: 74fc873295820c143ae6997115526d28, type: 3}
   _step3EnemyPrefabs:
   - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
   - {fileID: 4529582642562796652, guid: bc3764b09f75aaa488494d25a4364d47, type: 3}
@@ -22450,8 +22449,7 @@ MonoBehaviour:
   _step1EnemyPrefabs:
   - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
   _step2EnemyPrefabs:
-  - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
-  - {fileID: 4529582642562796652, guid: bc3764b09f75aaa488494d25a4364d47, type: 3}
+  - {fileID: 4529582642562796652, guid: 74fc873295820c143ae6997115526d28, type: 3}
   _step3EnemyPrefabs:
   - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
   - {fileID: 4529582642562796652, guid: bc3764b09f75aaa488494d25a4364d47, type: 3}

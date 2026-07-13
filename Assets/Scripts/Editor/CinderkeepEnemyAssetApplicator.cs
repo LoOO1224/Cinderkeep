@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.AI;
 
 // 적 프리팹의 AI와 전투 컴포넌트를 보존하면서 설원 테마의 저폴리 외형만 교체합니다.
 // 일반 적 변형과 Frozen Golem 조립 외형의 크기, 재질, 프리뷰를 관리합니다.
@@ -15,6 +16,7 @@ public static class CinderkeepEnemyAssetApplicator
     private const string MageFolder = ExternalAssetFolder + "/Mages";
     private const string PlantFolder = ExternalAssetFolder + "/CarnivorousPlant";
     private const string GolemFolder = ExternalAssetFolder + "/GolemCollection";
+    private const string FrostWolfFolder = ExternalAssetFolder + "/FrostWolf";
 
     private const string RedMagePrefabPath =
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_RedMage.prefab";
@@ -24,6 +26,8 @@ public static class CinderkeepEnemyAssetApplicator
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_IcePlant.prefab";
     private const string FrozenGolemPrefabPath =
         EnemyPrefabFolder + "/PF_Boss_FrozenGolem.prefab";
+    private const string FrostWolfPrefabPath =
+        EnemyPrefabFolder + "/PF_Enemy_LowPoly_FrostWolf.prefab";
 
     private const string MageBluePrefabPath = MageFolder + "/MageBlue.prefab";
     private const string MageTexturePath = MageFolder + "/Textures/MagesTexture.png";
@@ -33,6 +37,9 @@ public static class CinderkeepEnemyAssetApplicator
     private const string CrystalGolemIdlePath = GolemFolder + "/GolemIdle.FBX";
     private const string CrystalGolemDiffusePath = GolemFolder + "/CrG_Diffuse.png";
     private const string CrystalGolemNormalPath = GolemFolder + "/CrGNormals.png";
+    private const string FrostWolfModelPath = FrostWolfFolder + "/WolfLP.fbx";
+    private const string FrostWolfAlbedoPath = FrostWolfFolder + "/FrostWolf_Albedo.png";
+    private const string FrostWolfNormalPath = FrostWolfFolder + "/FrostWolf_Normal.png";
 
     private const string RedMageMaterialPath = EnemyMaterialFolder + "/FireMage_Red.mat";
     private const string IcePlantMaterialPath = EnemyMaterialFolder + "/IcePlant_Frost.mat";
@@ -40,6 +47,10 @@ public static class CinderkeepEnemyAssetApplicator
     private const string FrozenGolemMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Crystal.mat";
     private const string FrozenGolemControllerPath =
         EnemyAnimationFolder + "/FrozenGolem_Idle.controller";
+    private const string FrostWolfMaterialPath = EnemyMaterialFolder + "/FrostWolf_White.mat";
+    private const string FrostWolfControllerPath =
+        EnemyAnimationFolder + "/FrostWolf_Locomotion.controller";
+    private const string FrostWolfMoveSpeedParameter = "MoveSpeed";
     private const string EnemyVisualPrefix = "Visual_";
 
     [MenuItem("Cinderkeep/Assets/Enemies/Preview Current Enemies")]
@@ -48,6 +59,7 @@ public static class CinderkeepEnemyAssetApplicator
         RenderAssetPreview(RedMagePrefabPath, "Enemy_RedMage_Current.png");
         RenderAssetPreview(FrostMagePrefabPath, "Enemy_FrostMage_Current.png");
         RenderAssetPreview(IcePlantPrefabPath, "Enemy_IcePlant_Current.png");
+        RenderAssetPreview(FrostWolfPrefabPath, "Enemy_FrostWolf_Current.png");
         RenderAssetPreview(FrozenGolemPrefabPath, "Boss_FrozenGolem_Current.png");
         Debug.Log("[CinderkeepEnemyAssetApplicator] 현재 적 프리뷰를 생성했습니다.");
     }
@@ -138,6 +150,51 @@ public static class CinderkeepEnemyAssetApplicator
         Debug.Log("[CinderkeepEnemyAssetApplicator] IcePlant 서리 외형을 적용했습니다.");
     }
 
+    [MenuItem("Cinderkeep/Assets/Enemies/Apply Frost Wolf")]
+    public static void ApplyFrostWolf()
+    {
+        ConfigureFrostWolfImports();
+
+        Material frostWolfMaterial = GetOrCreateMaterial(
+            FrostWolfMaterialPath,
+            Color.white,
+            0f,
+            0.2f);
+        Texture2D albedoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(FrostWolfAlbedoPath);
+        Texture2D normalTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(FrostWolfNormalPath);
+        SetMaterialTexture(frostWolfMaterial, albedoTexture);
+        SetMaterialNormalTexture(frostWolfMaterial, normalTexture);
+
+        AnimatorController locomotionController = GetOrCreateFrostWolfAnimatorController();
+        if (locomotionController == null)
+        {
+            return;
+        }
+
+        if (EnsureFrostWolfPrefabExists() == false)
+        {
+            return;
+        }
+
+        bool didApply = ReplaceEnemyVisual(
+            FrostWolfPrefabPath,
+            FrostWolfModelPath,
+            "Visual_PF_Enemy_LowPoly_FrostWolf",
+            1f,
+            frostWolfMaterial,
+            1.15f,
+            locomotionController);
+
+        if (didApply == false)
+        {
+            return;
+        }
+
+        ConfigureFrostWolfPrefab();
+        RenderAssetPreview(FrostWolfPrefabPath, "Enemy_FrostWolf_White.png");
+        Debug.Log("[CinderkeepEnemyAssetApplicator] FrostWolf 설원 외형과 이동 애니메이션을 적용했습니다.");
+    }
+
     [MenuItem("Cinderkeep/Assets/Enemies/Apply Frozen Golem")]
     public static void ApplyFrozenGolem()
     {
@@ -170,6 +227,174 @@ public static class CinderkeepEnemyAssetApplicator
 
         RenderAssetPreview(FrozenGolemPrefabPath, "Boss_FrozenGolem_LowPoly.png");
         Debug.Log("[CinderkeepEnemyAssetApplicator] Frozen Golem 저폴리 외형을 적용했습니다.");
+    }
+
+    private static void ConfigureFrostWolfImports()
+    {
+        TextureImporter normalImporter = AssetImporter.GetAtPath(FrostWolfNormalPath) as TextureImporter;
+        if (normalImporter != null && normalImporter.textureType != TextureImporterType.NormalMap)
+        {
+            normalImporter.textureType = TextureImporterType.NormalMap;
+            normalImporter.SaveAndReimport();
+        }
+
+        ModelImporter modelImporter = AssetImporter.GetAtPath(FrostWolfModelPath) as ModelImporter;
+        if (modelImporter == null)
+        {
+            Debug.LogError("[CinderkeepEnemyAssetApplicator] FrostWolf FBX importer를 찾지 못했습니다.");
+            return;
+        }
+
+        modelImporter.importCameras = false;
+        modelImporter.importLights = false;
+        modelImporter.materialImportMode = ModelImporterMaterialImportMode.None;
+        modelImporter.animationType = ModelImporterAnimationType.Generic;
+        modelImporter.clipAnimations = new ModelImporterClipAnimation[]
+        {
+            CreateModelClip("Walk", 1f, 24f, true),
+            CreateModelClip("Idle", 976f, 1035f, true)
+        };
+        modelImporter.SaveAndReimport();
+    }
+
+    private static ModelImporterClipAnimation CreateModelClip(
+        string clipName,
+        float firstFrame,
+        float lastFrame,
+        bool loopTime)
+    {
+        return new ModelImporterClipAnimation
+        {
+            name = clipName,
+            takeName = "Take 001",
+            firstFrame = firstFrame,
+            lastFrame = lastFrame,
+            loopTime = loopTime,
+            loopPose = loopTime
+        };
+    }
+
+    private static AnimatorController GetOrCreateFrostWolfAnimatorController()
+    {
+        AnimationClip idleClip = FindAnimationClipCanBeNull(FrostWolfModelPath, "Idle");
+        AnimationClip walkClip = FindAnimationClipCanBeNull(FrostWolfModelPath, "Walk");
+        if (idleClip == null || walkClip == null)
+        {
+            Debug.LogError("[CinderkeepEnemyAssetApplicator] FrostWolf Idle 또는 Walk 클립을 찾지 못했습니다.");
+            return null;
+        }
+
+        EnsureAssetFolder(EnemyAnimationFolder);
+        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(
+            FrostWolfControllerPath);
+        if (controller == null)
+        {
+            controller = AnimatorController.CreateAnimatorControllerAtPath(FrostWolfControllerPath);
+        }
+
+        controller.parameters = new AnimatorControllerParameter[]
+        {
+            new AnimatorControllerParameter
+            {
+                name = FrostWolfMoveSpeedParameter,
+                type = AnimatorControllerParameterType.Float,
+                defaultFloat = 0f
+            }
+        };
+
+        AnimatorStateMachine stateMachine = controller.layers[0].stateMachine;
+        ChildAnimatorState[] currentStates = stateMachine.states;
+        for (int i = currentStates.Length - 1; i >= 0; i--)
+        {
+            stateMachine.RemoveState(currentStates[i].state);
+        }
+
+        AnimatorState idleState = stateMachine.AddState("Idle");
+        idleState.motion = idleClip;
+        AnimatorState walkState = stateMachine.AddState("Walk");
+        walkState.motion = walkClip;
+        stateMachine.defaultState = idleState;
+
+        AnimatorStateTransition idleToWalk = idleState.AddTransition(walkState);
+        idleToWalk.hasExitTime = false;
+        idleToWalk.duration = 0.12f;
+        idleToWalk.AddCondition(
+            AnimatorConditionMode.Greater,
+            0.05f,
+            FrostWolfMoveSpeedParameter);
+
+        AnimatorStateTransition walkToIdle = walkState.AddTransition(idleState);
+        walkToIdle.hasExitTime = false;
+        walkToIdle.duration = 0.12f;
+        walkToIdle.AddCondition(
+            AnimatorConditionMode.Less,
+            0.05f,
+            FrostWolfMoveSpeedParameter);
+
+        EditorUtility.SetDirty(controller);
+        AssetDatabase.SaveAssets();
+        return controller;
+    }
+
+    private static bool EnsureFrostWolfPrefabExists()
+    {
+        GameObject frostWolfPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(FrostWolfPrefabPath);
+        if (frostWolfPrefab != null)
+        {
+            return true;
+        }
+
+        bool didCopy = AssetDatabase.CopyAsset(RedMagePrefabPath, FrostWolfPrefabPath);
+        if (didCopy == false)
+        {
+            Debug.LogError("[CinderkeepEnemyAssetApplicator] FrostWolf 전투 프리팹을 만들지 못했습니다.");
+            return false;
+        }
+
+        AssetDatabase.ImportAsset(FrostWolfPrefabPath, ImportAssetOptions.ForceSynchronousImport);
+        return true;
+    }
+
+    private static void ConfigureFrostWolfPrefab()
+    {
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(FrostWolfPrefabPath);
+        if (prefabRoot == null)
+        {
+            return;
+        }
+
+        try
+        {
+            CapsuleCollider capsuleCollider = prefabRoot.GetComponent<CapsuleCollider>();
+            if (capsuleCollider != null)
+            {
+                capsuleCollider.center = new Vector3(0f, 0.58f, 0f);
+                capsuleCollider.height = 1.16f;
+                capsuleCollider.radius = 0.42f;
+            }
+
+            NavMeshAgent navMeshAgent = prefabRoot.GetComponent<NavMeshAgent>();
+            if (navMeshAgent != null)
+            {
+                navMeshAgent.height = 1.16f;
+                navMeshAgent.radius = 0.42f;
+                navMeshAgent.baseOffset = 0f;
+            }
+
+            if (prefabRoot.GetComponent<EnemyLocomotionAnimator>() == null)
+            {
+                prefabRoot.AddComponent<EnemyLocomotionAnimator>();
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, FrostWolfPrefabPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     private static bool ReplaceEnemyVisual(
@@ -328,8 +553,7 @@ public static class CinderkeepEnemyAssetApplicator
         Animator animator = visual.GetComponentInChildren<Animator>();
         if (animator == null)
         {
-            Debug.LogError("[CinderkeepEnemyAssetApplicator] Frozen Golem Animator를 찾지 못했습니다.");
-            return;
+            animator = visual.AddComponent<Animator>();
         }
 
         animator.runtimeAnimatorController = animatorController;

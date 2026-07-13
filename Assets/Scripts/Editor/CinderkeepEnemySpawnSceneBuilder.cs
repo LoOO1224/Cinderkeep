@@ -16,6 +16,8 @@ public static class CinderkeepEnemySpawnSceneBuilder
     private const string MageRedPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MageRed.prefab";
     private const string MagePurplePath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MagePurple.prefab";
     private const string PlantPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous Plant-Green.prefab";
+    private const string FrostWolfPrefabPath =
+        "Assets/Prefabs/Enemy/PF_Enemy_LowPoly_FrostWolf.prefab";
 
     [MenuItem("Cinderkeep/Setup Enemy Spawn Scene")]
     public static void SetupEnemySpawnScene()
@@ -46,10 +48,17 @@ public static class CinderkeepEnemySpawnSceneBuilder
             GetOrCreateMaterial("MAT_Enemy_LowPoly_IcePlant", new Color(0.22f, 0.75f, 0.78f, 1f)),
             new Vector3(0f, 0f, 0f),
             new Vector3(1.4f, 1.4f, 1.4f));
+        GameObject frostWolfEnemy = AssetDatabase.LoadAssetAtPath<GameObject>(FrostWolfPrefabPath);
+        if (frostWolfEnemy == null)
+        {
+            Debug.LogError("CinderkeepEnemySpawnSceneBuilder: FrostWolf 프리팹이 없습니다.");
+            return;
+        }
 
         CopyEnemyPrefabToSandbox(redMageEnemy);
         CopyEnemyPrefabToSandbox(purpleMageEnemy);
         CopyEnemyPrefabToSandbox(plantEnemy);
+        CopyEnemyPrefabToSandbox(frostWolfEnemy);
 
         Scene scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
         GameObject runtimeRoot = GetOrCreateRootObject("MainGame_RuntimeManagers");
@@ -74,7 +83,8 @@ public static class CinderkeepEnemySpawnSceneBuilder
             enemyLoopConnector,
             redMageEnemy,
             purpleMageEnemy,
-            plantEnemy);
+            plantEnemy,
+            frostWolfEnemy);
 
         SetSpawnRule(nearSpawnPoint, "_day1Rule", 999f, 1, 1, true);
         SetSpawnRule(nearSpawnPoint, "_day2Rule", 999f, 1, 1, true);
@@ -93,7 +103,8 @@ public static class CinderkeepEnemySpawnSceneBuilder
             enemyLoopConnector,
             redMageEnemy,
             purpleMageEnemy,
-            plantEnemy);
+            plantEnemy,
+            frostWolfEnemy);
 
         SetCandidatePoints(outerSpawnPoint, outerCandidates);
 
@@ -198,7 +209,8 @@ public static class CinderkeepEnemySpawnSceneBuilder
         EnemyLoopConnector enemyLoopConnector,
         GameObject redMageEnemy,
         GameObject purpleMageEnemy,
-        GameObject plantEnemy)
+        GameObject plantEnemy,
+        GameObject frostWolfEnemy)
     {
         GameObject spawnObject = GetOrCreateChild(parent, objectName);
         spawnObject.transform.position = position;
@@ -217,7 +229,7 @@ public static class CinderkeepEnemySpawnSceneBuilder
         serializedObject.FindProperty("_step2EnemyDataId").stringValue = "frost_wolf";
         serializedObject.FindProperty("_step3EnemyDataId").stringValue = "ice_zombie";
         SetPrefabArray(serializedObject.FindProperty("_step1EnemyPrefabs"), new GameObject[] { plantEnemy });
-        SetPrefabArray(serializedObject.FindProperty("_step2EnemyPrefabs"), new GameObject[] { plantEnemy, redMageEnemy });
+        SetPrefabArray(serializedObject.FindProperty("_step2EnemyPrefabs"), new GameObject[] { frostWolfEnemy });
         SetPrefabArray(serializedObject.FindProperty("_step3EnemyPrefabs"), new GameObject[] { plantEnemy, redMageEnemy, purpleMageEnemy });
         serializedObject.ApplyModifiedPropertiesWithoutUndo();
 
