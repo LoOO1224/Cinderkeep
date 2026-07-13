@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 // 적 프리팹의 AI와 전투 컴포넌트를 보존하면서 설원 테마의 저폴리 외형만 교체합니다.
@@ -9,10 +10,11 @@ public static class CinderkeepEnemyAssetApplicator
     private const string PreviewFolderName = "CinderkeepAssetPreviews";
     private const string EnemyPrefabFolder = "Assets/Prefabs/Enemy";
     private const string EnemyMaterialFolder = "Assets/Materials/Enemy";
+    private const string EnemyAnimationFolder = "Assets/Animations/Enemy";
     private const string ExternalAssetFolder = "Assets/ThirdParty/Free/CinderkeepExternalAssets";
     private const string MageFolder = ExternalAssetFolder + "/Mages";
     private const string PlantFolder = ExternalAssetFolder + "/CarnivorousPlant";
-    private const string PolygonIceFolder = ExternalAssetFolder + "/PolygonIce";
+    private const string GolemFolder = ExternalAssetFolder + "/GolemCollection";
 
     private const string FrostMagePrefabPath =
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_FrostMage.prefab";
@@ -25,16 +27,16 @@ public static class CinderkeepEnemyAssetApplicator
     private const string MageTexturePath = MageFolder + "/Textures/MagesTexture.png";
     private const string PlantYellowPrefabPath =
         PlantFolder + "/Prefabs/Carnivorous Plant-Yellow.prefab";
-    private const string RockSmallModelPath = PolygonIceFolder + "/SM_Rock_01.fbx";
-    private const string RockLargeModelPath = PolygonIceFolder + "/SM_Rock_04.fbx";
-    private const string CrystalCoreModelPath = PolygonIceFolder + "/FX_Crystal_01.fbx";
-    private const string CrystalSpikeModelPath = PolygonIceFolder + "/FX_Crystal_04.fbx";
-    private const string CrystalShardModelPath = PolygonIceFolder + "/FX_CrystalShard_01.fbx";
+    private const string CrystalGolemModelPath = GolemFolder + "/CrystalGolem.FBX";
+    private const string CrystalGolemIdlePath = GolemFolder + "/GolemIdle.FBX";
+    private const string CrystalGolemDiffusePath = GolemFolder + "/CrG_Diffuse.png";
+    private const string CrystalGolemNormalPath = GolemFolder + "/CrGNormals.png";
 
     private const string IcePlantMaterialPath = EnemyMaterialFolder + "/IcePlant_Frost.mat";
     private const string FrostMageMaterialPath = EnemyMaterialFolder + "/FrostMage_Blue.mat";
-    private const string GolemBodyMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Body.mat";
-    private const string GolemCoreMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Core.mat";
+    private const string FrozenGolemMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Crystal.mat";
+    private const string FrozenGolemControllerPath =
+        EnemyAnimationFolder + "/FrozenGolem_Idle.controller";
     private const string EnemyVisualPrefix = "Visual_";
 
     [MenuItem("Cinderkeep/Assets/Enemies/Preview Current Enemies")]
@@ -101,121 +103,33 @@ public static class CinderkeepEnemyAssetApplicator
     [MenuItem("Cinderkeep/Assets/Enemies/Apply Frozen Golem")]
     public static void ApplyFrozenGolem()
     {
-        Material bodyMaterial = GetOrCreateMaterial(
-            GolemBodyMaterialPath,
-            new Color(0.22f, 0.34f, 0.48f, 1f),
-            0.12f,
-            0.42f);
-        Material coreMaterial = GetOrCreateMaterial(
-            GolemCoreMaterialPath,
-            new Color(0.18f, 0.78f, 1f, 1f),
+        Material frozenGolemMaterial = GetOrCreateMaterial(
+            FrozenGolemMaterialPath,
+            Color.white,
             0.08f,
-            0.58f);
-        ConfigureEmission(coreMaterial, new Color(0.08f, 0.9f, 1.6f, 1f));
+            0.48f);
+        Texture2D diffuseTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CrystalGolemDiffusePath);
+        Texture2D normalTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CrystalGolemNormalPath);
+        SetMaterialTexture(frozenGolemMaterial, diffuseTexture);
+        SetMaterialNormalTexture(frozenGolemMaterial, normalTexture);
+        AnimatorController idleController = GetOrCreateIdleAnimatorController(
+            FrozenGolemControllerPath,
+            CrystalGolemIdlePath);
 
-        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(FrozenGolemPrefabPath);
-        if (prefabRoot == null)
+        bool didApply = ReplaceEnemyVisual(
+            FrozenGolemPrefabPath,
+            CrystalGolemModelPath,
+            "Visual_PF_Boss_FrozenGolem",
+            1f,
+            frozenGolemMaterial,
+            2f,
+            idleController);
+
+        if (didApply == false)
         {
             return;
         }
 
-        try
-        {
-            DestroyExistingVisuals(prefabRoot.transform);
-
-            GameObject visualRoot = new GameObject("Visual_PF_Boss_FrozenGolem");
-            visualRoot.transform.SetParent(prefabRoot.transform, false);
-
-            AddVisualPiece(
-                visualRoot.transform,
-                RockLargeModelPath,
-                "Body_Torso",
-                1.35f,
-                new Vector3(0f, 1.15f, 0f),
-                new Vector3(0f, 15f, 0f),
-                bodyMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                RockSmallModelPath,
-                "Body_Head",
-                0.55f,
-                new Vector3(0f, 1.95f, -0.02f),
-                new Vector3(0f, -20f, 8f),
-                bodyMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                RockSmallModelPath,
-                "Body_Arm_Left",
-                1.15f,
-                new Vector3(-0.85f, 1.2f, 0f),
-                new Vector3(0f, 5f, -52f),
-                bodyMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                RockSmallModelPath,
-                "Body_Arm_Right",
-                1.15f,
-                new Vector3(0.85f, 1.2f, 0f),
-                new Vector3(0f, -5f, 52f),
-                bodyMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                RockSmallModelPath,
-                "Body_Leg_Left",
-                0.9f,
-                new Vector3(-0.38f, 0.42f, 0f),
-                new Vector3(0f, 12f, -8f),
-                bodyMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                RockSmallModelPath,
-                "Body_Leg_Right",
-                0.9f,
-                new Vector3(0.38f, 0.42f, 0f),
-                new Vector3(0f, -12f, 8f),
-                bodyMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                CrystalCoreModelPath,
-                "Crystal_ChestCore",
-                0.42f,
-                new Vector3(0f, 1.25f, -0.58f),
-                new Vector3(90f, 0f, 0f),
-                coreMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                CrystalSpikeModelPath,
-                "Crystal_Shoulder_Left",
-                0.52f,
-                new Vector3(-0.55f, 1.75f, 0f),
-                new Vector3(0f, 0f, -24f),
-                coreMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                CrystalSpikeModelPath,
-                "Crystal_Shoulder_Right",
-                0.52f,
-                new Vector3(0.55f, 1.75f, 0f),
-                new Vector3(0f, 0f, 24f),
-                coreMaterial);
-            AddVisualPiece(
-                visualRoot.transform,
-                CrystalShardModelPath,
-                "Crystal_BackSpikes",
-                0.75f,
-                new Vector3(0f, 1.45f, 0.45f),
-                new Vector3(-25f, 0f, 0f),
-                coreMaterial);
-
-            PrefabUtility.SaveAsPrefabAsset(prefabRoot, FrozenGolemPrefabPath);
-        }
-        finally
-        {
-            PrefabUtility.UnloadPrefabContents(prefabRoot);
-        }
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
         RenderAssetPreview(FrozenGolemPrefabPath, "Boss_FrozenGolem_LowPoly.png");
         Debug.Log("[CinderkeepEnemyAssetApplicator] Frozen Golem 저폴리 외형을 적용했습니다.");
     }
@@ -225,7 +139,9 @@ public static class CinderkeepEnemyAssetApplicator
         string sourceVisualPath,
         string visualName,
         float localScale,
-        Material overrideMaterial)
+        Material overrideMaterial,
+        float targetHeight = 0f,
+        RuntimeAnimatorController animatorController = null)
     {
         GameObject sourceVisual = AssetDatabase.LoadAssetAtPath<GameObject>(sourceVisualPath);
         if (sourceVisual == null)
@@ -256,11 +172,26 @@ public static class CinderkeepEnemyAssetApplicator
             visual.transform.localPosition = Vector3.zero;
             visual.transform.localRotation = Quaternion.identity;
             visual.transform.localScale = Vector3.one * localScale;
+
+            if (targetHeight > 0f)
+            {
+                FitVisualToHeight(visual, targetHeight);
+                CenterVisualAtLocalPosition(
+                    visual,
+                    prefabRoot.transform,
+                    new Vector3(0f, targetHeight * 0.5f, 0f));
+            }
+
             DestroyCollidersInChildren(visual);
 
             if (overrideMaterial != null)
             {
                 ApplyMaterialToRenderers(visual, overrideMaterial);
+            }
+
+            if (animatorController != null)
+            {
+                AssignAnimatorController(visual, animatorController);
             }
 
             PrefabUtility.SaveAsPrefabAsset(prefabRoot, enemyPrefabPath);
@@ -290,30 +221,82 @@ public static class CinderkeepEnemyAssetApplicator
         }
     }
 
-    private static void AddVisualPiece(
-        Transform visualRoot,
-        string sourceModelPath,
-        string pieceName,
-        float targetHeight,
-        Vector3 localCenter,
-        Vector3 localEulerAngles,
-        Material material)
+    private static AnimatorController GetOrCreateIdleAnimatorController(
+        string controllerPath,
+        string animationAssetPath)
     {
-        GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(sourceModelPath);
-        GameObject piece = InstantiateAssetCanBeNull(sourceModel);
-        if (piece == null)
+        AnimationClip idleClip = FindAnimationClipCanBeNull(animationAssetPath, "Idle");
+        if (idleClip == null)
         {
-            Debug.LogError("[CinderkeepEnemyAssetApplicator] 골렘 파츠를 만들지 못했습니다: " + sourceModelPath);
+            Debug.LogError("[CinderkeepEnemyAssetApplicator] Frozen Golem Idle 클립을 찾지 못했습니다.");
+            return null;
+        }
+
+        EnsureAssetFolder(EnemyAnimationFolder);
+        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath);
+        if (controller == null)
+        {
+            controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+        }
+
+        AnimatorStateMachine stateMachine = controller.layers[0].stateMachine;
+        AnimatorState idleState = null;
+        ChildAnimatorState[] states = stateMachine.states;
+        for (int i = 0; i < states.Length; i++)
+        {
+            if (states[i].state.name == "Idle")
+            {
+                idleState = states[i].state;
+                break;
+            }
+        }
+
+        if (idleState == null)
+        {
+            idleState = stateMachine.AddState("Idle");
+        }
+
+        idleState.motion = idleClip;
+        stateMachine.defaultState = idleState;
+        EditorUtility.SetDirty(controller);
+        AssetDatabase.SaveAssets();
+        return controller;
+    }
+
+    private static AnimationClip FindAnimationClipCanBeNull(string assetPath, string clipName)
+    {
+        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+        for (int i = 0; i < assets.Length; i++)
+        {
+            AnimationClip animationClip = assets[i] as AnimationClip;
+            if (animationClip == null)
+            {
+                continue;
+            }
+
+            if (animationClip.name == clipName)
+            {
+                return animationClip;
+            }
+        }
+
+        return null;
+    }
+
+    private static void AssignAnimatorController(
+        GameObject visual,
+        RuntimeAnimatorController animatorController)
+    {
+        Animator animator = visual.GetComponentInChildren<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("[CinderkeepEnemyAssetApplicator] Frozen Golem Animator를 찾지 못했습니다.");
             return;
         }
 
-        piece.name = pieceName;
-        piece.transform.SetParent(visualRoot, false);
-        piece.transform.localRotation = Quaternion.Euler(localEulerAngles);
-        FitVisualToHeight(piece, targetHeight);
-        CenterVisualAtLocalPosition(piece, visualRoot, localCenter);
-        ApplyMaterialToRenderers(piece, material);
-        DestroyCollidersInChildren(piece);
+        animator.runtimeAnimatorController = animatorController;
+        animator.applyRootMotion = false;
+        EditorUtility.SetDirty(animator);
     }
 
     private static Material GetOrCreateMaterial(
@@ -346,18 +329,6 @@ public static class CinderkeepEnemyAssetApplicator
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssets();
         return material;
-    }
-
-    private static void ConfigureEmission(Material material, Color emissionColor)
-    {
-        if (material == null || material.HasProperty("_EmissionColor") == false)
-        {
-            return;
-        }
-
-        material.EnableKeyword("_EMISSION");
-        material.SetColor("_EmissionColor", emissionColor);
-        EditorUtility.SetDirty(material);
     }
 
     private static void SetMaterialColor(Material material, Color color)
@@ -400,6 +371,24 @@ public static class CinderkeepEnemyAssetApplicator
             material.SetTexture("_MainTex", texture);
         }
 
+        EditorUtility.SetDirty(material);
+        AssetDatabase.SaveAssets();
+    }
+
+    private static void SetMaterialNormalTexture(Material material, Texture texture)
+    {
+        if (material == null || texture == null)
+        {
+            return;
+        }
+
+        if (material.HasProperty("_BumpMap") == false)
+        {
+            return;
+        }
+
+        material.EnableKeyword("_NORMALMAP");
+        material.SetTexture("_BumpMap", texture);
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssets();
     }
@@ -509,7 +498,33 @@ public static class CinderkeepEnemyAssetApplicator
             return;
         }
 
+        SampleAnimatorForPreview(previewObject);
         RenderGameObjectPreview(previewObject, GetPreviewOutputPath(fileName));
+    }
+
+    private static void SampleAnimatorForPreview(GameObject previewObject)
+    {
+        Animator animator = previewObject.GetComponentInChildren<Animator>();
+        if (animator == null || animator.runtimeAnimatorController == null)
+        {
+            return;
+        }
+
+        AnimationClip[] animationClips = animator.runtimeAnimatorController.animationClips;
+        if (animationClips.Length <= 0)
+        {
+            return;
+        }
+
+        AnimationClip idleClip = animationClips[0];
+        Transform animatorTransform = animator.transform;
+        Vector3 localPosition = animatorTransform.localPosition;
+        Quaternion localRotation = animatorTransform.localRotation;
+        Vector3 localScale = animatorTransform.localScale;
+        idleClip.SampleAnimation(animator.gameObject, idleClip.length * 0.25f);
+        animatorTransform.localPosition = localPosition;
+        animatorTransform.localRotation = localRotation;
+        animatorTransform.localScale = localScale;
     }
 
     private static string GetPreviewOutputPath(string fileName)
@@ -532,9 +547,9 @@ public static class CinderkeepEnemyAssetApplicator
         camera.clearFlags = CameraClearFlags.SolidColor;
         camera.backgroundColor = new Color(0.06f, 0.08f, 0.12f, 1f);
         camera.transform.position = bounds.center + new Vector3(
-            objectSize * 2.5f,
-            objectSize * 1.2f,
-            objectSize * -0.35f);
+            objectSize * 1.35f,
+            objectSize * 1.05f,
+            objectSize * -2.1f);
         camera.transform.LookAt(bounds.center);
         camera.fieldOfView = 35f;
         camera.nearClipPlane = 0.01f;
