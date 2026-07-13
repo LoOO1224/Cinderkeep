@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 // 실제 장비 프리팹을 1인칭 카메라의 표시 오브젝트로 연결합니다.
@@ -11,49 +12,97 @@ public static class CinderkeepFirstPersonEquipmentApplicator
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
     private const string HandStonePrefabPath =
         "Assets/Prefabs/Equipment/PF_Equipment_HandStone.prefab";
+    private const string StoneAxePrefabPath =
+        "Assets/Prefabs/Equipment/PF_Equipment_Axe_Stone.prefab";
     private const string HandStoneViewName = "GameObject_HandStoneView";
+    private const string AxeViewName = "GameObject_AxeView";
     private const string PreviewFolderName = "CinderkeepAssetPreviews";
     private const int PreviewLayer = 31;
 
     [MenuItem("Cinderkeep/Assets/First Person Equipment/Apply Hand Stone")]
     public static void ApplyHandStone()
     {
+        ApplyEquipmentView(
+            HandStonePrefabPath,
+            HandStoneViewName,
+            "_handStoneView",
+            "Visual_HandStone",
+            Vector3.zero,
+            new Vector3(10f, -18f, 8f),
+            0.34f,
+            "FirstPerson_HandStone.png",
+            "손돌");
+    }
+
+    [MenuItem("Cinderkeep/Assets/First Person Equipment/Apply Stone Axe")]
+    public static void ApplyStoneAxe()
+    {
+        ApplyEquipmentView(
+            StoneAxePrefabPath,
+            AxeViewName,
+            "_axeView",
+            "Visual_StoneAxe",
+            Vector3.zero,
+            new Vector3(8f, -12f, -18f),
+            1.05f,
+            "FirstPerson_StoneAxe.png",
+            "돌도끼");
+    }
+
+    private static void ApplyEquipmentView(
+        string prefabPath,
+        string viewName,
+        string serializedPropertyName,
+        string visualName,
+        Vector3 visualEulerAngles,
+        Vector3 viewEulerAngles,
+        float targetSize,
+        string previewFileName,
+        string displayName)
+    {
         Scene scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
         FirstPersonToolView toolView = Object.FindFirstObjectByType<FirstPersonToolView>(
             FindObjectsInactive.Include);
-        GameObject handStonePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HandStonePrefabPath);
-        if (toolView == null || handStonePrefab == null)
+        GameObject equipmentPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (toolView == null || equipmentPrefab == null)
         {
-            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] 손돌 View 연결 대상을 찾지 못했습니다.");
+            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] " + displayName + " View 연결 대상을 찾지 못했습니다.");
             return;
         }
 
-        GameObject handStoneView = GetOrCreateView(toolView.transform, HandStoneViewName);
-        ClearChildren(handStoneView.transform);
+        SerializedObject serializedToolView = new SerializedObject(toolView);
+        SerializedProperty viewProperty = serializedToolView.FindProperty(serializedPropertyName);
+        if (viewProperty == null)
+        {
+            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] " + serializedPropertyName + " 필드를 찾지 못했습니다.");
+            return;
+        }
 
-        GameObject visual = PrefabUtility.InstantiatePrefab(handStonePrefab, scene) as GameObject;
+        GameObject viewObject = GetOrCreateView(toolView.transform, viewName);
+        ClearChildren(viewObject.transform);
+
+        GameObject visual = PrefabUtility.InstantiatePrefab(equipmentPrefab, scene) as GameObject;
         if (visual == null)
         {
-            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] 손돌 프리팹을 생성하지 못했습니다.");
+            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] " + displayName + " 프리팹을 생성하지 못했습니다.");
             return;
         }
 
-        visual.name = "Visual_HandStone";
-        visual.transform.SetParent(handStoneView.transform, false);
+        visual.name = visualName;
+        visual.transform.SetParent(viewObject.transform, false);
         visual.transform.localPosition = Vector3.zero;
-        visual.transform.localRotation = Quaternion.identity;
+        visual.transform.localRotation = Quaternion.Euler(visualEulerAngles);
         visual.transform.localScale = Vector3.one;
         RemoveColliders(visual);
         RemoveGameplayComponents(visual);
         SetLayerRecursively(visual.transform, 0);
-        FitVisualToSize(visual, handStoneView.transform, 0.34f);
+        FitVisualToSize(visual, viewObject.transform, targetSize);
 
-        handStoneView.transform.localPosition = Vector3.zero;
-        handStoneView.transform.localRotation = Quaternion.Euler(10f, -18f, 8f);
-        handStoneView.SetActive(false);
+        viewObject.transform.localPosition = Vector3.zero;
+        viewObject.transform.localRotation = Quaternion.Euler(viewEulerAngles);
+        viewObject.SetActive(false);
 
-        SerializedObject serializedToolView = new SerializedObject(toolView);
-        serializedToolView.FindProperty("_handStoneView").objectReferenceValue = handStoneView;
+        viewProperty.objectReferenceValue = viewObject;
         serializedToolView.ApplyModifiedPropertiesWithoutUndo();
 
         EditorUtility.SetDirty(toolView);
@@ -62,8 +111,8 @@ public static class CinderkeepFirstPersonEquipmentApplicator
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        RenderPrefabPreview(handStonePrefab, "FirstPerson_HandStone.png");
-        Debug.Log("[CinderkeepFirstPersonEquipmentApplicator] 손돌 1인칭 View를 연결했습니다.");
+        RenderPrefabPreview(equipmentPrefab, previewFileName);
+        Debug.Log("[CinderkeepFirstPersonEquipmentApplicator] " + displayName + " 1인칭 View를 연결했습니다.");
     }
 
     private static GameObject GetOrCreateView(Transform parent, string objectName)
@@ -155,10 +204,36 @@ public static class CinderkeepFirstPersonEquipmentApplicator
 
     private static void RenderPrefabPreview(GameObject prefab, string fileName)
     {
+        if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+        {
+            Debug.LogWarning("[CinderkeepFirstPersonEquipmentApplicator] 그래픽 장치가 없어 프리뷰 생성을 건너뜁니다.");
+            return;
+        }
+
         GameObject previewObject = Object.Instantiate(prefab);
         SetLayerRecursively(previewObject.transform, PreviewLayer);
+
+        Renderer[] renderers = previewObject.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length <= 0)
+        {
+            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] " + prefab.name + " 프리팹에 Renderer가 없습니다.");
+            Object.DestroyImmediate(previewObject);
+            return;
+        }
+
         Bounds bounds = GetRendererBounds(previewObject);
         float objectSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+        if (objectSize <= 0.001f)
+        {
+            Debug.LogError("[CinderkeepFirstPersonEquipmentApplicator] " + prefab.name + " 프리팹의 표시 크기가 0입니다.");
+            Object.DestroyImmediate(previewObject);
+            return;
+        }
+
+        Debug.Log(
+            "[CinderkeepFirstPersonEquipmentApplicator] Preview " + prefab.name
+            + " / Renderers=" + renderers.Length
+            + " / Bounds=" + bounds);
 
         GameObject cameraObject = new GameObject("PreviewCamera");
         Camera camera = cameraObject.AddComponent<Camera>();
