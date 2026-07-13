@@ -14,7 +14,6 @@ public static class CinderkeepEnemyAssetApplicator
     private const string EnemyAnimationFolder = "Assets/Animations/Enemy";
     private const string ExternalAssetFolder = "Assets/ThirdParty/Free/CinderkeepExternalAssets";
     private const string MageFolder = ExternalAssetFolder + "/Mages";
-    private const string PlantFolder = ExternalAssetFolder + "/CarnivorousPlant";
     private const string GolemFolder = ExternalAssetFolder + "/GolemCollection";
     private const string FrostWolfFolder = ExternalAssetFolder + "/FrostWolf";
 
@@ -22,17 +21,16 @@ public static class CinderkeepEnemyAssetApplicator
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_RedMage.prefab";
     private const string FrostMagePrefabPath =
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_FrostMage.prefab";
-    private const string IcePlantPrefabPath =
-        EnemyPrefabFolder + "/PF_Enemy_LowPoly_IcePlant.prefab";
+    private const string IceWraithPrefabPath =
+        EnemyPrefabFolder + "/PF_Enemy_LowPoly_IceWraith.prefab";
     private const string FrozenGolemPrefabPath =
         EnemyPrefabFolder + "/PF_Boss_FrozenGolem.prefab";
     private const string FrostWolfPrefabPath =
         EnemyPrefabFolder + "/PF_Enemy_LowPoly_FrostWolf.prefab";
 
     private const string MageBluePrefabPath = MageFolder + "/MageBlue.prefab";
+    private const string MageWhitePrefabPath = MageFolder + "/MageWhite.prefab";
     private const string MageTexturePath = MageFolder + "/Textures/MagesTexture.png";
-    private const string PlantYellowPrefabPath =
-        PlantFolder + "/Prefabs/Carnivorous Plant-Yellow.prefab";
     private const string CrystalGolemModelPath = GolemFolder + "/CrystalGolem.FBX";
     private const string CrystalGolemIdlePath = GolemFolder + "/GolemIdle.FBX";
     private const string CrystalGolemDiffusePath = GolemFolder + "/CrG_Diffuse.png";
@@ -42,7 +40,7 @@ public static class CinderkeepEnemyAssetApplicator
     private const string FrostWolfNormalPath = FrostWolfFolder + "/FrostWolf_Normal.png";
 
     private const string RedMageMaterialPath = EnemyMaterialFolder + "/FireMage_Red.mat";
-    private const string IcePlantMaterialPath = EnemyMaterialFolder + "/IcePlant_Frost.mat";
+    private const string IceWraithMaterialPath = EnemyMaterialFolder + "/IceWraith_Frost.mat";
     private const string FrostMageMaterialPath = EnemyMaterialFolder + "/FrostMage_Blue.mat";
     private const string FrozenGolemMaterialPath = EnemyMaterialFolder + "/FrozenGolem_Crystal.mat";
     private const string FrozenGolemControllerPath =
@@ -58,7 +56,7 @@ public static class CinderkeepEnemyAssetApplicator
     {
         RenderAssetPreview(RedMagePrefabPath, "Enemy_RedMage_Current.png");
         RenderAssetPreview(FrostMagePrefabPath, "Enemy_FrostMage_Current.png");
-        RenderAssetPreview(IcePlantPrefabPath, "Enemy_IcePlant_Current.png");
+        RenderAssetPreview(IceWraithPrefabPath, "Enemy_IceWraith_Current.png");
         RenderAssetPreview(FrostWolfPrefabPath, "Enemy_FrostWolf_Current.png");
         RenderAssetPreview(FrozenGolemPrefabPath, "Boss_FrozenGolem_Current.png");
         Debug.Log("[CinderkeepEnemyAssetApplicator] 현재 적 프리뷰를 생성했습니다.");
@@ -125,29 +123,32 @@ public static class CinderkeepEnemyAssetApplicator
         Debug.Log("[CinderkeepEnemyAssetApplicator] FrostMage Blue 외형을 적용했습니다.");
     }
 
-    [MenuItem("Cinderkeep/Assets/Enemies/Apply Frost Ice Plant")]
-    public static void ApplyFrostIcePlant()
+    [MenuItem("Cinderkeep/Assets/Enemies/Apply Ice Wraith")]
+    public static void ApplyIceWraith()
     {
-        Material frostMaterial = GetOrCreateMaterial(
-            IcePlantMaterialPath,
-            new Color(0.18f, 0.68f, 0.82f, 1f),
+        Material wraithMaterial = GetOrCreateMaterial(
+            IceWraithMaterialPath,
+            new Color(0.72f, 0.88f, 1f, 1f),
             0.05f,
             0.28f);
+        Texture2D mageTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(MageTexturePath);
+        SetMaterialTexture(wraithMaterial, mageTexture);
 
         bool didApply = ReplaceEnemyVisual(
-            IcePlantPrefabPath,
-            PlantYellowPrefabPath,
-            "Visual_PF_Enemy_LowPoly_IcePlant",
-            1.4f,
-            frostMaterial);
+            IceWraithPrefabPath,
+            MageWhitePrefabPath,
+            "Visual_PF_Enemy_LowPoly_IceWraith",
+            1.2f,
+            wraithMaterial,
+            1.55f);
 
         if (didApply == false)
         {
             return;
         }
 
-        RenderAssetPreview(IcePlantPrefabPath, "Enemy_IcePlant_Frost.png");
-        Debug.Log("[CinderkeepEnemyAssetApplicator] IcePlant 서리 외형을 적용했습니다.");
+        RenderAssetPreview(IceWraithPrefabPath, "Enemy_IceWraith_Frost.png");
+        Debug.Log("[CinderkeepEnemyAssetApplicator] Ice Wraith 설원 외형을 적용했습니다.");
     }
 
     [MenuItem("Cinderkeep/Assets/Enemies/Apply Frost Wolf")]
@@ -422,6 +423,7 @@ public static class CinderkeepEnemyAssetApplicator
         bool didSave = false;
         try
         {
+            prefabRoot.name = Path.GetFileNameWithoutExtension(enemyPrefabPath);
             DestroyExistingVisuals(prefabRoot.transform);
 
             GameObject visual = InstantiateAssetCanBeNull(sourceVisual);
@@ -588,6 +590,7 @@ public static class CinderkeepEnemyAssetApplicator
         SetMaterialColor(material, color);
         SetMaterialFloat(material, "_Metallic", metallic);
         SetMaterialFloat(material, "_Smoothness", smoothness);
+        material.name = Path.GetFileNameWithoutExtension(materialPath);
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssets();
         return material;
