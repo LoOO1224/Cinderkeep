@@ -1,6 +1,8 @@
 using System.IO;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // 외부 후보에서 선별된 에셋을 Cinderkeep용 경량 프리팹으로 변환합니다.
 // 원본 패키지 전체가 아니라 이미 임포트된 모델과 프로젝트 재질만 연결합니다.
@@ -68,6 +70,8 @@ public static class CinderkeepExternalAssetApplicator
     private const string FurnaceTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace_Tier2.prefab";
     private const string FurnaceStoneMaterialPath = BuildingMaterialFolder + "/Furnace_Stone.mat";
     private const string FurnaceEmberMaterialPath = BuildingMaterialFolder + "/Furnace_Ember.mat";
+    private const string MainGameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
+    private const string BuildingPreviewRootName = "BuildingPreview_GameLoop";
 
     private static readonly string[] FrozenTowerCandidatePaths =
     {
@@ -441,6 +445,44 @@ public static class CinderkeepExternalAssetApplicator
         Debug.Log("[CinderkeepExternalAssetApplicator] 용광로 불꽃 외형 적용을 완료했습니다.");
     }
 
+    [MenuItem("Cinderkeep/Assets/Replace Main Scene Furnace")]
+    public static void ReplaceMainSceneFurnace()
+    {
+        GameObject furnacePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(FurnacePrefabPath);
+        if (furnacePrefab == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 용광로 프리팹을 찾지 못했습니다.");
+            return;
+        }
+
+        Scene mainGameScene = EditorSceneManager.OpenScene(MainGameScenePath, OpenSceneMode.Single);
+        GameObject buildingPreviewRoot = FindRootObjectByName(mainGameScene, BuildingPreviewRootName);
+        if (buildingPreviewRoot == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 건축 미리보기 루트를 찾지 못했습니다.");
+            return;
+        }
+
+        RemoveDirectChildrenByName(buildingPreviewRoot.transform, "Furnace", "Furnace (1)");
+
+        GameObject furnace = PrefabUtility.InstantiatePrefab(furnacePrefab, mainGameScene) as GameObject;
+        if (furnace == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 용광로 프리팹 인스턴스 생성에 실패했습니다.");
+            return;
+        }
+
+        furnace.name = "Furnace";
+        furnace.transform.SetParent(buildingPreviewRoot.transform, false);
+        furnace.transform.localPosition = new Vector3(6.32f, 0f, 4.96f);
+        furnace.transform.localRotation = Quaternion.identity;
+        furnace.transform.localScale = Vector3.one;
+
+        EditorSceneManager.MarkSceneDirty(mainGameScene);
+        EditorSceneManager.SaveScene(mainGameScene);
+        Debug.Log("[CinderkeepExternalAssetApplicator] 메인 씬 용광로 중복 제거와 프리팹 교체를 완료했습니다.");
+    }
+
     [MenuItem("Cinderkeep/Assets/Apply Forge Workbench Visuals")]
     public static void ApplyForgeWorkbenchVisuals()
     {
@@ -501,6 +543,60 @@ public static class CinderkeepExternalAssetApplicator
             }
 
             currentPath = nextPath;
+        }
+    }
+
+    private static GameObject FindRootObjectByName(Scene scene, string objectName)
+    {
+        GameObject[] rootObjects = scene.GetRootGameObjects();
+        for (int i = 0; i < rootObjects.Length; i++)
+        {
+            GameObject rootObject = rootObjects[i];
+            Transform target = FindTransformByName(rootObject.transform, objectName);
+            if (target != null)
+            {
+                return target.gameObject;
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindTransformByName(Transform parent, string objectName)
+    {
+        if (parent.name == objectName)
+        {
+            return parent;
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform result = FindTransformByName(parent.GetChild(i), objectName);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    private static void RemoveDirectChildrenByName(
+        Transform parent,
+        string firstName,
+        string secondName)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = parent.GetChild(i);
+            bool isFirstTarget = child.name == firstName;
+            bool isSecondTarget = child.name == secondName;
+            if (isFirstTarget == false && isSecondTarget == false)
+            {
+                continue;
+            }
+
+            Object.DestroyImmediate(child.gameObject);
         }
     }
 
