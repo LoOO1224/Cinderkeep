@@ -66,6 +66,15 @@ public static class CinderkeepExternalAssetApplicator
     private const string SandboxWorkbenchPrefabPath =
         "Assets/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Crafting_Workbench.prefab";
     private const string WorkbenchMaterialPath = BuildingMaterialFolder + "/Workbench_Forge.mat";
+    private const string AnvilTier1ModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomProps/Models/"
+        + "SM_Prop_Anvil_01.fbx";
+    private const string AnvilTier2ModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomProps/Models/"
+        + "SM_Prop_Anvil_03.fbx";
+    private const string AnvilPrefabPath = "Assets/Prefabs/Building/PF_Building_Anvil.prefab";
+    private const string AnvilTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Anvil_Tier2.prefab";
+    private const string AnvilMaterialPath = BuildingMaterialFolder + "/Anvil_Iron.mat";
     private const string FurnacePrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace.prefab";
     private const string FurnaceTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace_Tier2.prefab";
     private const string FurnaceStoneMaterialPath = BuildingMaterialFolder + "/Furnace_Stone.mat";
@@ -518,11 +527,55 @@ public static class CinderkeepExternalAssetApplicator
         Debug.Log("[CinderkeepExternalAssetApplicator] Forge workbench visuals applied.");
     }
 
+    [MenuItem("Cinderkeep/Assets/Apply Anvil Visuals")]
+    public static void ApplyAnvilVisuals()
+    {
+        Texture2D albedoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CinderHeartBrazierAlbedoPath);
+        Texture2D normalTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CinderHeartBrazierNormalPath);
+        if (albedoTexture == null || normalTexture == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 모루 텍스처 에셋을 찾지 못했습니다.");
+            return;
+        }
+
+        Material anvilMaterial = GetOrCreateProjectMaterial(
+            AnvilMaterialPath,
+            Color.white,
+            0.68f,
+            0.34f);
+        ConfigureSurfaceTextures(anvilMaterial, albedoTexture, normalTexture);
+
+        bool didApplyTier1 = ApplyAnvilVisual(
+            AnvilPrefabPath,
+            AnvilTier1ModelPath,
+            anvilMaterial,
+            "Visual_Anvil_Tier1",
+            1.05f);
+        bool didApplyTier2 = ApplyAnvilVisual(
+            AnvilTier2PrefabPath,
+            AnvilTier2ModelPath,
+            anvilMaterial,
+            "Visual_Anvil_Tier2",
+            1.2f);
+        if (didApplyTier1 == false || didApplyTier2 == false)
+        {
+            return;
+        }
+
+        GameObject tier1Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AnvilPrefabPath);
+        GameObject tier2Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AnvilTier2PrefabPath);
+        RenderPrefabPreview(tier1Prefab, GetPreviewOutputPath("PF_Building_Anvil.png"));
+        RenderPrefabPreview(tier2Prefab, GetPreviewOutputPath("PF_Building_Anvil_Tier2.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] 모루 1·2티어 외형 적용을 완료했습니다.");
+    }
+
     [MenuItem("Cinderkeep/Assets/Report Applied Asset Bounds")]
     public static void ReportAppliedAssetBounds()
     {
         ReportPrefabBounds(FurnacePrefabPath);
         ReportPrefabBounds(FurnaceTier2PrefabPath);
+        ReportPrefabBounds(AnvilPrefabPath);
+        ReportPrefabBounds(AnvilTier2PrefabPath);
         ReportPrefabBounds(WoodTowerPrefabPath);
         ReportPrefabBounds(IronTowerPrefabPath);
         ReportPrefabBounds(GoldTowerPrefabPath);
@@ -792,6 +845,59 @@ public static class CinderkeepExternalAssetApplicator
             DestroyCollidersInChildren(visual);
 
             PrefabUtility.SaveAsPrefabAsset(prefabRoot, workbenchPrefabPath);
+            didSave = true;
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        return didSave;
+    }
+
+    private static bool ApplyAnvilVisual(
+        string anvilPrefabPath,
+        string anvilModelPath,
+        Material anvilMaterial,
+        string visualName,
+        float targetHeight)
+    {
+        GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(anvilModelPath);
+        if (sourceModel == null || anvilMaterial == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 모루 모델 또는 머티리얼을 찾지 못했습니다.");
+            return false;
+        }
+
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(anvilPrefabPath);
+        if (prefabRoot == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] 모루 프리팹을 찾지 못했습니다: " + anvilPrefabPath);
+            return false;
+        }
+
+        bool didSave = false;
+        try
+        {
+            DestroyAllChildren(prefabRoot.transform);
+
+            GameObject visual = InstantiateAssetCanBeNull(sourceModel);
+            if (visual == null)
+            {
+                return false;
+            }
+
+            visual.name = visualName;
+            visual.transform.SetParent(prefabRoot.transform, false);
+            FitVisualToHeight(visual, targetHeight);
+            PlaceVisualOnGround(visual, prefabRoot.transform.position);
+            ApplyMaterialToRenderers(visual, anvilMaterial);
+            DestroyCollidersInChildren(visual);
+            FitBoxColliderToVisual(prefabRoot, visual, 0.12f);
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, anvilPrefabPath);
             didSave = true;
         }
         finally
