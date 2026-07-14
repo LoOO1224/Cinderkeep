@@ -399,6 +399,7 @@ public static class CinderkeepGameLoopSceneBuilder
         CreateResourceTierPrefabs(resourceMaterials);
         CreatePickaxePrefab(resourceMaterials.WoodTier1, resourceMaterials.Iron);
         CreateWorkbenchPrefab(resourceMaterials.WoodTier1);
+        CinderkeepExternalAssetApplicator.ApplyForgeWorkbenchVisuals();
         CreateTurretPrefab(resourceMaterials.WoodTier1);
         CreateEnemyPrefab(enemyMaterial);
         CreateSecondPriorityPreviewPrefab("PF_4_0_Candidate_PlayerVisual_MageBlack", MageBlackPath);

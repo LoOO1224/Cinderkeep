@@ -55,6 +55,15 @@ public static class CinderkeepExternalAssetApplicator
         CinderHeartMaterialFolder + "/CinderHeart_Ember.mat";
     private const string CinderHeartCoreMaterialPath =
         CinderHeartMaterialFolder + "/CinderHeart_Core.mat";
+    private const string WorkbenchForgeModelPath =
+        "Assets/ThirdParty/Free/CinderkeepExternalAssets/FantasyKingdomProps/Models/"
+        + "SM_Prop_Workbench_Forge_01_Preset.fbx";
+    private const string WorkbenchPrefabPath = "Assets/Prefabs/Building/PF_Building_Workbench.prefab";
+    private const string WorkbenchTier2PrefabPath =
+        "Assets/Prefabs/Building/PF_Building_Workbench_Tier2.prefab";
+    private const string SandboxWorkbenchPrefabPath =
+        "Assets/_Sandbox/4_0_CandidateAssets/Prefabs/PF_4_0_Crafting_Workbench.prefab";
+    private const string WorkbenchMaterialPath = BuildingMaterialFolder + "/Workbench_Forge.mat";
     private const string FurnacePrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace.prefab";
     private const string FurnaceTier2PrefabPath = "Assets/Prefabs/Building/PF_Building_Furnace_Tier2.prefab";
     private const string FurnaceStoneMaterialPath = BuildingMaterialFolder + "/Furnace_Stone.mat";
@@ -432,6 +441,41 @@ public static class CinderkeepExternalAssetApplicator
         Debug.Log("[CinderkeepExternalAssetApplicator] 용광로 불꽃 외형 적용을 완료했습니다.");
     }
 
+    [MenuItem("Cinderkeep/Assets/Apply Forge Workbench Visuals")]
+    public static void ApplyForgeWorkbenchVisuals()
+    {
+        Texture2D albedoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CinderHeartBrazierAlbedoPath);
+        Texture2D normalTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CinderHeartBrazierNormalPath);
+        if (albedoTexture == null || normalTexture == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] Workbench texture assets are missing.");
+            return;
+        }
+
+        Material workbenchMaterial = GetOrCreateProjectMaterial(
+            WorkbenchMaterialPath,
+            Color.white,
+            0.08f,
+            0.28f);
+        ConfigureSurfaceTextures(workbenchMaterial, albedoTexture, normalTexture);
+
+        bool didApplySandbox = ApplyWorkbenchVisual(SandboxWorkbenchPrefabPath, workbenchMaterial, 1.35f);
+        bool didApplyTier1 = ApplyWorkbenchVisual(WorkbenchPrefabPath, workbenchMaterial, 1.35f);
+        bool didApplyTier2 = ApplyWorkbenchVisual(WorkbenchTier2PrefabPath, workbenchMaterial, 1.55f);
+        if (didApplySandbox == false || didApplyTier1 == false || didApplyTier2 == false)
+        {
+            return;
+        }
+
+        GameObject sandboxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SandboxWorkbenchPrefabPath);
+        GameObject tier1Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(WorkbenchPrefabPath);
+        GameObject tier2Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(WorkbenchTier2PrefabPath);
+        RenderPrefabPreview(sandboxPrefab, GetPreviewOutputPath("PF_4_0_Crafting_Workbench.png"));
+        RenderPrefabPreview(tier1Prefab, GetPreviewOutputPath("PF_Building_Workbench.png"));
+        RenderPrefabPreview(tier2Prefab, GetPreviewOutputPath("PF_Building_Workbench_Tier2.png"));
+        Debug.Log("[CinderkeepExternalAssetApplicator] Forge workbench visuals applied.");
+    }
+
     [MenuItem("Cinderkeep/Assets/Report Applied Asset Bounds")]
     public static void ReportAppliedAssetBounds()
     {
@@ -614,6 +658,56 @@ public static class CinderkeepExternalAssetApplicator
         return didSave;
     }
 
+    private static bool ApplyWorkbenchVisual(
+        string workbenchPrefabPath,
+        Material workbenchMaterial,
+        float targetHeight)
+    {
+        GameObject sourceModel = AssetDatabase.LoadAssetAtPath<GameObject>(WorkbenchForgeModelPath);
+        if (sourceModel == null || workbenchMaterial == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] Workbench model or material is missing.");
+            return false;
+        }
+
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(workbenchPrefabPath);
+        if (prefabRoot == null)
+        {
+            Debug.LogError("[CinderkeepExternalAssetApplicator] Workbench prefab is missing: " + workbenchPrefabPath);
+            return false;
+        }
+
+        bool didSave = false;
+        try
+        {
+            DestroyAllChildren(prefabRoot.transform);
+
+            GameObject visual = InstantiateAssetCanBeNull(sourceModel);
+            if (visual == null)
+            {
+                return false;
+            }
+
+            visual.name = "Visual_ForgeWorkbench";
+            visual.transform.SetParent(prefabRoot.transform, false);
+            FitVisualToHeight(visual, targetHeight);
+            PlaceVisualOnGround(visual, prefabRoot.transform.position);
+            ApplyMaterialToRenderers(visual, workbenchMaterial);
+            DestroyCollidersInChildren(visual);
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, workbenchPrefabPath);
+            didSave = true;
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        return didSave;
+    }
+
     private static bool ApplyFurnaceVisual(
         string furnacePrefabPath,
         Material stoneMaterial,
@@ -778,6 +872,14 @@ public static class CinderkeepExternalAssetApplicator
         }
 
         Object.DestroyImmediate(child.gameObject);
+    }
+
+    private static void DestroyAllChildren(Transform parent)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            Object.DestroyImmediate(parent.GetChild(i).gameObject);
+        }
     }
 
     private static void SetupFurnaceLight(Transform parent, float height, float intensity)
